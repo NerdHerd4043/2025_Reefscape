@@ -5,10 +5,12 @@
 package frc.robot.subsystems.coral;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.spark.SparkMax;
 
 public class CoralIntake extends SubsystemBase {
   /** Creates a new CoralIntake. */
-  public CoralIntake() {}
+  public CoralIntake() {
+  }
 
   @Override
   public void periodic() {

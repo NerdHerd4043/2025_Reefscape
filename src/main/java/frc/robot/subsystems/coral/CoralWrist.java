@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CoralWrist extends SubsystemBase {
   /** Creates a new CoralWrist. */
-  public CoralWrist() {}
+  public CoralWrist() {
+  }
 
   @Override
   public void periodic() {
