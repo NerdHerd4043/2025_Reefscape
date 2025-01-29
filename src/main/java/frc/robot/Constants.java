@@ -50,4 +50,13 @@ public class Constants {
 
     public static final double intakeSpeed = 0.5;
   }
+
+  public static final class CoralWrist {
+    public static final int motorId = 0; // FIXME: Need a motor id
+  }
+
+  public static final class Elevator {
+    public static final int leftMotorId = 0; // FIXME: Need a motor id
+    public static final int rightMotorId = 0; // FIXME: Need a motor id
+  }
 }
