@@ -57,9 +57,6 @@ public class SwerveModule {
 
     this.pidController.enableContinuousInput(-180, 180);
 
-    // this.speedMotor.setInverted(driveInverted);
-    speedMotorConfig.inverted(true);
-
     // Set scaling factors
     this.speedEncoder = this.speedMotor.getEncoder();
   }

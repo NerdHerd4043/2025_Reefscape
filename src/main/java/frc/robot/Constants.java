@@ -12,7 +12,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 /** Add your docs here. */
 public class Constants {
   public static final class DriveConstants {
-    public static final double deadband = 0.08;
+    public static final double deadband = 0.09;
     public static final int currentLimit = 40;
     public static final double slewRate = 20; // lower number for higher center of mass
     public static final int temp = 21;
@@ -20,7 +20,8 @@ public class Constants {
     public static final double NEO_FREE_SPEED = 5820.0 / 60.0;
     public static final double WHEEL_DIAMETER = 0.1016;
     public static final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
-    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.dist / Math.sqrt(2.0));
+    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY
+        / (ModuleLocations.moduleLocationLength / Math.sqrt(2.0));
 
     public static final class SwervePID {
       public static final double p = 0.12;
@@ -36,12 +37,14 @@ public class Constants {
     }
 
     public static final class ModuleLocations {
-      public static final double dist = Units.inchesToMeters(9.25);
-      public static final double robotRaduius = Math.sqrt(2 * Math.pow(dist, 2));
-      public static final Translation2d frontLeft = new Translation2d(dist, dist);
-      public static final Translation2d frontRight = new Translation2d(dist, -dist);
-      public static final Translation2d backLeft = new Translation2d(-dist, dist);
-      public static final Translation2d backRight = new Translation2d(-dist, -dist);
+      public static final double moduleLocationLength = Units.inchesToMeters(9.25);
+      public static final double moduleLocationWidth = Units.inchesToMeters(9.25);
+      public static final double robotRaduius = Math
+          .sqrt(Math.pow(moduleLocationLength, 2) + Math.pow(moduleLocationWidth, 2));
+      public static final Translation2d frontLeft = new Translation2d(moduleLocationLength, moduleLocationLength);
+      public static final Translation2d frontRight = new Translation2d(moduleLocationLength, -moduleLocationLength);
+      public static final Translation2d backLeft = new Translation2d(-moduleLocationLength, moduleLocationLength);
+      public static final Translation2d backRight = new Translation2d(-moduleLocationLength, -moduleLocationLength);
     }
   }
 

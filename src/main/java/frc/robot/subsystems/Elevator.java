@@ -20,6 +20,9 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   public Elevator() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
+
+    motorConfig.smartCurrentLimit(40);
+
     leftMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }

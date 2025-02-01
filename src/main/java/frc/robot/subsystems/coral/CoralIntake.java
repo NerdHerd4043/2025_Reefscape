@@ -21,6 +21,8 @@ public class CoralIntake extends SubsystemBase {
   public CoralIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
 
+    motorConfig.smartCurrentLimit(40);
+
     intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 

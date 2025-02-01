@@ -20,6 +20,8 @@ public class CoralWrist extends SubsystemBase {
   public CoralWrist() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
 
+    motorConfig.smartCurrentLimit(40);
+
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
