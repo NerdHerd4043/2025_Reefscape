@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -22,12 +23,13 @@ public class RobotContainer {
   final Drivebase drivebase = new Drivebase();
 
   final Elevator elevator = new Elevator();
-
   final CoralWrist coralWrist = new CoralWrist();
-
   private static CoralIntake coralIntake = new CoralIntake();
 
+  private SendableChooser<Command> autoChooser;
+
   public RobotContainer() {
+
     drivebase.setDefaultCommand(
         new Drive(
             drivebase,
