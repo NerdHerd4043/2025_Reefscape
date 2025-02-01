@@ -90,7 +90,7 @@ public class Constants {
   public static final class Elevator {
     public static final int currentLimit = 40;
 
-    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(6, 5);
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0);
 
     public static final int leftMotorId = 0; // FIXME: Need a motor id
     public static final int rightMotorId = 0; // FIXME: Need a motor id
