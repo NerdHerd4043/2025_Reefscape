@@ -37,8 +37,8 @@ public class Constants {
     }
 
     public static final class ModuleLocations {
-      public static final double moduleLocationLength = Units.inchesToMeters(9.25);
-      public static final double moduleLocationWidth = Units.inchesToMeters(9.25);
+      public static final double moduleLocationLength = Units.inchesToMeters(12.00);
+      public static final double moduleLocationWidth = Units.inchesToMeters(12.25);
       public static final double robotRaduius = Math
           .sqrt(Math.pow(moduleLocationLength, 2) + Math.pow(moduleLocationWidth, 2));
       public static final Translation2d frontLeft = new Translation2d(moduleLocationLength, moduleLocationLength);
