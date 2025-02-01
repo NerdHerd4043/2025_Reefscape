@@ -5,23 +5,24 @@
 package cowlib;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.SwervePID;
 
 /** Add your docs here. */
 public class SwerveModule {
-  private CANSparkMax angleMotor;
-  private CANSparkMax speedMotor;
+  private SparkMax angleMotor;
+  private SparkMax speedMotor;
   private RelativeEncoder speedEncoder;
   private PIDController pidController;
   private CANcoder encoder;
@@ -30,11 +31,24 @@ public class SwerveModule {
 
   public SwerveModule(int angleMotorId, int speedMotorId, int encoderId, boolean driveInverted,
       double maxVelocity, double maxVoltage) {
-    this.angleMotor = new CANSparkMax(angleMotorId, MotorType.kBrushless);
-    this.speedMotor = new CANSparkMax(speedMotorId, MotorType.kBrushless);
+    this.angleMotor = new SparkMax(angleMotorId, MotorType.kBrushless);
+    this.speedMotor = new SparkMax(speedMotorId, MotorType.kBrushless);
 
-    this.speedMotor.setIdleMode(IdleMode.kBrake);
-    this.angleMotor.setIdleMode(IdleMode.kBrake);
+    final SparkMaxConfig angleMotorConfig = new SparkMaxConfig();
+    final SparkMaxConfig speedMotorConfig = new SparkMaxConfig();
+
+    speedMotorConfig.inverted(driveInverted);
+
+    double driveReduction = 1.0 / 6.75;
+    double WHEEL_DIAMETER = 0.1016;
+    double rotationsToDistance = driveReduction * WHEEL_DIAMETER * Math.PI;
+
+    speedMotorConfig.encoder
+        .positionConversionFactor(rotationsToDistance)
+        .velocityConversionFactor(rotationsToDistance);
+
+    angleMotor.configure(angleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    speedMotor.configure(speedMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.pidController = new PIDController(SwervePID.p, SwervePID.i, SwervePID.d);
     this.encoder = new CANcoder(encoderId);
@@ -43,16 +57,11 @@ public class SwerveModule {
 
     this.pidController.enableContinuousInput(-180, 180);
 
-    this.speedMotor.setInverted(driveInverted);
+    // this.speedMotor.setInverted(driveInverted);
+    speedMotorConfig.inverted(true);
 
     // Set scaling factors
     this.speedEncoder = this.speedMotor.getEncoder();
-    double driveReduction = 1.0 / 6.75;
-    double WHEEL_DIAMETER = 0.1016;
-    double rotationsToDistance = driveReduction * WHEEL_DIAMETER * Math.PI;
-
-    this.speedEncoder.setPositionConversionFactor(rotationsToDistance);
-    this.speedEncoder.setVelocityConversionFactor(rotationsToDistance / 60);
   }
 
   public SwerveModule(SwerveModuleConfig config, double maxVelocity, double maxVoltage) {
@@ -62,9 +71,6 @@ public class SwerveModule {
         config.drive_inverted,
         maxVelocity,
         maxVoltage);
-
-    angleMotor.setSmartCurrentLimit(DriveConstants.currentLimit);
-    speedMotor.setSmartCurrentLimit(DriveConstants.currentLimit);
   }
 
   private void drive(double speedMetersPerSecond, double angle) {
