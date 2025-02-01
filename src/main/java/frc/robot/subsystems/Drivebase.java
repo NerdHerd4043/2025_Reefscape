@@ -6,11 +6,18 @@ package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.studica.frc.AHRS;
@@ -63,8 +70,8 @@ public class Drivebase extends SubsystemBase {
 
   private Field2d field = new Field2d();
 
-  private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate); // Limits speed of changes in
-                                                                                    // direction
+  // Limits speed of changes in direction
+  private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
@@ -73,11 +80,108 @@ public class Drivebase extends SubsystemBase {
 
   /** Creates a new Drivebase. */
   public Drivebase() {
+    var inst = NetworkTableInstance.getDefault();
+    var table = inst.getTable("SmartDashboard");
+    this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
+    this.driveSpeedChooser = new SendableChooser<>();
+
+    this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
+    this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
+    this.driveSpeedChooser.addOption("Half Speed", 0.5);
+    this.driveSpeedChooser.addOption("Quarter Speed", 0.25);
+    this.driveSpeedChooser.addOption("No Speed", 0.0);
+
+    SmartDashboard.putData(this.driveSpeedChooser);
+
+    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
+  }
+
+  public double getFieldAngle() {
+    return -gyro.getYaw();
+  }
+
+  public void fieldOrientedDrive(double speedX, double speedY, double rot) {
+    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rot,
+        Rotation2d.fromDegrees(getFieldAngle()));
+    this.drive(speeds);
+  }
+
+  public void robotOrientedDrive(double speedX, double speedY, double rot) {
+    ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, rot);
+    this.drive(speeds);
+  }
+
+  public void defaultDrive(double speedX, double speedY, double rot, boolean slew) {
+    if (slew) {
+      speedX = slewRateX.calculate(speedX);
+      speedY = slewRateY.calculate(speedY);
+    }
+    if (this.fieldOrientedEntry.get(true)) {
+      fieldOrientedDrive(speedX, speedY, rot);
+    } else {
+      robotOrientedDrive(speedX, speedY, rot);
+    }
+  }
+
+  private void drive(ChassisSpeeds speeds) {
+    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY * getRobotSpeedRatio());
+
+    this.frontLeft.drive(moduleStates[0]);
+    this.frontRight.drive(moduleStates[1]);
+    this.backLeft.drive(moduleStates[2]);
+    this.backRight.drive(moduleStates[3]);
+  }
+
+  public double getMaxVelocity() {
+    return MAX_VELOCITY;
+  }
+
+  public double getMaxAngularVelocity() {
+    return MAX_ANGULAR_VELOCITY;
+  }
+
+  public Pose2d getRobotPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      positions[i] = modules[i].getPosition();
+    }
+    return positions;
+  }
+
+  public double getRobotSpeedRatio() {
+    return this.driveSpeedChooser.getSelected();
+  }
+
+  public void resetGyro() {
+    gyro.reset();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    var positions = getModulePositions();
+
+    odometry.update(gyro.getRotation2d(), positions);
+    var pose = getRobotPose();
+
+    // Everything below is unnecessary for running the robot
+    var translation = pose.getTranslation();
+    var x = translation.getX();
+    var y = translation.getY();
+    var rotation = pose.getRotation().getDegrees();
+    SmartDashboard.putNumber("x", x);
+    SmartDashboard.putNumber("y", y);
+    SmartDashboard.putNumber("rot", rotation);
+    field.setRobotPose(getRobotPose());
+
+    SmartDashboard.putNumber("Speed Ratio", getRobotSpeedRatio());
   }
 }
