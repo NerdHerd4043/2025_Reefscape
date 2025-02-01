@@ -81,7 +81,6 @@ public class RobotContainer {
   private void configureBindings() {
     driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
     driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
-
   }
 
   public Command getAutonomousCommand() {

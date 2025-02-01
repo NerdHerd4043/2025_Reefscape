@@ -66,23 +66,23 @@ public class Constants {
 
     // FIXME: Tune
     public static final class PIDValues {
-      public static final double p = 4;
+      public static final double p = 0;
       public static final double i = 0;
-      public static final double d = 1.7;
+      public static final double d = 0;
     }
 
     // FIXME: Tune
     public static final class FeedForwardValues {
-      public static final double kS = 0.07;
-      public static final double kG = 0.4;
-      public static final double kV = 3;
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
     }
 
     // FIXME: Find limits
     public static final class WristPositions {
       public static final double lower = 0;
       public static final double upper = 1;
-      public static final double coralStationPos = 1;
+      public static final double stationPos = 1;
       public static final double branchPos = 0.5;
     }
   }

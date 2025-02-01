@@ -13,10 +13,12 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralWrist.PIDValues;
@@ -24,6 +26,7 @@ import frc.robot.Constants.CoralWrist.WristPositions;
 
 @Logged
 public class CoralWrist extends SubsystemBase {
+  @NotLogged
   private SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
 
   @Logged
@@ -69,8 +72,8 @@ public class CoralWrist extends SubsystemBase {
     this.pidController.setGoal(MathUtil.clamp(target, WristPositions.lower, WristPositions.upper));
   }
 
-  public void coralStation() {
-    this.pidController.setGoal(WristPositions.coralStationPos);
+  public void station() {
+    this.pidController.setGoal(WristPositions.stationPos);
   }
 
   public void branch() {
@@ -83,6 +86,16 @@ public class CoralWrist extends SubsystemBase {
 
   public double getEncoderRadians() {
     return getEncoder() * 2 * Math.PI;
+  }
+
+  public Command getBranchCommand() {
+    this.enabled = true;
+    return this.runOnce(() -> this.branch());
+  }
+
+  public Command getStationCommand() {
+    this.enabled = true;
+    return this.runOnce(() -> this.station());
   }
 
   @Override
