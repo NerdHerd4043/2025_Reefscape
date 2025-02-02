@@ -80,6 +80,10 @@ public class Elevator extends SubsystemBase {
     return this.encoder.getPosition();
   }
 
+  public void resetPosition() {
+    this.encoder.setPosition(0);
+  }
+
   public void enable() {
     this.enabled = true;
   }
