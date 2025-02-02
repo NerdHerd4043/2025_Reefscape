@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -23,12 +24,13 @@ import frc.robot.Constants.Elevator.PIDValues;
 
 @Logged
 public class Elevator extends SubsystemBase {
+  @NotLogged
   private SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
+  @NotLogged
   private SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean enabled = false;
 
-  @Logged
   private RelativeEncoder encoder = rightMotor.getEncoder();
 
   private ElevatorFeedforward feedforward = new ElevatorFeedforward(
@@ -69,6 +71,7 @@ public class Elevator extends SubsystemBase {
     rightMotor.setVoltage(ff + pidController.calculate(getMeasurement()));
   }
 
+  @NotLogged
   public TrapezoidProfile.State getSetpoint() {
     return this.pidController.getSetpoint();
   }
