@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import cowlib.SwerveModuleConfig;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -78,7 +80,7 @@ public class Constants {
       public static final double kV = 0;
     }
 
-    // FIXME: Find limits
+    // FIXME: Measure limits
     public static final class WristPositions {
       public static final double lower = 0;
       public static final double upper = 1;
@@ -94,6 +96,14 @@ public class Constants {
 
     public static final int leftMotorId = 0; // FIXME: Need a motor id
     public static final int rightMotorId = 0; // FIXME: Need a motor id
+
+    // FIXME: Measure hights
+    public static final double[] elevatorHeights = {
+        0.0, //
+        0.0, //
+        0.0, //
+        0.0 //
+    };
 
     // FIXME: Tune
     public static final class PIDValues {

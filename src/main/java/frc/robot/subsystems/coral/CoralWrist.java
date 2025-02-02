@@ -61,7 +61,7 @@ public class CoralWrist extends SubsystemBase {
   private void updatePID() {
     var setpoint = getSetpoint();
     ffOutput = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    wristMotor.setVoltage(ffOutput + pidController.calculate(getEncoderRadians()));
+    this.wristMotor.setVoltage(ffOutput + pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged

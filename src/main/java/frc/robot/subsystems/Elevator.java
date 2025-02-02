@@ -17,6 +17,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -90,6 +91,16 @@ public class Elevator extends SubsystemBase {
 
   public void disable() {
     this.enabled = false;
+  }
+
+  public void levelX(int level) {
+    this.pidController.setGoal(Constants.Elevator.elevatorHeights[level]);
+  }
+
+  public Command getLevelCommand(int level) {
+
+    enable();
+    return this.runOnce(() -> levelX(level));
   }
 
   @Override
