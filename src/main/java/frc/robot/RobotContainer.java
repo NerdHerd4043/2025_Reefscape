@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CoralWrist;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Elevator;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.coral.CoralIntake;
+import frc.robot.subsystems.coral.CoralWrist;
 
 public class RobotContainer {
 
@@ -81,6 +81,9 @@ public class RobotContainer {
   private void configureBindings() {
     driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
     driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
+
+    driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
+    driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());
   }
 
   public Command getAutonomousCommand() {

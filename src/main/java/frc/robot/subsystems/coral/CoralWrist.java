@@ -64,6 +64,7 @@ public class CoralWrist extends SubsystemBase {
     wristMotor.setVoltage(ffOutput + pidController.calculate(getEncoderRadians()));
   }
 
+  @NotLogged
   public TrapezoidProfile.State getSetpoint() {
     return this.pidController.getSetpoint();
   }
