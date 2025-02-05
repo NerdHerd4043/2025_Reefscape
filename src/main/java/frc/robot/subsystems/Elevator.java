@@ -8,6 +8,8 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkLimitSwitch;
+import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -31,8 +33,10 @@ public class Elevator extends SubsystemBase {
   private SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean enabled = false;
+  private boolean extended = false;
 
   private RelativeEncoder encoder = rightMotor.getEncoder();
+  private SparkLimitSwitch limitSwitch;
 
   private ElevatorFeedforward feedforward = new ElevatorFeedforward(
       Constants.Elevator.FeedForwardValues.kS,
@@ -93,19 +97,31 @@ public class Elevator extends SubsystemBase {
     this.enabled = false;
   }
 
-  public void levelX(int level) {
+  public void extend(int level) {
+    this.enable();
+    this.extended = true;
     this.pidController.setGoal(Constants.Elevator.elevatorHeights[level]);
   }
 
-  public Command getLevelCommand(int level) {
+  public void collapse() {
+    this.extended = false;
+    this.pidController.setGoal(Constants.Elevator.elevatorHeights[0]);
+  }
 
-    enable();
-    return this.runOnce(() -> levelX(level));
+  public Command getExtendCommand(int level) {
+    return this.runOnce(() -> extend(level));
+  }
+
+  public Command getCollapseCommand() {
+    return this.runOnce(this::collapse);
   }
 
   @Override
   public void periodic() {
-    if (this.enabled) {
+    if (!this.extended) {
+      this.disable();
+    }
+    if (this.extended && this.enabled) {
       updatePID();
     }
   }
