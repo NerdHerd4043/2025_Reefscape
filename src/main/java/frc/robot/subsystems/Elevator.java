@@ -116,12 +116,17 @@ public class Elevator extends SubsystemBase {
     return this.runOnce(this::collapse);
   }
 
+  // public boolean isElevatorExtended() {
+  // return this.extended;
+  // }
+
   @Override
   public void periodic() {
-    if (!this.extended) {
+    if (!this.extended // && rightMotor.getReverseLimitSwitch().isPressed()
+    ) {
       this.disable();
     }
-    if (this.extended && this.enabled) {
+    if (this.enabled) {
       updatePID();
     }
   }
