@@ -52,6 +52,7 @@ public class Constants {
     public static final int motorId = 0; // FIXME: Need a motor id
 
     public static final double intakeSpeed = 0.5;
+    public static final int currentLimit = 30;
   }
 
   public static final class CoralWrist {
