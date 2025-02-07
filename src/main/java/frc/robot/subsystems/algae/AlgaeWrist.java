@@ -51,7 +51,7 @@ public class AlgaeWrist extends SubsystemBase {
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal();
+    this.pidController.setGoal(getMeasurement());
   }
 
   private void updatePID() {
