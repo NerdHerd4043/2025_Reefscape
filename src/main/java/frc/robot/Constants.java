@@ -48,9 +48,46 @@ public class Constants {
     }
   }
 
+  public static final class AlgaeIntake {
+    public static final int motorID = 0; // FIXME: Need a motor id
+    public static final int currentLimit = 30;
+    public static final double intakeSpeed = 0;
+  }
+
+  public static final class AlgaeWrist {
+    public static final int motorID = 0;
+    public static final int currentLimit = 30;
+
+    // FIXME: Find Constraints
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+        0, 0);
+
+    // FIXME: Tune
+    public static final class PIDValues {
+      public static final double p = 0;
+      public static final double i = 0;
+      public static final double d = 0;
+    }
+
+    // FIXME: Tune
+    public static final class FeedForwardValues {
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+    }
+
+    // FIXME: Find limits
+    public static final class WristPositions {
+      public static final double lower = 0;
+      public static final double upper = 1;
+      public static final double stationPos = 1;
+      public static final double branchPos = 0.5;
+    }
+  }
+
   public static final class CoralIntake {
     public static final int motorId = 0; // FIXME: Need a motor id
-
+    public static final int currentLimit = 30;
     public static final double intakeSpeed = 0.5;
   }
 
@@ -82,8 +119,6 @@ public class Constants {
     public static final class WristPositions {
       public static final double lower = 0;
       public static final double upper = 1;
-      public static final double stationPos = 1;
-      public static final double branchPos = 0.5;
     }
   }
 

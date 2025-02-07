@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coral;
+package frc.robot.subsystems.algae;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -15,34 +15,34 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class CoralIntake extends SubsystemBase {
-  private SparkMax intakeMotor = new SparkMax(Constants.CoralIntake.motorId, MotorType.kBrushless);
+public class AlgaeIntake extends SubsystemBase {
+  private SparkMax intakeMotor = new SparkMax(Constants.AlgaeIntake.motorID, MotorType.kBrushless);
 
-  /** Creates a new CoralIntake. */
-  public CoralIntake() {
+  /** Creates a new AlgaeIntake. */
+  public AlgaeIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
 
-    motorConfig.smartCurrentLimit(Constants.CoralIntake.currentLimit);
+    motorConfig.smartCurrentLimit(Constants.AlgaeIntake.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
 
     intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void runIntake(double intakeMotorSpeed) {
-    intakeMotor.set(intakeMotorSpeed);
+    this.intakeMotor.set(intakeMotorSpeed);
   }
 
   public void stop() {
-    intakeMotor.stopMotor();
+    this.intakeMotor.stopMotor();
   }
 
   public Command intakeCommand() {
-    return this.run(() -> this.runIntake(Constants.CoralIntake.intakeSpeed))
+    return this.run(() -> runIntake(Constants.AlgaeIntake.intakeSpeed))
         .finallyDo(this::stop);
   }
 
   public Command outtakeCommand() {
-    return this.run(() -> this.runIntake(-Constants.CoralIntake.intakeSpeed))
+    return this.run(() -> runIntake(-Constants.AlgaeIntake.intakeSpeed))
         .finallyDo(this::stop);
   }
 
