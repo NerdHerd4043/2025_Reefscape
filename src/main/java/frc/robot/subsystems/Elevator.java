@@ -124,6 +124,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // if (!this.extended && rightMotor.getReverseLimitSwitch().isPressed()) {
     // this.disable();
+    // resetPosition();
     // }
     if (this.enabled) {
       updatePID();
