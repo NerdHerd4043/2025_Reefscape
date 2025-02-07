@@ -122,6 +122,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // FIXME: uncomment when LimitSwitch is wired
     // if (!this.extended && rightMotor.getReverseLimitSwitch().isPressed()) {
     // this.disable();
     // resetPosition();
