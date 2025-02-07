@@ -4,17 +4,24 @@
 
 package frc.robot.subsystems.algae;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeWrist.PIDValuesA;
+import frc.robot.Constants.AlgaeWrist.WristPositionsA;
 
 public class AlgaeWrist extends SubsystemBase {
   final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
@@ -25,6 +32,8 @@ public class AlgaeWrist extends SubsystemBase {
       Constants.AlgaeWrist.FeedForwardValuesA.kV);
 
   private double ffOutput;
+
+  private CANcoder encoder = new CANcoder(Constants.AlgaeWrist.encoderID);
 
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesA.p,
@@ -37,12 +46,53 @@ public class AlgaeWrist extends SubsystemBase {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
 
     motorConfig.smartCurrentLimit(Constants.AlgaeWrist.currentLimit);
+    motorConfig.idleMode(IdleMode.kBrake);
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    this.pidController.setGoal(getEncoderRadians());
+  }
+
+  private void updatePID() {
+    var setpoint = getSetpoint();
+  }
+
+  @NotLogged
+  public TrapezoidProfile.State getSetpoint() {
+    return this.pidController.getSetpoint();
+  }
+
+  public void setTarget(double target) {
+    this.pidController.setGoal(MathUtil.clamp(target, WristPositionsA.lower, WristPositionsA.upper));
+  }
+
+  public double getEncoder() {
+    return this.encoder.getAbsolutePosition().getValueAsDouble();
+  }
+
+  public double getEncoderRadians() {
+    return getEncoder() * 2 * Math.PI;
+  }
+
+  public void up() {
+    this.pidController.setGoal(WristPositionsA.upper);
+  }
+
+  public void down() {
+    this.pidController.setGoal(WristPositionsA.lower);
+  }
+
+  public Command getUpCommand() {
+    return this.run(() -> this.up());
+  }
+
+  public Command getDownCommand() {
+    return this.run(() -> this.down());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updatePID();
   }
 }

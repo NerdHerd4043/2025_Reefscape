@@ -58,6 +58,8 @@ public class Constants {
     public static final int motorID = 0;
     public static final int currentLimit = 30;
 
+    public static final int encoderID = 0;
+
     // FIXME: Find Constraints
     public static final TrapezoidProfile.Constraints constraintsA = new TrapezoidProfile.Constraints(
         0, 0);
