@@ -20,11 +20,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.ModuleLocations;
+import frc.robot.Constants.DriveConstants.RobotConfigInfo;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 
 public class Drivebase extends SubsystemBase {
@@ -97,6 +100,25 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
 
+    RobotConfig config;
+
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      e.printStackTrace();
+      config = RobotConfigInfo.robotConfig;
+    }
+
+    AutoBuilder.configure(
+        this::getRobotPose,
+        this::resetPose,
+        this::getCurrentSpeeds,
+        this::drive,
+        null,
+        config,
+        fieldOrientedEntry,
+        null);
+
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
   }
 
@@ -154,6 +176,14 @@ public class Drivebase extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
+    return states;
+  }
+
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
     for (int i = 0; i < modules.length; i++) {
@@ -168,6 +198,14 @@ public class Drivebase extends SubsystemBase {
 
   public void resetGyro() {
     gyro.reset();
+  }
+
+  public void resetPose(Pose2d pose2d) {
+    odometry.resetPosition(gyro.getRotation2d(), getModulePositions(), pose2d);
+  }
+
+  public ChassisSpeeds getCurrentSpeeds() {
+    return kinematics.toChassisSpeeds(getModuleStates())
   }
 
   @Override

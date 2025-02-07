@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+
 import cowlib.SwerveModuleConfig;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
@@ -15,13 +19,12 @@ public class Constants {
     public static final double deadband = 0.09;
     public static final int currentLimit = 40;
     public static final double slewRate = 20; // lower number for higher center of mass
-    public static final int temp = 21;
-    public static final double DRIVE_REDUCTION = 1.0 / 6.75;
+    public static final double DRIVE_REDUCTION = 1.0 / 6.75; // FIXME: Figure out our
     public static final double NEO_FREE_SPEED = 5820.0 / 60.0;
     public static final double WHEEL_DIAMETER = 0.1016;
     public static final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY
-        / (ModuleLocations.moduleLocationLength / Math.sqrt(2.0));
+        / (ModuleLocations.robotRaduius / Math.sqrt(2.0));
 
     public static final class SwervePID {
       public static final double p = 0.12;
@@ -45,6 +48,26 @@ public class Constants {
       public static final Translation2d frontRight = new Translation2d(moduleLocationLength, -moduleLocationLength);
       public static final Translation2d backLeft = new Translation2d(-moduleLocationLength, moduleLocationLength);
       public static final Translation2d backRight = new Translation2d(-moduleLocationLength, -moduleLocationLength);
+    }
+
+    public static final class RobotConfigInfo {
+      public static final ModuleConfig moduleConfig = new ModuleConfig(
+          DriveConstants.WHEEL_DIAMETER,
+          2.75, // FIXME: estimate more correctly
+          0.7, // FIXME: estimate more correctly
+          DCMotor.getNEO(1),
+          DriveConstants.DRIVE_REDUCTION,
+          DriveConstants.currentLimit,
+          1); // FIXME: what is the numMotors thingy? figure out later
+
+      public static final RobotConfig robotConfig = new RobotConfig(
+          66.68, // FIXME: estimate more correctly
+          3.682, // FIXME: estimate more correctly
+          moduleConfig,
+          ModuleLocations.frontLeft,
+          ModuleLocations.frontRight,
+          ModuleLocations.backLeft,
+          ModuleLocations.backRight);
     }
   }
 
