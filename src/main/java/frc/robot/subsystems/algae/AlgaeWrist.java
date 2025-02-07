@@ -5,6 +5,7 @@
 package frc.robot.subsystems.algae;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -33,7 +34,7 @@ public class AlgaeWrist extends SubsystemBase {
 
   private double ffOutput;
 
-  private CANcoder encoder = new CANcoder(Constants.AlgaeWrist.encoderID);
+  private RelativeEncoder encoder = wristMotor.getEncoder();
 
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesA.p,
@@ -50,11 +51,13 @@ public class AlgaeWrist extends SubsystemBase {
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(getEncoderRadians());
+    this.pidController.setGoal();
   }
 
   private void updatePID() {
     var setpoint = getSetpoint();
+    var ff = -feedforward.calculate(setpoint.position, setpoint.velocity);
+    wristMotor.setVoltage(ff + pidController.calculate(getMeasurement()));
   }
 
   @NotLogged
@@ -66,12 +69,12 @@ public class AlgaeWrist extends SubsystemBase {
     this.pidController.setGoal(MathUtil.clamp(target, WristPositionsA.lower, WristPositionsA.upper));
   }
 
-  public double getEncoder() {
-    return this.encoder.getAbsolutePosition().getValueAsDouble();
+  public double getMeasurement() {
+    return this.encoder.getPosition();
   }
 
-  public double getEncoderRadians() {
-    return getEncoder() * 2 * Math.PI;
+  public void resetPosition() {
+    this.encoder.setPosition(0);
   }
 
   public void up() {
