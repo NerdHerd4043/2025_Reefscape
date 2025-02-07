@@ -59,29 +59,27 @@ public class Constants {
     public static final int currentLimit = 30;
 
     // FIXME: Find Constraints
-    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+    public static final TrapezoidProfile.Constraints constraintsA = new TrapezoidProfile.Constraints(
         0, 0);
 
     // FIXME: Tune
-    public static final class PIDValues {
+    public static final class PIDValuesA {
       public static final double p = 0;
       public static final double i = 0;
       public static final double d = 0;
     }
 
     // FIXME: Tune
-    public static final class FeedForwardValues {
+    public static final class FeedForwardValuesA {
       public static final double kS = 0;
       public static final double kG = 0;
       public static final double kV = 0;
     }
 
     // FIXME: Find limits
-    public static final class WristPositions {
+    public static final class WristPositionsA {
       public static final double lower = 0;
       public static final double upper = 1;
-      public static final double stationPos = 1;
-      public static final double branchPos = 0.5;
     }
   }
 
@@ -98,25 +96,25 @@ public class Constants {
     public static final int currentLimit = 25;
 
     // FIXME: Find Constraints
-    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+    public static final TrapezoidProfile.Constraints constraintsC = new TrapezoidProfile.Constraints(
         0, 0);
 
     // FIXME: Tune
-    public static final class PIDValues {
+    public static final class PIDValuesC {
       public static final double p = 0;
       public static final double i = 0;
       public static final double d = 0;
     }
 
     // FIXME: Tune
-    public static final class FeedForwardValues {
+    public static final class FeedForwardValuesC {
       public static final double kS = 0;
       public static final double kG = 0;
       public static final double kV = 0;
     }
 
     // FIXME: Find limits
-    public static final class WristPositions {
+    public static final class WristPositionsC {
       public static final double lower = 0;
       public static final double upper = 1;
     }
