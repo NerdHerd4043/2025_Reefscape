@@ -15,13 +15,16 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -29,6 +32,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.RobotConfigInfo;
 import frc.robot.Constants.DriveConstants.SwerveModules;
+import frc.robot.Constants.PathPlannerConstants.RotationPID;
+import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 
 public class Drivebase extends SubsystemBase {
   // Where to find drive reduction (for swerve):
@@ -114,10 +119,19 @@ public class Drivebase extends SubsystemBase {
         this::resetPose,
         this::getCurrentSpeeds,
         this::drive,
-        null,
+        new PPHolonomicDriveController(
+            new PIDConstants(TranslationPID.p, TranslationPID.i, TranslationPID.d),
+            new PIDConstants(RotationPID.p, RotationPID.i, RotationPID.d)),
         config,
-        fieldOrientedEntry,
-        null);
+        () -> {
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Blue;
+          } else {
+            return false;
+          }
+        },
+        this);
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
   }
@@ -205,7 +219,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public ChassisSpeeds getCurrentSpeeds() {
-    return kinematics.toChassisSpeeds(getModuleStates())
+    return kinematics.toChassisSpeeds(getModuleStates());
   }
 
   @Override
