@@ -75,6 +75,7 @@ public class Drivebase extends SubsystemBase {
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
+  private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
 
   private BooleanEntry fieldOrientedEntry;
 
@@ -84,15 +85,17 @@ public class Drivebase extends SubsystemBase {
     var table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
-    this.driveSpeedChooser = new SendableChooser<>();
-
     this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
     this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
     this.driveSpeedChooser.addOption("Half Speed", 0.5);
     this.driveSpeedChooser.addOption("Quarter Speed", 0.25);
     this.driveSpeedChooser.addOption("No Speed", 0.0);
 
+    this.fieldOriented.setDefaultOption("Field Oriented", true);
+    this.fieldOriented.addOption("Robot Oriented", false);
+
     SmartDashboard.putData(this.driveSpeedChooser);
+    SmartDashboard.putData(this.fieldOriented);
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
   }
@@ -112,12 +115,16 @@ public class Drivebase extends SubsystemBase {
     this.drive(speeds);
   }
 
+  public boolean getDefaultDrive() {
+    return this.fieldOriented.getSelected();
+  }
+
   public void defaultDrive(double speedX, double speedY, double rot, boolean slew) {
     if (slew) {
       speedX = slewRateX.calculate(speedX);
       speedY = slewRateY.calculate(speedY);
     }
-    if (this.fieldOrientedEntry.get(true)) {
+    if (this.fieldOrientedEntry.get(getDefaultDrive())) {
       fieldOrientedDrive(speedX, speedY, rot);
     } else {
       robotOrientedDrive(speedX, speedY, rot);
