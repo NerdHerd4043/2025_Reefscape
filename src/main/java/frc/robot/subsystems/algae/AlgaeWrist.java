@@ -48,6 +48,7 @@ public class AlgaeWrist extends SubsystemBase {
 
     motorConfig.smartCurrentLimit(Constants.AlgaeWrist.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
+    motorConfig.inverted(true);
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

@@ -24,6 +24,7 @@ public class AlgaeIntake extends SubsystemBase {
 
     motorConfig.smartCurrentLimit(Constants.AlgaeIntake.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
+    motorConfig.inverted(true);
 
     intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
