@@ -62,6 +62,7 @@ public class Elevator extends SubsystemBase {
     final SparkMaxConfig rightMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
 
     leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
+    rightMotorConfig.inverted(true);
 
     // FIXME: need a limit switch wired
     // rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
