@@ -19,6 +19,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -74,7 +75,7 @@ public class Elevator extends SubsystemBase {
   private void updatePID() {
     var setpoint = getSetpoint();
     var ff = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    rightMotor.setVoltage(ff + pidController.calculate(getMeasurement()));
+    rightMotor.setVoltage(ff + pidController.calculate(getEncoder()));
   }
 
   @NotLogged
@@ -82,7 +83,7 @@ public class Elevator extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
-  public double getMeasurement() {
+  public double getEncoder() {
     return this.encoder.getPosition();
   }
 
@@ -131,5 +132,6 @@ public class Elevator extends SubsystemBase {
     if (this.enabled) {
       updatePID();
     }
+    SmartDashboard.putNumber("Elevator Encoder", getEncoder());
   }
 }
