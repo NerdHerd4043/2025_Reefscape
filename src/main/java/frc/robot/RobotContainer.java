@@ -21,9 +21,9 @@ public class RobotContainer {
 
   final Drivebase drivebase = new Drivebase();
 
-  final Elevator elevator = new Elevator();
-  final CoralWrist coralWrist = new CoralWrist();
-  private static CoralIntake coralIntake = new CoralIntake();
+  // final Elevator elevator = new Elevator();
+  // final CoralWrist coralWrist = new CoralWrist();
+  // private static CoralIntake coralIntake = new CoralIntake();
 
   private SendableChooser<Command> autoChooser;
 
@@ -79,11 +79,11 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
-    driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
+    // driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
+    // driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
 
-    driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
-    driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());
+    // driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
+    // driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());
   }
 
   public Command getAutonomousCommand() {

@@ -7,7 +7,6 @@ package frc.robot;
 import cowlib.SwerveModuleConfig;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -56,10 +55,10 @@ public class Constants {
   }
 
   public static final class CoralWrist {
-    public static final int motorId = 0; // FIXME: Need a mo
-        pubic s    pub
+    public static final int motorId = 0; // FIXME: Need a motor id
+    public static final int encoderID = 0; // FIXME: Need id
+    public static final int currentLimit = 30;
 
-        // IXME: Find Constraints
     public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
         0, 0);
 
