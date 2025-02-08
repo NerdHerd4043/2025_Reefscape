@@ -17,13 +17,13 @@ import frc.robot.subsystems.coral.CoralWrist;
 
 public class RobotContainer {
 
-  private static CommandXboxController driveStick = new CommandXboxController(0);
+  private static final CommandXboxController driveStick = new CommandXboxController(0);
 
-  final Drivebase drivebase = new Drivebase();
+  public static final Drivebase drivebase = new Drivebase();
 
-  // final Elevator elevator = new Elevator();
-  // final CoralWrist coralWrist = new CoralWrist();
-  // private static CoralIntake coralIntake = new CoralIntake();
+  // public static final Elevator elevator = new Elevator();
+  // public static final CoralWrist coralWrist = new CoralWrist();
+  // public static final CoralIntake coralIntake = new CoralIntake();
 
   private SendableChooser<Command> autoChooser;
 

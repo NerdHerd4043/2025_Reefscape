@@ -21,7 +21,7 @@ public class Constants {
     public static final double WHEEL_DIAMETER = 0.1016;
     public static final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY
-        / (ModuleLocations.moduleLocationLength / Math.sqrt(2.0));
+        / (ModuleLocations.robotRaduius / Math.sqrt(2.0));
 
     public static final class SwervePID {
       public static final double p = 0.12;
