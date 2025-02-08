@@ -19,11 +19,11 @@ public class RobotContainer {
 
   private static CommandXboxController driveStick = new CommandXboxController(0);
 
-  final Drivebase drivebase = new Drivebase();
+  private static final Drivebase drivebase = new Drivebase();
 
-  final Elevator elevator = new Elevator();
-  final CoralWrist coralWrist = new CoralWrist();
-  private static CoralIntake coralIntake = new CoralIntake();
+  private static final Elevator elevator = new Elevator();
+  private static final CoralWrist coralWrist = new CoralWrist();
+  private static final CoralIntake coralIntake = new CoralIntake();
 
   private SendableChooser<Command> autoChooser;
 
