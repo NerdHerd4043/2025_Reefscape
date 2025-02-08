@@ -14,7 +14,7 @@ public class LimelightUtil {
     public int ID;
     public int myID;
 
-    private Map<Integer, OffsetRatios> IDRatios = Map.of(
+    private Map<Integer, OffsetRatios> IDRatiosMap = Map.of(
             3, new OffsetRatios(1.0, 3.0),
             4, new OffsetRatios(3, 2)); // Imagine there are more items in the map
 
@@ -22,7 +22,7 @@ public class LimelightUtil {
         this.offset = offset;
         this.ID = getID();
 
-        final double xRatio = this.IDRatios.get(this.ID).xRatio;
+        final double xRatio = this.IDRatiosMap.get(this.ID).xRatio;
 
         return this.offset * xRatio;
     }
@@ -31,7 +31,7 @@ public class LimelightUtil {
         this.offset = offset;
         this.ID = getID();
 
-        final double yRatio = this.IDRatios.get(this.ID).yRatio;
+        final double yRatio = this.IDRatiosMap.get(this.ID).yRatio;
 
         return this.offset * yRatio;
     }
