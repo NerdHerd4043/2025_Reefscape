@@ -39,8 +39,8 @@ public class Constants {
     public static final class ModuleLocations {
       public static final double moduleLocationLength = Units.inchesToMeters(12.00);
       public static final double moduleLocationWidth = Units.inchesToMeters(12.25);
-      public static final double robotRaduius = Math
-          .sqrt(Math.pow(moduleLocationLength, 2) + Math.pow(moduleLocationWidth, 2));
+      public static final double robotRaduius = Math.sqrt(Math.pow(moduleLocationLength, 2)
+          + Math.pow(moduleLocationWidth, 2));
       public static final Translation2d frontLeft = new Translation2d(moduleLocationLength, moduleLocationLength);
       public static final Translation2d frontRight = new Translation2d(moduleLocationLength, -moduleLocationLength);
       public static final Translation2d backLeft = new Translation2d(-moduleLocationLength, moduleLocationLength);
@@ -77,7 +77,7 @@ public class Constants {
       public static final double kV = 0;
     }
 
-    // FIXME: Find limits
+    // FIXME: Measure limits
     public static final class WristPositions {
       public static final double lower = 0;
       public static final double upper = 1;
@@ -87,7 +87,34 @@ public class Constants {
   }
 
   public static final class Elevator {
+    public static final int currentLimit = 40;
+
+    // FIXME: find limits
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0);
+
     public static final int leftMotorId = 0; // FIXME: Need a motor id
     public static final int rightMotorId = 0; // FIXME: Need a motor id
+
+    // FIXME: Measure hights
+    public static final double[] elevatorHeights = {
+        0.0, //
+        0.0, //
+        0.0, //
+        0.0 //
+    };
+
+    // FIXME: Tune
+    public static final class PIDValues {
+      public static final double p = 0;
+      public static final double i = 0;
+      public static final double d = 0;
+    }
+
+    // FIXME: Tune
+    public static final class FeedForwardValues {
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+    }
   }
 }
