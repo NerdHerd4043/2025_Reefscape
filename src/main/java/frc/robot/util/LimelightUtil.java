@@ -6,6 +6,7 @@ package frc.robot.util;
 
 import java.util.Map;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
@@ -43,5 +44,20 @@ public class LimelightUtil {
         }
 
         return myID;
+    }
+
+    public Pose2d getRobotPose_FieldSpace2D() {
+        int[] validIDs = { 18 };
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-one", validIDs);
+        Pose2d pos = LimelightHelpers.getBotPose2d_wpiBlue("limelight-one");
+        return pos;
+    }
+
+    public static double getX() {
+        int[] validIDs = { 18 };
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-one", validIDs);
+        double posEstimate = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-one").pose.getX();
+        return posEstimate;
     }
 }

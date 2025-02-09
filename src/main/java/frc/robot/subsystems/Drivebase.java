@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
+import cowlib.Util;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,12 +20,19 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -34,6 +42,8 @@ import frc.robot.Constants.DriveConstants.RobotConfigInfo;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
+import frc.robot.util.LimelightHelpers;
+import frc.robot.util.LimelightUtil;
 
 public class Drivebase extends SubsystemBase {
   // Where to find drive reduction (for swerve):
@@ -222,6 +232,34 @@ public class Drivebase extends SubsystemBase {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
+  public Command getAlignCommand() {
+    var initPos = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+
+    this.resetPose(initPos);
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        initPos,
+        new Pose2d(0, 0.1, Rotation2d.fromDegrees(0)));
+
+    // LimelightUtil.getX() - 0.1
+
+    // Pose2d x = LimelightUtil.getRobotPose_FieldSpace2D;
+
+    PathConstraints constraints = new PathConstraints(
+        2.750, // Max Velocity
+        2.183, // Max Acceleration
+        360, // Max Angular Velocity
+        360 // Max Angular Acceleration
+    );
+
+    PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
+        new GoalEndState(0.0, Rotation2d.fromDegrees(0)));
+
+    path.preventFlipping = true;
+
+    return AutoBuilder.followPath(path);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -242,5 +280,6 @@ public class Drivebase extends SubsystemBase {
     field.setRobotPose(getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", getRobotSpeedRatio());
+    SmartDashboard.putNumber("X", LimelightUtil.getX());
   }
 }
