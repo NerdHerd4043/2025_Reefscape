@@ -83,15 +83,15 @@ public class Constants {
   }
 
   public static final class CoralIntake {
-    public static final int motorId = 0; // FIXME: Need a motor id
+    public static final int motorId = 30;
     public static final double intakeSpeed = 0.5; // FIXME
     public static final int currentLimit = 30;
   }
 
   public static final class CoralWrist {
-    public static final int motorId = 0; // FIXME: Need a motor id
-    public static final int encoderID = 0; // FIXME: Need id
-    public static final int currentLimit = 30;
+    public static final int motorId = 31;
+    public static final int encoderID = 32;
+    public static final int currentLimit = 25;
 
     // Limits the CoralWrist PID Controller
     public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
@@ -126,7 +126,34 @@ public class Constants {
   }
 
   public static final class Elevator {
-    public static final int leftMotorId = 0; // FIXME: Need a motor id
-    public static final int rightMotorId = 0; // FIXME: Need a motor id
+    public static final int currentLimit = 40;
+
+    // FIXME: find limits
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0);
+
+    public static final int leftMotorId = 41;
+    public static final int rightMotorId = 40;
+
+    // FIXME: Measure hights
+    public static final double[] elevatorHeights = {
+        0.0, //
+        0.0, //
+        0.0, //
+        0.0 //
+    };
+
+    // FIXME: Tune
+    public static final class PIDValues {
+      public static final double p = 0;
+      public static final double i = 0;
+      public static final double d = 0;
+    }
+
+    // FIXME: Tune
+    public static final class FeedForwardValues {
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+    }
   }
 }
