@@ -85,6 +85,8 @@ public class RobotContainer {
     // driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
     // driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());
 
+    driveStick.y().onTrue(elevator.getExtendCommand(3));
+    driveStick.x().onTrue(elevator.getExtendCommand(2));
     driveStick.a().onTrue(elevator.getExtendCommand(1));
     driveStick.b().whileTrue(elevator.getCollapseCommand());
   }

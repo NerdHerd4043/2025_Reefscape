@@ -130,7 +130,7 @@ public class Constants {
 
     // FIXME: find limits
     public static final TrapezoidProfile.Constraints constraints = // I just lost the game
-        new TrapezoidProfile.Constraints(30, 5);
+        new TrapezoidProfile.Constraints(150, 100);
 
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
@@ -141,8 +141,8 @@ public class Constants {
     public static final double[] elevatorHeights = {
         0.0, //
         maxElevatorHeight / 4, //
-        0.0, //
-        0.0 //
+        maxElevatorHeight / 2, //
+        maxElevatorHeight * 0.99 //
     };
 
     // FIXME: Tune
