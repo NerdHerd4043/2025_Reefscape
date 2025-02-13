@@ -57,13 +57,13 @@ public class Elevator extends SubsystemBase {
     final SparkMaxConfig baseMotorConfig = new SparkMaxConfig();
 
     baseMotorConfig.smartCurrentLimit(Constants.Elevator.currentLimit);
-    baseMotorConfig.idleMode(IdleMode.kCoast);
+    baseMotorConfig.idleMode(IdleMode.kBrake);
 
     final SparkMaxConfig leftMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
     final SparkMaxConfig rightMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
 
     leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
-    rightMotorConfig.inverted(false);
+    rightMotorConfig.inverted(true);
 
     // FIXME: need a limit switch wired
     // rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
@@ -71,12 +71,13 @@ public class Elevator extends SubsystemBase {
     leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    currentPose();
+    resetPosition();
+    this.collapse();
   }
 
   private void updatePID() {
     var setpoint = getSetpoint();
-    var ff = -feedforward.calculate(setpoint.position, setpoint.velocity);
+    var ff = feedforward.calculate(setpoint.position, setpoint.velocity);
     rightMotor.setVoltage(ff + pidController.calculate(getEncoder()));
   }
 
@@ -86,7 +87,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getEncoder() {
-    return -this.encoder.getPosition();
+    return this.encoder.getPosition();
   }
 
   public void resetPosition() {
@@ -143,11 +144,12 @@ public class Elevator extends SubsystemBase {
 
     updatePID();
 
-    // 134.49
-
     SmartDashboard.putNumber("Elevator Encoder", getEncoder());
 
     SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+
+    double[] elevatorUwu = { this.pidController.getSetpoint().position, getEncoder() };
+    SmartDashboard.putNumberArray("Elevator Uwu", elevatorUwu);
 
     SmartDashboard.putBoolean("Limit", rightMotor.getReverseLimitSwitch().isPressed());
   }

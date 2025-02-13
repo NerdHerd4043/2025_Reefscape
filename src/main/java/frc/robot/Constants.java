@@ -129,22 +129,25 @@ public class Constants {
     public static final int currentLimit = 40;
 
     // FIXME: find limits
-    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(1, 1);
+    public static final TrapezoidProfile.Constraints constraints = // I just lost the game
+        new TrapezoidProfile.Constraints(30, 5);
 
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
 
+    public static final double maxElevatorHeight = 134.49; // This is an encoder value
+
     // FIXME: Measure hights
     public static final double[] elevatorHeights = {
         0.0, //
-        0.0, //
+        maxElevatorHeight / 4, //
         0.0, //
         0.0 //
     };
 
     // FIXME: Tune
     public static final class PIDValues {
-      public static final double p = 0;
+      public static final double p = 1;
       public static final double i = 0;
       public static final double d = 0;
     }
