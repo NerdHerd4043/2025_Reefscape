@@ -6,6 +6,8 @@ package frc.robot.util;
 
 import java.util.Map;
 
+import com.studica.frc.AHRS;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
@@ -21,7 +23,7 @@ public class LimelightUtil {
 
     public double getTargetX(double offset) {
         this.offset = offset;
-        this.ID = getID();
+        // this.ID = getID();
 
         final double xRatio = this.IDRatiosMap.get(this.ID).xRatio;
 
@@ -30,7 +32,7 @@ public class LimelightUtil {
 
     public double getTargetY(double offset) {
         this.offset = offset;
-        this.ID = getID();
+        // this.ID = getID();
 
         final double yRatio = this.IDRatiosMap.get(this.ID).yRatio;
 
@@ -46,9 +48,16 @@ public class LimelightUtil {
         return myID;
     }
 
-    public Pose2d getRobotPose_FieldSpace2D() {
-        int[] validIDs = { 18 };
+    public Pose2d getRobotPose_FieldSpace2D(double yaw) {
+        LimelightHelpers.SetIMUMode("limelight-one", 2);
+
+        int[] validIDs = { 18 }; // FIXME: add all valid ids
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight-one", validIDs);
+
+        LimelightHelpers.SetRobotOrientation("limelight-one", yaw, 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate limelightPose = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-one");
+
         Pose2d pos = LimelightHelpers.getBotPose2d_wpiBlue("limelight-one");
         return pos;
     }
