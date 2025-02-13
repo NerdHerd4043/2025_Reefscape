@@ -17,7 +17,7 @@ import frc.robot.subsystems.coral.CoralWrist;
 
 public class RobotContainer {
 
-  private static CommandXboxController driveStick = new CommandXboxController(0);
+  private static final CommandXboxController driveStick = new CommandXboxController(0);
 
   private static final Drivebase drivebase = new Drivebase();
 
@@ -79,8 +79,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
-    driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
+    // driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
+    // driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
 
     driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
     driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());

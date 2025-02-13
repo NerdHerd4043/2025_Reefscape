@@ -23,40 +23,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 
 public class Drivebase extends SubsystemBase {
-  // Where to find drive reduction (for swerve):
-  // (https://www.swervedrivespecialties.com/products/mk4i-swerve-module)
-  private final double DRIVE_REDUCTION = 1.0 / 6.12;
-
-  // Get from website, divide by 60 since the number that the
-  // website gives is in rotations per minute and we want
-  // rotations per second.
-  private final double NEO_FREE_SPEED = 5820.0 / 60.0;
-
-  // Measured by hand
-  private final double WHEEL_DIAMETER = 0.1016;
-
-  // Max velocity = Fastest the motor can spin (free speed) times the gear ratio
-  // times the circumference of the wheel (diameter (twice the radius) times pi).
-  private final double MAX_VELOCITY = NEO_FREE_SPEED * DRIVE_REDUCTION * WHEEL_DIAMETER * Math.PI;
-
-  // Max velocity applied tangentially (in a direction that causes the robot to
-  // spin) divided by the radius of the robot (center to wheel) is equal to the
-  // max angular velocity. Rearrangement of basic physics formula.
-  private final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / (ModuleLocations.robotRaduius);
-
-  private final double MAX_VOLTAGE = 12; // This is the battery voltage.
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
-  private SwerveModule frontLeft = new SwerveModule(SwerveModules.frontLeft, MAX_VELOCITY, MAX_VOLTAGE);
-  private SwerveModule frontRight = new SwerveModule(SwerveModules.frontRight, MAX_VELOCITY, MAX_VOLTAGE);
-  private SwerveModule backLeft = new SwerveModule(SwerveModules.backLeft, MAX_VELOCITY, MAX_VOLTAGE);
-  private SwerveModule backRight = new SwerveModule(SwerveModules.backRight, MAX_VELOCITY, MAX_VOLTAGE);
+  private SwerveModule frontLeft = new SwerveModule(
+      SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
+  private SwerveModule frontRight = new SwerveModule(
+      SwerveModules.frontRight, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
+  private SwerveModule backLeft = new SwerveModule(
+      SwerveModules.backLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
+  private SwerveModule backRight = new SwerveModule(
+      SwerveModules.backRight, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
 
   private SwerveModule[] modules = new SwerveModule[] { frontLeft, frontRight, backLeft, backRight };
 
@@ -75,6 +58,7 @@ public class Drivebase extends SubsystemBase {
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
+  private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
 
   private BooleanEntry fieldOrientedEntry;
 
@@ -84,15 +68,17 @@ public class Drivebase extends SubsystemBase {
     var table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
-    this.driveSpeedChooser = new SendableChooser<>();
-
     this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
     this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
     this.driveSpeedChooser.addOption("Half Speed", 0.5);
     this.driveSpeedChooser.addOption("Quarter Speed", 0.25);
     this.driveSpeedChooser.addOption("No Speed", 0.0);
 
+    this.fieldOriented.setDefaultOption("Field Oriented", true);
+    this.fieldOriented.addOption("Robot Oriented", false);
+
     SmartDashboard.putData(this.driveSpeedChooser);
+    SmartDashboard.putData(this.fieldOriented);
 
     odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
   }
@@ -112,12 +98,16 @@ public class Drivebase extends SubsystemBase {
     this.drive(speeds);
   }
 
+  public boolean getDefaultDrive() {
+    return this.fieldOriented.getSelected();
+  }
+
   public void defaultDrive(double speedX, double speedY, double rot, boolean slew) {
     if (slew) {
       speedX = slewRateX.calculate(speedX);
       speedY = slewRateY.calculate(speedY);
     }
-    if (this.fieldOrientedEntry.get(true)) {
+    if (this.fieldOrientedEntry.get(getDefaultDrive())) {
       fieldOrientedDrive(speedX, speedY, rot);
     } else {
       robotOrientedDrive(speedX, speedY, rot);
@@ -127,7 +117,7 @@ public class Drivebase extends SubsystemBase {
   private void drive(ChassisSpeeds speeds) {
     SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY * getRobotSpeedRatio());
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity * getRobotSpeedRatio());
 
     this.frontLeft.drive(moduleStates[0]);
     this.frontRight.drive(moduleStates[1]);
@@ -136,11 +126,11 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double getMaxVelocity() {
-    return MAX_VELOCITY;
+    return DriveConstants.maxVelocity;
   }
 
   public double getMaxAngularVelocity() {
-    return MAX_ANGULAR_VELOCITY;
+    return DriveConstants.maxAngularVelocity;
   }
 
   public Pose2d getRobotPose() {
