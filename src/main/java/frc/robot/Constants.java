@@ -129,7 +129,7 @@ public class Constants {
     public static final int currentLimit = 40;
 
     // FIXME: find limits
-    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0, 0);
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(1, 1);
 
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
@@ -152,7 +152,7 @@ public class Constants {
     // FIXME: Tune
     public static final class FeedForwardValues {
       public static final double kS = 0;
-      public static final double kG = 0;
+      public static final double kG = 0.33;
       public static final double kV = 0;
     }
   }

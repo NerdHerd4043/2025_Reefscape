@@ -57,19 +57,21 @@ public class Elevator extends SubsystemBase {
     final SparkMaxConfig baseMotorConfig = new SparkMaxConfig();
 
     baseMotorConfig.smartCurrentLimit(Constants.Elevator.currentLimit);
-    baseMotorConfig.idleMode(IdleMode.kBrake);
+    baseMotorConfig.idleMode(IdleMode.kCoast);
 
     final SparkMaxConfig leftMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
     final SparkMaxConfig rightMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
 
     leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
-    rightMotorConfig.inverted(true);
+    rightMotorConfig.inverted(false);
 
     // FIXME: need a limit switch wired
     // rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
 
     leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    currentPose();
   }
 
   private void updatePID() {
@@ -84,7 +86,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getEncoder() {
-    return this.encoder.getPosition();
+    return -this.encoder.getPosition();
   }
 
   public void resetPosition() {
@@ -110,12 +112,21 @@ public class Elevator extends SubsystemBase {
     this.pidController.setGoal(Constants.Elevator.elevatorHeights[0]);
   }
 
+  // For testing purposes
+  public void currentPose() {
+    this.pidController.setGoal(getEncoder());
+  }
+
   public Command getExtendCommand(int level) {
     return this.runOnce(() -> extend(level));
   }
 
   public Command getCollapseCommand() {
     return this.runOnce(this::collapse);
+  }
+
+  public Command getCurrentPoseCommand() {
+    return this.runOnce(this::currentPose);
   }
 
   // public boolean isElevatorExtended() {
@@ -129,9 +140,15 @@ public class Elevator extends SubsystemBase {
     // this.disable();
     // resetPosition();
     // }
-    if (this.enabled) {
-      updatePID();
-    }
+
+    updatePID();
+
+    // 134.49
+
     SmartDashboard.putNumber("Elevator Encoder", getEncoder());
+
+    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+
+    SmartDashboard.putBoolean("Limit", rightMotor.getReverseLimitSwitch().isPressed());
   }
 }
