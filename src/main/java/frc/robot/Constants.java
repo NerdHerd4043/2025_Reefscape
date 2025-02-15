@@ -85,13 +85,13 @@ public class Constants {
   public static final class CoralIntake {
     public static final int motorId = 30;
     public static final double intakeSpeed = 0.5; // FIXME
-    public static final int currentLimit = 30;
+    public static final int currentLimit = 20;
   }
 
   public static final class CoralWrist {
     public static final int motorId = 31;
     public static final int encoderID = 32;
-    public static final int currentLimit = 25;
+    public static final int currentLimit = 20;
 
     // Limits the CoralWrist PID Controller
     public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
