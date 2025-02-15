@@ -68,6 +68,9 @@ public class Drivebase extends SubsystemBase {
     var table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
+    this.driveSpeedChooser = new SendableChooser<>();
+    this.fieldOriented = new SendableChooser<>();
+
     this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
     this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
     this.driveSpeedChooser.addOption("Half Speed", 0.5);
