@@ -153,9 +153,9 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
 
-    double[] elevatorUwu = { this.pidController.getSetpoint().position, getEncoder() };
-    SmartDashboard.putNumberArray("Elevator Uwu", elevatorUwu);
+    SmartDashboard.putBoolean("Elevator Limit Switch", rightMotor.getReverseLimitSwitch().isPressed());
 
-    SmartDashboard.putBoolean("Limit", rightMotor.getReverseLimitSwitch().isPressed());
+    SmartDashboard.putBoolean("Elevator Enabled", enabled);
+    SmartDashboard.putBoolean("Elevator Extended", extended);
   }
 }
