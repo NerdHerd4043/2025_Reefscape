@@ -48,15 +48,14 @@ public class LimelightUtil {
         return myID;
     }
 
-    public Pose2d getRobotPose_FieldSpace2D(double yaw) {
+    public static Pose2d getRobotPose_FieldSpace2D(double yaw) {
+        // FIXME: set IMU mode elsewhere so it isn't set each time we get our position
         LimelightHelpers.SetIMUMode("limelight-one", 2);
 
         int[] validIDs = { 18 }; // FIXME: add all valid ids
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight-one", validIDs);
 
         LimelightHelpers.SetRobotOrientation("limelight-one", yaw, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate limelightPose = LimelightHelpers
-                .getBotPoseEstimate_wpiBlue_MegaTag2("limelight-one");
 
         Pose2d pos = LimelightHelpers.getBotPose2d_wpiBlue("limelight-one");
         return pos;

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
 import cowlib.Util;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -85,6 +86,9 @@ public class Drivebase extends SubsystemBase {
       ModuleLocations.backRight);
 
   private SwerveDriveOdometry odometry;
+
+  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(
+      kinematics, gyro.getRotation2d(), getModulePositions(), getRobotPose());
 
   private Field2d field = new Field2d();
 
@@ -286,5 +290,7 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("Speed Ratio", getRobotSpeedRatio());
     SmartDashboard.putNumber("X", LimelightUtil.getX());
+
+    SmartDashboard.putNumber("X Dist", LimelightUtil.getRobotPose_FieldSpace2D(gyro.getAngle()).getX());
   }
 }
