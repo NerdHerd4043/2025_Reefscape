@@ -64,14 +64,22 @@ public class RobotContainer {
   private double[] getScaledXY() {
     double[] xy = getXY();
 
-    // Convert to Polar coordinates
+    // Converting to Polar coordinates (uses coordinates (r, theta) where `r` is
+    // magnitude and `theta` is the angle relative to 0. Usually 0 is in the
+    // positive direction of a cartesian graph's x axis, and increases positively
+    // with counterclockwise rotation).
     double r = Math.sqrt(xy[0] * xy[0] + xy[1] * xy[1]);
     double theta = Math.atan2(xy[0], xy[1]);
 
-    // Square radius and scale by max velocity
+    // Square radius and scale by max velocity. This allows for slower speed when
+    // the drivestick is closer to the center without limiting the max speed because
+    // 1 is the max output of the drivestick and 1 * 1 = 1.
     r = r * r * drivebase.getMaxVelocity();
 
-    // Convert to Cartesian coordinates
+    // Convert to Cartesian coordinates (uses coordinates (x,y)) by getting the `x`
+    // and `y` legs of the right triangle where `r` is the hypotenuse and `x` and
+    // `y` are the legs. Learn trigonometry *shrug*. Also multiplies by 0.5 if the
+    // elevator is in use so the robot has smaller chances of tipping.
     xy[1] = r * Math.cos(theta) /* * getElevatorSpeedRatio() */;
     xy[0] = r * Math.sin(theta) /* * getElevatorSpeedRatio() */;
 
