@@ -53,6 +53,14 @@ public class RobotContainer {
     return xy;
   }
 
+  // private double getElevatorSpeedRatio() {
+  // if (elevator.isElevatorExtended()) {
+  // return 0.5;
+  // } else {
+  // return 1;
+  // }
+  // }
+
   private double[] getScaledXY() {
     double[] xy = getXY();
 
@@ -64,8 +72,8 @@ public class RobotContainer {
     r = r * r * drivebase.getMaxVelocity();
 
     // Convert to Cartesian coordinates
-    xy[1] = r * Math.cos(theta);
-    xy[0] = r * Math.sin(theta);
+    xy[1] = r * Math.cos(theta) /* * getElevatorSpeedRatio() */;
+    xy[0] = r * Math.sin(theta) /* * getElevatorSpeedRatio() */;
 
     return xy;
   }

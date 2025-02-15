@@ -72,7 +72,6 @@ public class Elevator extends SubsystemBase {
     rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     resetPosition();
-    this.collapse();
   }
 
   private void updatePID() {
@@ -130,19 +129,19 @@ public class Elevator extends SubsystemBase {
     return this.runOnce(this::currentPose);
   }
 
-  // public boolean isElevatorExtended() {
-  // return this.extended;
-  // }
+  public boolean isElevatorExtended() {
+    return this.extended;
+  }
 
   @Override
   public void periodic() {
-    // FIXME: uncomment when LimitSwitch is wired
-    // if (!this.extended && rightMotor.getReverseLimitSwitch().isPressed()) {
-    // this.disable();
-    // resetPosition();
-    // }
-
-    updatePID();
+    if (!this.extended && limitSwitch.isPressed()) {
+      this.disable();
+      resetPosition();
+    }
+    if (this.enabled) {
+      updatePID();
+    }
 
     SmartDashboard.putNumber("Elevator Encoder", getEncoder());
 
