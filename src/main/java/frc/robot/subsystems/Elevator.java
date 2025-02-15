@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -104,17 +105,17 @@ public class Elevator extends SubsystemBase {
   public void extend(int level) {
     this.enable();
     this.extended = true;
-    this.pidController.setGoal(Constants.Elevator.elevatorHeights[level]);
+    personalSetGoal(Constants.Elevator.elevatorHeights[level]);
   }
 
   public void collapse() {
     this.extended = false;
-    this.pidController.setGoal(Constants.Elevator.elevatorHeights[0]);
+    personalSetGoal(Constants.Elevator.elevatorHeights[0]);
   }
 
   // For testing purposes
   public void currentPose() {
-    this.pidController.setGoal(getEncoder());
+    personalSetGoal(getEncoder());
   }
 
   public Command getExtendCommand(int level) {
@@ -131,6 +132,11 @@ public class Elevator extends SubsystemBase {
 
   public boolean isElevatorExtended() {
     return this.extended;
+  }
+
+  private void personalSetGoal(double input) {
+    this.pidController.setGoal(
+        MathUtil.clamp(input, 0.0, Constants.Elevator.maxElevatorHeight));
   }
 
   @Override
