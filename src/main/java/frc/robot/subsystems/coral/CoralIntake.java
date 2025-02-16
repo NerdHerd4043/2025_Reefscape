@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,9 +22,10 @@ public class CoralIntake extends SubsystemBase {
   /** Creates a new CoralIntake. */
   public CoralIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
-
+    
     motorConfig.smartCurrentLimit(Constants.CoralIntake.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
+    motorConfig.inverted(true);
 
     intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -46,8 +48,14 @@ public class CoralIntake extends SubsystemBase {
         .finallyDo(this::stop);
   }
 
+  public double getIntakeAmps() {
+    return intakeMotor.getOutputCurrent();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("Intake Amps", getIntakeAmps());
   }
 }

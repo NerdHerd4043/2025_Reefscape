@@ -7,28 +7,162 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkLimitSwitch;
+import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import frc.robot.Constants.Elevator.PIDValues;
+
+@Logged
 public class Elevator extends SubsystemBase {
+  @NotLogged
   private SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
+  @NotLogged
   private SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
+
+  private boolean positionKnown = false;
+
+  private boolean enabled = false;
+  private boolean extended = false;
+
+  private RelativeEncoder encoder = rightMotor.getEncoder();
+  private SparkLimitSwitch limitSwitch;
+
+  private ElevatorFeedforward feedforward = new ElevatorFeedforward(
+      Constants.Elevator.FeedForwardValues.kS,
+      Constants.Elevator.FeedForwardValues.kG,
+      Constants.Elevator.FeedForwardValues.kV);
+
+  @Logged
+  private ProfiledPIDController pidController = new ProfiledPIDController(
+      PIDValues.p,
+      PIDValues.i,
+      PIDValues.d,
+      // The motion profile constraints
+      Constants.Elevator.constraints);
 
   /** Creates a new Elevator. */
   public Elevator() {
-    final SparkMaxConfig motorConfig = new SparkMaxConfig();
+    final SparkMaxConfig baseMotorConfig = new SparkMaxConfig();
 
-    motorConfig.smartCurrentLimit(40);
+    baseMotorConfig.smartCurrentLimit(Constants.Elevator.currentLimit);
+    baseMotorConfig.idleMode(IdleMode.kBrake);
 
-    leftMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    rightMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    final SparkMaxConfig leftMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
+    final SparkMaxConfig rightMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
+
+    leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
+    rightMotorConfig.inverted(true);
+
+    rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+
+    leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
+
+    if (limitSwitch.isPressed()) {
+      resetPosition();
+    }
+  }
+
+  private void updatePID() {
+    var setpoint = getSetpoint();
+    var ff = feedforward.calculate(setpoint.position, setpoint.velocity);
+    rightMotor.setVoltage(ff + pidController.calculate(getEncoder()));
+  }
+
+  @NotLogged
+  public TrapezoidProfile.State getSetpoint() {
+    return this.pidController.getSetpoint();
+  }
+
+  public double getEncoder() {
+    return this.encoder.getPosition();
+  }
+
+  public void resetPosition() {
+    this.positionKnown = true;
+    this.encoder.setPosition(0);
+  }
+
+  public void enable() {
+    this.enabled = true;
+  }
+
+  public void disable() {
+    this.enabled = false;
+  }
+
+  public void extend(int level) {
+    this.enable();
+    this.extended = true;
+    personalSetGoal(Constants.Elevator.elevatorHeights[level]);
+  }
+
+  public void collapse() {
+    this.extended = false;
+    personalSetGoal(Constants.Elevator.elevatorHeights[0]);
+  }
+
+  // For testing purposes
+  public void currentPose() {
+    personalSetGoal(getEncoder());
+  }
+
+  public Command getExtendCommand(int level) {
+    return this.runOnce(() -> extend(level));
+  }
+
+  public Command getCollapseCommand() {
+    return this.runOnce(this::collapse);
+  }
+
+  public Command getCurrentPoseCommand() {
+    return this.runOnce(this::currentPose);
+  }
+
+  public boolean isElevatorExtended() {
+    return this.enabled;
+  }
+
+  private void personalSetGoal(double input) {
+    this.pidController.setGoal(
+        MathUtil.clamp(input, -0.00001, Constants.Elevator.maxElevatorHeight));
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (!this.extended && this.limitSwitch.isPressed()) {
+      this.disable();
+      resetPosition();
+    }
+    if (this.enabled /* && this.positionKnown */) {
+      updatePID();
+    }
+
+    SmartDashboard.putNumber("Elevator Encoder", getEncoder());
+
+    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+
+    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitch.isPressed());
+    SmartDashboard.putBoolean("Elevator Limit Switch E", this.rightMotor.getReverseLimitSwitch().isPressed());
+
+    SmartDashboard.putBoolean("Elevator Enabled", enabled);
+    SmartDashboard.putBoolean("Elevator Extended", extended);
   }
 }
