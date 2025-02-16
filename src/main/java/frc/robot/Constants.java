@@ -84,25 +84,27 @@ public class Constants {
 
   public static final class CoralIntake {
     public static final int motorId = 30;
-    public static final double intakeSpeed = 0.5; // FIXME
-    public static final int currentLimit = 20;
+    public static final double intakeSpeed = 0.8; // FIXME
+    public static final int currentLimit = 30;
   }
 
   public static final class CoralWrist {
     public static final int motorId = 31;
     public static final int encoderID = 32;
-    public static final int currentLimit = 20;
+    public static final int currentLimit = 30;
+
+    public static final double maxWristRotation = 1.23; // FIXME
 
     // Limits the CoralWrist PID Controller
     public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-        0, 0);
+        3.2, 2.5);
 
     // Tuned manually. Practice here:
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
     // FIXME: Tune
     public static final class PIDValues {
-      public static final double p = 0;
-      public static final double i = 0;
+      public static final double p = 2.8;
+      public static final double i = 1.4;
       public static final double d = 0;
     }
 
@@ -119,9 +121,10 @@ public class Constants {
     // FIXME: Find limits
     public static final class WristPositions {
       public static final double lower = 0;
-      public static final double upper = 1;
-      public static final double stationPos = 1;
-      public static final double branchPos = 0.5;
+      public static final double upper = 1.23;
+      public static final double stationPos = 1.23;
+      public static final double L2BranchPos = 0.43;
+      public static final double highBranchesPos = 0;
     }
   }
 
@@ -141,7 +144,7 @@ public class Constants {
     public static final double[] elevatorHeights = {
         0.0, //
         maxElevatorHeight / 4, //
-        maxElevatorHeight / 2, //
+        63, // L3
         maxElevatorHeight * 0.99 //
     };
 
