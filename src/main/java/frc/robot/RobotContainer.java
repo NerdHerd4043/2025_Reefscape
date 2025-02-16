@@ -53,13 +53,13 @@ public class RobotContainer {
     return xy;
   }
 
-  // private double getElevatorSpeedRatio() {
-  // if (elevator.isElevatorExtended()) {
-  // return 0.5;
-  // } else {
-  // return 1;
-  // }
-  // }
+  private double getElevatorSpeedRatio() {
+    if (elevator.isElevatorExtended()) {
+      return 0.5;
+    } else {
+      return 1;
+    }
+  }
 
   private double[] getScaledXY() {
     double[] xy = getXY();
@@ -80,8 +80,8 @@ public class RobotContainer {
     // and `y` legs of the right triangle where `r` is the hypotenuse and `x` and
     // `y` are the legs. Learn trigonometry *shrug*. Also multiplies by 0.5 if the
     // elevator is in use so the robot has smaller chances of tipping.
-    xy[1] = r * Math.cos(theta) /* * getElevatorSpeedRatio() */;
-    xy[0] = r * Math.sin(theta) /* * getElevatorSpeedRatio() */;
+    xy[1] = r * Math.cos(theta) * getElevatorSpeedRatio();
+    xy[0] = r * Math.sin(theta) * getElevatorSpeedRatio();
 
     return xy;
   }
