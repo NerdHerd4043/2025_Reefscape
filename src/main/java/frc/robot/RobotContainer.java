@@ -12,6 +12,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.algae.AlgaeIntake;
+import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 
@@ -22,8 +24,12 @@ public class RobotContainer {
   private static final Drivebase drivebase = new Drivebase();
 
   private static final Elevator elevator = new Elevator();
+
   private static final CoralWrist coralWrist = new CoralWrist();
   private static final CoralIntake coralIntake = new CoralIntake();
+
+  private static final AlgaeWrist algaeWrist = new AlgaeWrist();
+  private static final AlgaeIntake algaeIntake = new AlgaeIntake();
 
   private SendableChooser<Command> autoChooser;
 
@@ -107,9 +113,7 @@ public class RobotContainer {
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
     /* Coral wrist angle buttons */
-    driveStick.povUp().onTrue(coralWrist.stationCommand()); // Wrist up
     driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist straightish
-    driveStick.povDown().onTrue(coralWrist.highBranchesCommand()); // Wrist down
 
     /* Elevator height and coral wrist angle (at the same time) buttons */
     // Coral station position
@@ -129,6 +133,11 @@ public class RobotContainer {
         Commands.parallel(
             elevator.extendCommand(3),
             coralWrist.highBranchesCommand()));
+
+    /* Algae buttons for testing */
+    driveStick.rightTrigger().toggleOnTrue(algaeIntake.intakeCommand());
+    driveStick.povUp().onTrue(algaeWrist.upCommand());
+    driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Reset gyro button */
     driveStick.povUpLeft().onTrue(drivebase.resetGyroCommand());

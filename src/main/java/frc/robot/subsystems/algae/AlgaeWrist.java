@@ -99,9 +99,11 @@ public class AlgaeWrist extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     this.updatePID();
+
     // if (wristMotor.getForwardLimitSwitch().isPressed()) {
     // resetPosition();
     // }
+
     SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
   }
 }
