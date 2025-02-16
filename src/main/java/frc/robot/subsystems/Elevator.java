@@ -91,6 +91,10 @@ public class Elevator extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
+  public boolean limitSwitchPressed() {
+    return this.limitSwitch.isPressed();
+  }
+
   public double getEncoder() {
     return this.encoder.getPosition();
   }
