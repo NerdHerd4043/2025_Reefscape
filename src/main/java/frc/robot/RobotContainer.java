@@ -105,6 +105,9 @@ public class RobotContainer {
     driveStick.x().onTrue(elevator.getExtendCommand(2));
     driveStick.a().onTrue(elevator.getExtendCommand(1));
     driveStick.b().whileTrue(elevator.getCollapseCommand());
+
+    // Reset gyro button
+    driveStick.povUpLeft().onTrue(drivebase.getResetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
