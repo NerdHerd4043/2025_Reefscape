@@ -23,6 +23,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 import frc.robot.Constants.Elevator.PIDValues;
@@ -75,9 +76,27 @@ public class Elevator extends SubsystemBase {
 
     this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
 
+    // I only keep this because I'm not certain if when starting
+    // the robot with the limit switch already pressed will still
+    // cause the trigger to schedule the reset command
     if (limitSwitch.isPressed()) {
       resetPosition();
     }
+
+    // You should already be familiar with Triggers.
+    // In `RobotContainer` we use methods on `CommandXboxController` to get Triggers
+    // and bind commands to button press
+    Trigger limitSwitchTrigger = new Trigger(this::limitSwitchPressed);
+    // Could implement `this::isCollapsed` if we need to get the collapsed state
+    // again later
+    Trigger collapsedTrigger = new Trigger(() -> !this.extended);
+
+    // Just like in robot container, we can compose some triggers to schedule
+    // a command, we just do it here because I arbitrarily decided that is the
+    // responsibility of the elevator itself
+    limitSwitchTrigger
+        .and(collapsedTrigger)
+        .onTrue(this.resetPositionCommand());
   }
 
   private void updatePID() {
@@ -99,9 +118,20 @@ public class Elevator extends SubsystemBase {
     return this.encoder.getPosition();
   }
 
+  // We use the term `zero` a lot when talking about this
+  // not really sure if that name works better or not
   public void resetPosition() {
+    // I moved disable here because it made this api a bit more concise elsewhere,
+    // the only change in functionality is that the pidloop, which is already
+    // disabled, will get re-disabled during that initial limit switch check
+    this.disable();
     this.positionKnown = true;
     this.encoder.setPosition(0);
+  }
+
+  // Would be `zeroCommand`
+  public Command resetPositionCommand() {
+    return this.runOnce(this::resetPosition);
   }
 
   public void enable() {
@@ -151,10 +181,6 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!this.extended && this.limitSwitch.isPressed()) {
-      this.disable();
-      resetPosition();
-    }
     if (this.enabled /* && this.positionKnown */) {
       updatePID();
     }
