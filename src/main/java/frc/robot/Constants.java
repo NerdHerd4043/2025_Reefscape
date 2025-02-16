@@ -137,7 +137,7 @@ public class Constants {
     // Tuned manually. Practice here:
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
     // FIXME: Tune
-    public static final class PIDValues {
+    public static final class PIDValuesC {
       public static final double p = 2.8;
       public static final double i = 1.4;
       public static final double d = 0;

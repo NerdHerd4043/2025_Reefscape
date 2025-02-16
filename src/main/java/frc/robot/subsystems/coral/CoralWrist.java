@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralWrist.PIDValuesC;
-import frc.robot.Constants.CoralWrist.WristPositions;
+import frc.robot.Constants.CoralWrist.WristPositionsC;
 
 @Logged
 public class CoralWrist extends SubsystemBase {
@@ -76,15 +76,15 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public void station() {
-    personalSetGoal(WristPositions.stationPos);
+    personalSetGoal(WristPositionsC.stationPos);
   }
 
   public void L2Branch() {
-    personalSetGoal(WristPositions.L2BranchPos);
+    personalSetGoal(WristPositionsC.L2BranchPos);
   }
 
   public void highBranches() {
-    personalSetGoal(WristPositions.highBranchesPos);
+    personalSetGoal(WristPositionsC.highBranchesPos);
   }
 
   public double getEncoder() {
@@ -112,7 +112,7 @@ public class CoralWrist extends SubsystemBase {
 
   private void personalSetGoal(double input) {
     this.pidController.setGoal(
-        MathUtil.clamp(input, 0.0, WristPositions.upper));
+        MathUtil.clamp(input, 0.0, WristPositionsC.upper));
   }
 
   @Override
