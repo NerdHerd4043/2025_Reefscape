@@ -26,7 +26,7 @@ import frc.robot.Constants.AlgaeWrist.PIDValuesA;
 import frc.robot.Constants.AlgaeWrist.WristPositionsA;
 
 public class AlgaeWrist extends SubsystemBase {
-  final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
+  private final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
 
   private ArmFeedforward feedforward = new ArmFeedforward(
       Constants.AlgaeWrist.FeedForwardValuesA.kS,

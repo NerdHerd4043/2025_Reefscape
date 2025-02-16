@@ -28,7 +28,7 @@ import frc.robot.Constants.CoralWrist.WristPositionsC;
 @Logged
 public class CoralWrist extends SubsystemBase {
   @NotLogged
-  private SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
+  private final SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
 
   @Logged
   private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID

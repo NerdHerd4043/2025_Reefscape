@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class AlgaeIntake extends SubsystemBase {
-  private SparkMax intakeMotor = new SparkMax(Constants.AlgaeIntake.motorID, MotorType.kBrushless);
+  private final SparkMax intakeMotor = new SparkMax(Constants.AlgaeIntake.motorID, MotorType.kBrushless);
 
   /** Creates a new AlgaeIntake. */
   public AlgaeIntake() {

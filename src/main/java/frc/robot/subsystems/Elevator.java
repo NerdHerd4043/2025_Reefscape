@@ -25,14 +25,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import frc.robot.Constants.Elevator.PIDValues;
+import frc.robot.Constants.Elevator.PIDValuesE;
 
 @Logged
 public class Elevator extends SubsystemBase {
   @NotLogged
-  private SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
+  private final SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
   @NotLogged
-  private SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
+  private final SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean positionKnown = false;
 
@@ -49,9 +49,9 @@ public class Elevator extends SubsystemBase {
 
   @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
-      PIDValues.p,
-      PIDValues.i,
-      PIDValues.d,
+      PIDValuesE.p,
+      PIDValuesE.i,
+      PIDValuesE.d,
       // The motion profile constraints
       Constants.Elevator.constraints);
 
