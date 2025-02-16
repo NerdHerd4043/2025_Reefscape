@@ -39,7 +39,7 @@ public class SwerveModule {
 
     speedMotorConfig.inverted(driveInverted);
 
-    double driveReduction = 1.0 / 6.75;
+    double driveReduction = 1.0 / 6.12;
     double WHEEL_DIAMETER = 0.1016;
     double rotationsToDistance = driveReduction * WHEEL_DIAMETER * Math.PI;
 
