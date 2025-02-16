@@ -26,7 +26,7 @@ import frc.robot.Constants.AlgaeWrist.PIDValuesA;
 import frc.robot.Constants.AlgaeWrist.WristPositionsA;
 
 public class AlgaeWrist extends SubsystemBase {
-  final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
+  private final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
 
   private ArmFeedforward feedforward = new ArmFeedforward(
       Constants.AlgaeWrist.FeedForwardValuesA.kS,
@@ -51,15 +51,15 @@ public class AlgaeWrist extends SubsystemBase {
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(true);
 
-    wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(getEncoder());
+    this.pidController.setGoal(this.encoderPosition());
   }
 
   private void updatePID() {
-    var setpoint = getSetpoint();
-    var ff = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    wristMotor.setVoltage(ff + pidController.calculate(getEncoder()));
+    var setpoint = this.getSetpoint();
+    var ff = -this.feedforward.calculate(setpoint.position, setpoint.velocity);
+    wristMotor.setVoltage(ff + this.pidController.calculate(encoderPosition()));
   }
 
   @NotLogged
@@ -67,11 +67,11 @@ public class AlgaeWrist extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
-  public void setTarget(double target) {
+  public void setGoal(double target) {
     this.pidController.setGoal(MathUtil.clamp(target, WristPositionsA.lower, WristPositionsA.upper));
   }
 
-  public double getEncoder() {
+  public double encoderPosition() {
     return this.encoder.getPosition();
   }
 
@@ -80,28 +80,30 @@ public class AlgaeWrist extends SubsystemBase {
   }
 
   public void up() {
-    this.pidController.setGoal(WristPositionsA.upper);
+    this.setGoal(WristPositionsA.upper);
   }
 
   public void down() {
-    this.pidController.setGoal(WristPositionsA.lower);
+    this.setGoal(WristPositionsA.lower);
   }
 
-  public Command getUpCommand() {
-    return this.run(() -> this.up());
+  public Command upCommand() {
+    return this.run(this::up);
   }
 
-  public Command getDownCommand() {
-    return this.run(() -> this.down());
+  public Command downCommand() {
+    return this.run(this::down);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updatePID();
+    this.updatePID();
+
     // if (wristMotor.getForwardLimitSwitch().isPressed()) {
     // resetPosition();
     // }
-    SmartDashboard.putNumber("Algae Wrist Encoder", getEncoder());
+
+    SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
   }
 }

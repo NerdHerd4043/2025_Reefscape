@@ -28,16 +28,10 @@ import frc.robot.Constants.CoralWrist.WristPositionsC;
 @Logged
 public class CoralWrist extends SubsystemBase {
   @NotLogged
-  private SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
+  private final SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
 
   @Logged
   private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID
-
-  private ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0); // FIXME: Tune
-
-  private double ffOutput;
-
-  private boolean enabled = false;
 
   // FIXME: Tune
   @Logged
@@ -55,15 +49,13 @@ public class CoralWrist extends SubsystemBase {
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(false);
 
-    wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(getEncoderRadians());
+    this.pidController.setGoal(this.getEncoderRadians());
   }
 
   private void updatePID() {
-    var setpoint = getSetpoint();
-    ffOutput = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    this.wristMotor.setVoltage(ffOutput + pidController.calculate(getEncoderRadians()));
+    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged
@@ -72,19 +64,19 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public void setTarget(double target) {
-    personalSetGoal(target);
+    this.setGoal(target);
   }
 
   public void station() {
-    personalSetGoal(WristPositionsC.stationPos);
+    this.setGoal(WristPositionsC.stationPos);
   }
 
   public void L2Branch() {
-    personalSetGoal(WristPositionsC.L2BranchPos);
+    this.setGoal(WristPositionsC.L2BranchPos);
   }
 
   public void highBranches() {
-    personalSetGoal(WristPositionsC.highBranchesPos);
+    this.setGoal(WristPositionsC.highBranchesPos);
   }
 
   public double getEncoder() {
@@ -92,25 +84,22 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public double getEncoderRadians() {
-    return getEncoder() * 2 * Math.PI;
+    return this.getEncoder() * 2 * Math.PI;
   }
 
-  public Command getL2BranchCommand() {
-    this.enabled = true;
-    return this.runOnce(() -> this.L2Branch());
+  public Command L2BranchCommand() {
+    return this.runOnce(this::L2Branch);
   }
 
-  public Command getHighBranchesCommand() {
-    this.enabled = true;
-    return this.runOnce(() -> this.highBranches());
+  public Command highBranchesCommand() {
+    return this.runOnce(this::highBranches);
   }
 
-  public Command getStationCommand() {
-    this.enabled = true;
-    return this.runOnce(() -> this.station());
+  public Command stationCommand() {
+    return this.runOnce(this::station);
   }
 
-  private void personalSetGoal(double input) {
+  private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0.0, WristPositionsC.upper));
   }
@@ -119,10 +108,10 @@ public class CoralWrist extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    updatePID();
+    this.updatePID();
 
-    SmartDashboard.putNumber("Wrist Setpoint", getSetpoint().position);
+    SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
     SmartDashboard.putNumber("Wrist Goal", this.pidController.getGoal().position);
-    SmartDashboard.putNumber("Coral Wrist Encoder", getEncoderRadians());
+    SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
   }
 }
