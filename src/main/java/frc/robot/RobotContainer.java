@@ -95,16 +95,33 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    driveStick.rightBumper().whileTrue(coralIntake.intakeCommand());
-    driveStick.leftBumper().whileTrue(coralIntake.outtakeCommand());
+    // Intake/Output buttons
+    driveStick.leftBumper().whileTrue(
+        Commands.parallel(
+            elevator.getCollapseCommand(),
+            coralIntake.intakeCommand(),
+            coralWrist.getStationCommand()));
+    driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
+    // Coral wrist angle buttons
     driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
-    driveStick.povDown().onTrue(this.coralWrist.getBranchCommand());
+    driveStick.povRight().onTrue(this.coralWrist.getL2BranchCommand());
+    driveStick.povDown().onTrue(this.coralWrist.getHighBranchesCommand());
 
-    driveStick.y().onTrue(elevator.getExtendCommand(3));
-    driveStick.x().onTrue(elevator.getExtendCommand(2));
-    driveStick.a().onTrue(elevator.getExtendCommand(1));
-    driveStick.b().whileTrue(elevator.getCollapseCommand());
+    // Elevator height and coral wrist angle (at the same time) buttons
+    driveStick.y().onTrue(
+        Commands.parallel(
+            elevator.getExtendCommand(3),
+            coralWrist.getHighBranchesCommand()));
+    driveStick.x().onTrue(
+        Commands.parallel(
+            elevator.getExtendCommand(2),
+            coralWrist.getHighBranchesCommand()));
+    driveStick.a().onTrue(coralWrist.getL2BranchCommand()); // This one is lowest height
+    driveStick.b().whileTrue(
+        Commands.parallel(
+            elevator.getCollapseCommand(),
+            coralWrist.getStationCommand()));
 
     // Reset gyro button
     driveStick.povUpLeft().onTrue(drivebase.getResetGyroCommand());
