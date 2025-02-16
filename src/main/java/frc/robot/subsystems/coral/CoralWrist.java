@@ -33,12 +33,6 @@ public class CoralWrist extends SubsystemBase {
   @Logged
   private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID
 
-  private ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0); // FIXME: Tune
-
-  private double ffOutput;
-
-  private boolean enabled = false;
-
   // FIXME: Tune
   @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
@@ -61,9 +55,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   private void updatePID() {
-    var setpoint = getSetpoint();
-    ffOutput = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    this.wristMotor.setVoltage(ffOutput + pidController.calculate(getEncoderRadians()));
+    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged
@@ -95,17 +87,14 @@ public class CoralWrist extends SubsystemBase {
     return this.getEncoder() * 2 * Math.PI;
   }
 
-    this.enabled = true;
   public Command L2BranchCommand() {
     return this.runOnce(this::L2Branch);
   }
 
-    this.enabled = true;
   public Command highBranchesCommand() {
     return this.runOnce(this::highBranches);
   }
 
-    this.enabled = true;
   public Command stationCommand() {
     return this.runOnce(this::station);
   }

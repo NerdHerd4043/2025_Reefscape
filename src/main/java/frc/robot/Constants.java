@@ -145,14 +145,6 @@ public class Constants {
       public static final double d = 0;
     }
 
-    // Also tuned manually. Practice on the site linked above.
-    // FIXME: Tune
-    public static final class FeedForwardValuesC {
-      public static final double kS = 0;
-      public static final double kG = 0;
-      public static final double kV = 0;
-    }
-
     // Found manually. Put the encoder value on the driver station dashboard and
     // move the encoder to the desired position, then record the value.
     public static final class WristPositionsC {
