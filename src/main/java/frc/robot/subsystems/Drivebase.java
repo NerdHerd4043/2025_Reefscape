@@ -14,7 +14,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,12 +66,14 @@ public class Drivebase extends SubsystemBase {
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
 
   private BooleanEntry fieldOrientedEntry;
+  private StructPublisher<Pose2d> posePublisher;
 
   /** Creates a new Drivebase. */
   public Drivebase() {
     var inst = NetworkTableInstance.getDefault();
     var table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
+    this.posePublisher = table.getStructTopic("pose2d", Pose2d.struct).publish();
 
     this.driveSpeedChooser = new SendableChooser<>();
     this.fieldOriented = new SendableChooser<>();
@@ -184,5 +188,9 @@ public class Drivebase extends SubsystemBase {
     field.setRobotPose(getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", getRobotSpeedRatio());
+
+    this.posePublisher.set(this.getRobotPose());
+
+    SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
   }
 }
