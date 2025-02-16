@@ -34,6 +34,8 @@ public class Elevator extends SubsystemBase {
   @NotLogged
   private SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
+  private boolean positionKnown = false;
+
   private boolean enabled = false;
   private boolean extended = false;
 
@@ -66,13 +68,16 @@ public class Elevator extends SubsystemBase {
     leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
     rightMotorConfig.inverted(true);
 
-    // FIXME: need a limit switch wired
-    // rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
+    rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
     leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    resetPosition();
+    this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
+
+    if (limitSwitch.isPressed()) {
+      resetPosition();
+    }
   }
 
   private void updatePID() {
@@ -91,6 +96,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetPosition() {
+    this.positionKnown = true;
     this.encoder.setPosition(0);
   }
 
@@ -131,21 +137,21 @@ public class Elevator extends SubsystemBase {
   }
 
   public boolean isElevatorExtended() {
-    return this.extended;
+    return this.enabled;
   }
 
   private void personalSetGoal(double input) {
     this.pidController.setGoal(
-        MathUtil.clamp(input, 0.0, Constants.Elevator.maxElevatorHeight));
+        MathUtil.clamp(input, -0.00001, Constants.Elevator.maxElevatorHeight));
   }
 
   @Override
   public void periodic() {
-    if (!this.extended && limitSwitch.isPressed()) {
+    if (!this.extended && this.limitSwitch.isPressed()) {
       this.disable();
       resetPosition();
     }
-    if (this.enabled) {
+    if (this.enabled /* && this.positionKnown */) {
       updatePID();
     }
 
@@ -153,7 +159,8 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", rightMotor.getReverseLimitSwitch().isPressed());
+    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitch.isPressed());
+    SmartDashboard.putBoolean("Elevator Limit Switch E", this.rightMotor.getReverseLimitSwitch().isPressed());
 
     SmartDashboard.putBoolean("Elevator Enabled", enabled);
     SmartDashboard.putBoolean("Elevator Extended", extended);
