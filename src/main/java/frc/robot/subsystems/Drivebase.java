@@ -158,7 +158,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public Command getResetGyroCommand() {
-    return this.run(() -> this.resetGyro());
+    return this.runOnce(() -> this.resetGyro());
   }
 
   @Override
