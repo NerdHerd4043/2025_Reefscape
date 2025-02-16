@@ -95,22 +95,22 @@ public class CoralWrist extends SubsystemBase {
     return this.getEncoder() * 2 * Math.PI;
   }
 
-  public Command getL2BranchCommand() {
     this.enabled = true;
+  public Command L2BranchCommand() {
     return this.runOnce(this::L2Branch);
   }
 
-  public Command getHighBranchesCommand() {
     this.enabled = true;
+  public Command highBranchesCommand() {
     return this.runOnce(this::highBranches);
   }
 
-  public Command getStationCommand() {
     this.enabled = true;
+  public Command stationCommand() {
     return this.runOnce(this::station);
   }
 
-  private void personalSetGoal(double input) {
+  private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0.0, WristPositionsC.upper));
   }

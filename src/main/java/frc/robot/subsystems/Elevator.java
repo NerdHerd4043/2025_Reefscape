@@ -91,7 +91,7 @@ public class Elevator extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
-  public double getEncoder() {
+  public double encoderPosition() {
     return this.encoder.getPosition();
   }
 
@@ -124,24 +124,24 @@ public class Elevator extends SubsystemBase {
     this.setGoal(this.encoderPosition());
   }
 
-  public Command getExtendCommand(int level) {
+  public Command extendCommand(int level) {
     return this.runOnce(() -> this.extend(level));
   }
 
-  public Command getCollapseCommand() {
+  public Command collapseCommand() {
     return this.runOnce(this::collapse);
   }
 
-  public Command getCurrentPoseCommand() {
   // For testing purposes, not used in final robot
+  public Command currentPoseCommand() {
     return this.runOnce(this::currentPose);
   }
 
-  public boolean isElevatorExtended() {
+  public boolean elevatorExtended() {
     return this.enabled;
   }
 
-  private void personalSetGoal(double input) {
+  private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0, Constants.Elevator.maxElevatorHeight));
   }

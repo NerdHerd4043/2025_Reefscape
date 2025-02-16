@@ -67,11 +67,11 @@ public class AlgaeWrist extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
-  public void setTarget(double target) {
+  public void setGoal(double target) {
     this.pidController.setGoal(MathUtil.clamp(target, WristPositionsA.lower, WristPositionsA.upper));
   }
 
-  public double getEncoder() {
+  public double encoderPosition() {
     return this.encoder.getPosition();
   }
 
@@ -80,18 +80,18 @@ public class AlgaeWrist extends SubsystemBase {
   }
 
   public void up() {
-    this.pidController.setGoal(WristPositionsA.upper);
+    this.setGoal(WristPositionsA.upper);
   }
 
   public void down() {
-    this.pidController.setGoal(WristPositionsA.lower);
+    this.setGoal(WristPositionsA.lower);
   }
 
-  public Command getUpCommand() {
+  public Command upCommand() {
     return this.run(this::up);
   }
 
-  public Command getDownCommand() {
+  public Command downCommand() {
     return this.run(this::down);
   }
 

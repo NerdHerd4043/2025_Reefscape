@@ -158,7 +158,7 @@ public class Drivebase extends SubsystemBase {
     this.gyro.reset();
   }
 
-  public Command getResetGyroCommand() {
+  public Command resetGyroCommand() {
     return this.run(this::resetGyro);
   }
 
@@ -168,7 +168,7 @@ public class Drivebase extends SubsystemBase {
 
     var positions = this.getModulePositions();
 
-    odometry.update(gyro.getRotation2d(), positions);
+    this.odometry.update(this.gyro.getRotation2d(), positions);
     var pose = this.getRobotPose();
 
     // Everything below is unnecessary for running the robot

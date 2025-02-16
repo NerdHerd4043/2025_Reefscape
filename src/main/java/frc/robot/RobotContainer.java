@@ -54,7 +54,7 @@ public class RobotContainer {
   }
 
   private double getElevatorSpeedRatio() {
-    if (elevator.isElevatorExtended()) {
+    if (elevator.elevatorExtended()) {
       return 0.5;
     } else {
       return 1;
@@ -98,33 +98,33 @@ public class RobotContainer {
     // Intake/Output buttons
     driveStick.leftBumper().whileTrue(
         Commands.parallel(
-            elevator.getCollapseCommand(),
+            elevator.collapseCommand(),
             coralIntake.intakeCommand(),
-            coralWrist.getStationCommand()));
-    driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
+            coralWrist.stationCommand()));
+    driveStick.rightBumper().whileTrue(coralIntake.outputCommand());
 
     // Coral wrist angle buttons
-    driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
-    driveStick.povRight().onTrue(this.coralWrist.getL2BranchCommand());
-    driveStick.povDown().onTrue(this.coralWrist.getHighBranchesCommand());
+    driveStick.povUp().onTrue(this.coralWrist.stationCommand());
+    driveStick.povRight().onTrue(this.coralWrist.L2BranchCommand());
+    driveStick.povDown().onTrue(this.coralWrist.highBranchesCommand());
 
     // Elevator height and coral wrist angle (at the same time) buttons
     driveStick.y().onTrue(
         Commands.parallel(
-            elevator.getExtendCommand(3),
-            coralWrist.getHighBranchesCommand()));
+            elevator.extendCommand(3),
+            coralWrist.highBranchesCommand()));
     driveStick.x().onTrue(
         Commands.parallel(
-            elevator.getExtendCommand(2),
-            coralWrist.getHighBranchesCommand()));
-    driveStick.a().onTrue(coralWrist.getL2BranchCommand()); // This one is lowest height
+            elevator.extendCommand(2),
+            coralWrist.highBranchesCommand()));
+    driveStick.a().onTrue(coralWrist.L2BranchCommand()); // This one is lowest height
     driveStick.b().whileTrue(
         Commands.parallel(
-            elevator.getCollapseCommand(),
-            coralWrist.getStationCommand()));
+            elevator.collapseCommand(),
+            coralWrist.stationCommand()));
 
     // Reset gyro button
-    driveStick.povUpLeft().onTrue(drivebase.getResetGyroCommand());
+    driveStick.povUpLeft().onTrue(drivebase.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
