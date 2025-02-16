@@ -169,16 +169,8 @@ public class Drivebase extends SubsystemBase {
     var positions = this.getModulePositions();
 
     this.odometry.update(this.gyro.getRotation2d(), positions);
-    var pose = this.getRobotPose();
 
     // Everything below is unnecessary for running the robot
-    var translation = pose.getTranslation();
-    var x = translation.getX();
-    var y = translation.getY();
-    var rotation = pose.getRotation().getDegrees();
-    SmartDashboard.putNumber("x", x);
-    SmartDashboard.putNumber("y", y);
-    SmartDashboard.putNumber("rot", rotation);
     this.field.setRobotPose(this.getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
