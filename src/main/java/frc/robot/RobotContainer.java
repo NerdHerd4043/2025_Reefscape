@@ -62,7 +62,7 @@ public class RobotContainer {
   }
 
   private double[] getScaledXY() {
-    double[] xy = getXY();
+    double[] xy = this.getXY();
 
     // Converting to Polar coordinates (uses coordinates (r, theta) where `r` is
     // magnitude and `theta` is the angle relative to 0. Usually 0 is in the
@@ -80,14 +80,14 @@ public class RobotContainer {
     // and `y` legs of the right triangle where `r` is the hypotenuse and `x` and
     // `y` are the legs. Learn trigonometry *shrug*. Also multiplies by 0.5 if the
     // elevator is in use so the robot has smaller chances of tipping.
-    xy[1] = r * Math.cos(theta) * getElevatorSpeedRatio();
-    xy[0] = r * Math.sin(theta) * getElevatorSpeedRatio();
+    xy[1] = r * Math.cos(theta) * this.getElevatorSpeedRatio();
+    xy[0] = r * Math.sin(theta) * this.getElevatorSpeedRatio();
 
     return xy;
   }
 
   private double scaleRotationAxis(double input) {
-    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * 0.6;
+    return this.deadband(this.squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * 0.6;
   }
 
   private double squared(double input) {

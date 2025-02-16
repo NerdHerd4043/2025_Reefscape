@@ -22,20 +22,20 @@ public class CoralIntake extends SubsystemBase {
   /** Creates a new CoralIntake. */
   public CoralIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
-    
+
     motorConfig.smartCurrentLimit(Constants.CoralIntake.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(true);
 
-    intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void runIntake(double intakeMotorSpeed) {
-    intakeMotor.set(intakeMotorSpeed);
+    this.intakeMotor.set(intakeMotorSpeed);
   }
 
   public void stop() {
-    intakeMotor.stopMotor();
+    this.intakeMotor.stopMotor();
   }
 
   public Command intakeCommand() {
@@ -49,13 +49,13 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public double getIntakeAmps() {
-    return intakeMotor.getOutputCurrent();
+    return this.intakeMotor.getOutputCurrent();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    SmartDashboard.putNumber("Intake Amps", getIntakeAmps());
+    SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
   }
 }

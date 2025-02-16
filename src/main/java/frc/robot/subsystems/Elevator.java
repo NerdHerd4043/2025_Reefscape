@@ -70,20 +70,20 @@ public class Elevator extends SubsystemBase {
 
     rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
-    leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
 
-    if (limitSwitch.isPressed()) {
-      resetPosition();
+    if (this.limitSwitchPressed()) {
+      this.resetPosition();
     }
   }
 
   private void updatePID() {
-    var setpoint = getSetpoint();
-    var ff = feedforward.calculate(setpoint.position, setpoint.velocity);
-    rightMotor.setVoltage(ff + pidController.calculate(getEncoder()));
+    var setpoint = this.getSetpoint();
+    var ff = this.feedforward.calculate(setpoint.position, setpoint.velocity);
+    this.rightMotor.setVoltage(ff + this.pidController.calculate(this.encoderPosition()));
   }
 
   @NotLogged
@@ -111,21 +111,21 @@ public class Elevator extends SubsystemBase {
   public void extend(int level) {
     this.enable();
     this.extended = true;
-    personalSetGoal(Constants.Elevator.elevatorHeights[level]);
+    this.setGoal(Constants.Elevator.elevatorHeights[level]);
   }
 
   public void collapse() {
     this.extended = false;
-    personalSetGoal(Constants.Elevator.elevatorHeights[0]);
+    this.setGoal(Constants.Elevator.elevatorHeights[0]);
   }
 
-  // For testing purposes
+  // For testing purposes, not used in final robot
   public void currentPose() {
-    personalSetGoal(getEncoder());
+    this.setGoal(this.encoderPosition());
   }
 
   public Command getExtendCommand(int level) {
-    return this.runOnce(() -> extend(level));
+    return this.runOnce(() -> this.extend(level));
   }
 
   public Command getCollapseCommand() {
@@ -133,6 +133,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command getCurrentPoseCommand() {
+  // For testing purposes, not used in final robot
     return this.runOnce(this::currentPose);
   }
 
@@ -142,27 +143,30 @@ public class Elevator extends SubsystemBase {
 
   private void personalSetGoal(double input) {
     this.pidController.setGoal(
-        MathUtil.clamp(input, -0.00001, Constants.Elevator.maxElevatorHeight));
+        MathUtil.clamp(input, 0, Constants.Elevator.maxElevatorHeight));
+  }
+
+  public boolean limitSwitchPressed() {
+    return this.limitSwitch.isPressed();
   }
 
   @Override
   public void periodic() {
-    if (!this.extended && this.limitSwitch.isPressed()) {
+    if (!this.extended && this.limitSwitchPressed()) {
       this.disable();
-      resetPosition();
+      this.resetPosition();
     }
     if (this.enabled /* && this.positionKnown */) {
-      updatePID();
+      this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", getEncoder());
+    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
 
     SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitch.isPressed());
-    SmartDashboard.putBoolean("Elevator Limit Switch E", this.rightMotor.getReverseLimitSwitch().isPressed());
+    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitchPressed());
 
-    SmartDashboard.putBoolean("Elevator Enabled", enabled);
-    SmartDashboard.putBoolean("Elevator Extended", extended);
+    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
+    SmartDashboard.putBoolean("Elevator Extended", this.extended);
   }
 }

@@ -51,15 +51,15 @@ public class AlgaeWrist extends SubsystemBase {
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(true);
 
-    wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(getEncoder());
+    this.pidController.setGoal(this.encoderPosition());
   }
 
   private void updatePID() {
-    var setpoint = getSetpoint();
-    var ff = -feedforward.calculate(setpoint.position, setpoint.velocity);
-    wristMotor.setVoltage(ff + pidController.calculate(getEncoder()));
+    var setpoint = this.getSetpoint();
+    var ff = -this.feedforward.calculate(setpoint.position, setpoint.velocity);
+    wristMotor.setVoltage(ff + this.pidController.calculate(encoderPosition()));
   }
 
   @NotLogged
@@ -88,20 +88,20 @@ public class AlgaeWrist extends SubsystemBase {
   }
 
   public Command getUpCommand() {
-    return this.run(() -> this.up());
+    return this.run(this::up);
   }
 
   public Command getDownCommand() {
-    return this.run(() -> this.down());
+    return this.run(this::down);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updatePID();
+    this.updatePID();
     // if (wristMotor.getForwardLimitSwitch().isPressed()) {
     // resetPosition();
     // }
-    SmartDashboard.putNumber("Algae Wrist Encoder", getEncoder());
+    SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
   }
 }

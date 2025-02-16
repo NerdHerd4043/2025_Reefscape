@@ -47,8 +47,8 @@ public class SwerveModule {
         .positionConversionFactor(rotationsToDistance)
         .velocityConversionFactor(rotationsToDistance);
 
-    angleMotor.configure(angleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    speedMotor.configure(speedMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.angleMotor.configure(angleMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.speedMotor.configure(speedMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.pidController = new PIDController(SwervePID.p, SwervePID.i, SwervePID.d);
     this.encoder = new CANcoder(encoderId);
@@ -72,8 +72,8 @@ public class SwerveModule {
 
   private void drive(double speedMetersPerSecond, double angle) {
     double voltage = (speedMetersPerSecond / maxVelocity) * maxVoltage;
-    speedMotor.setVoltage(voltage);
-    angleMotor.setVoltage(-pidController.calculate(this.getEncoder(), angle));
+    this.speedMotor.setVoltage(voltage);
+    this.angleMotor.setVoltage(-this.pidController.calculate(this.getEncoder(), angle));
   }
 
   public void drive(SwerveModuleState state) {
@@ -82,26 +82,26 @@ public class SwerveModule {
   }
 
   public double getEncoder() {
-    return encoder.getAbsolutePosition().getValueAsDouble() * 360.0;
+    return this.encoder.getAbsolutePosition().getValueAsDouble() * 360.0;
   }
 
   public double getDriveOutput() {
-    return speedMotor.getAppliedOutput();
+    return this.speedMotor.getAppliedOutput();
   }
 
   private Rotation2d getRotation() {
-    return Rotation2d.fromDegrees(getEncoder());
+    return Rotation2d.fromDegrees(this.getEncoder());
   }
 
   public double getEncoderRadians() {
-    return Units.degreesToRadians(getEncoder());
+    return Units.degreesToRadians(this.getEncoder());
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(speedEncoder.getPosition(), getRotation());
+    return new SwerveModulePosition(this.speedEncoder.getPosition(), this.getRotation());
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(speedEncoder.getVelocity(), getRotation());
+    return new SwerveModuleState(this.speedEncoder.getVelocity(), this.getRotation());
   }
 }
