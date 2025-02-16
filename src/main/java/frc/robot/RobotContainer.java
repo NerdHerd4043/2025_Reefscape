@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -94,19 +95,26 @@ public class RobotContainer {
     return Math.copySign(input * input, input);
   }
 
+  private void conditionalRumble() {
+    if (coralIntake.coralAquired()) {
+      driveStick.setRumble(RumbleType.kBothRumble, 1);
+    }
+  }
+
   private void configureBindings() {
     // Intake/Output buttons
     driveStick.leftBumper().whileTrue(
         Commands.parallel(
             elevator.getCollapseCommand(),
             coralIntake.intakeCommand(),
-            coralWrist.getStationCommand()));
+            coralWrist.getStationCommand(),
+            Commands.run(this::conditionalRumble)));
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
     // Coral wrist angle buttons
-    driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
-    driveStick.povRight().onTrue(this.coralWrist.getL2BranchCommand());
-    driveStick.povDown().onTrue(this.coralWrist.getHighBranchesCommand());
+    driveStick.povUp().onTrue(coralWrist.getStationCommand());
+    driveStick.povRight().onTrue(coralWrist.getL2BranchCommand());
+    driveStick.povDown().onTrue(coralWrist.getHighBranchesCommand());
 
     // Elevator height and coral wrist angle (at the same time) buttons
     driveStick.y().onTrue(

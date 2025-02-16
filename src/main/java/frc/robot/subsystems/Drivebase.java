@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -177,6 +179,7 @@ public class Drivebase extends SubsystemBase {
     var rotation = pose.getRotation().getDegrees();
     SmartDashboard.putNumber("x", x);
     SmartDashboard.putNumber("y", y);
+    SmartDashboard.putNumberArray("pose", new double[] { x, y });
     SmartDashboard.putNumber("rot", rotation);
     field.setRobotPose(getRobotPose());
 
