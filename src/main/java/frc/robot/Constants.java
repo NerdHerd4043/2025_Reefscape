@@ -82,6 +82,41 @@ public class Constants {
     }
   }
 
+  public static final class AlgaeIntake {
+    public static final int motorID = 50; // FIXME: Need a motor id
+    public static final int currentLimit = 30;
+    public static final double intakeSpeed = 0; // FIXME
+  }
+
+  public static final class AlgaeWrist {
+    public static final int motorID = 51; // FIXME
+    public static final int currentLimit = 30;
+
+    // FIXME: Find Constraints
+    public static final TrapezoidProfile.Constraints constraintsA = new TrapezoidProfile.Constraints(
+        0, 0);
+
+    // FIXME: Tune
+    public static final class PIDValuesA {
+      public static final double p = 0;
+      public static final double i = 0;
+      public static final double d = 0;
+    }
+
+    // FIXME: Tune
+    public static final class FeedForwardValuesA {
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+    }
+
+    // FIXME: Find limits
+    public static final class WristPositionsA {
+      public static final double lower = 0;
+      public static final double upper = 1;
+    }
+  }
+
   public static final class CoralIntake {
     public static final int motorId = 30;
     public static final double intakeSpeed = 0.8; // FIXME
@@ -110,7 +145,7 @@ public class Constants {
 
     // Also tuned manually. Practice on the site linked above.
     // FIXME: Tune
-    public static final class FeedForwardValues {
+    public static final class FeedForwardValuesC {
       public static final double kS = 0;
       public static final double kG = 0;
       public static final double kV = 0;
@@ -119,7 +154,7 @@ public class Constants {
     // Found manually. Put the encoder value on the driver station dashboard and
     // move the encoder to the desired position, then record the value.
     // FIXME: Find limits
-    public static final class WristPositions {
+    public static final class WristPositionsC {
       public static final double lower = 0;
       public static final double upper = 1.23;
       public static final double stationPos = 1.23;
