@@ -53,7 +53,7 @@ public class CoralWrist extends SubsystemBase {
 
     motorConfig.smartCurrentLimit(Constants.CoralWrist.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
-    motorConfig.inverted(true);
+    motorConfig.inverted(false);
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -72,28 +72,37 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public void setTarget(double target) {
-    this.pidController.setGoal(MathUtil.clamp(target, WristPositions.lower, WristPositions.upper));
+    personalSetGoal(target);
   }
 
   public void station() {
-    this.pidController.setGoal(WristPositions.stationPos);
+    personalSetGoal(WristPositions.stationPos);
   }
 
-  public void branch() {
-    this.pidController.setGoal(WristPositions.branchPos);
+  public void L2Branch() {
+    personalSetGoal(WristPositions.L2BranchPos);
+  }
+
+  public void highBranches() {
+    personalSetGoal(WristPositions.highBranchesPos);
   }
 
   public double getEncoder() {
-    return this.encoder.getAbsolutePosition().getValueAsDouble();
+    return -this.encoder.getAbsolutePosition().getValueAsDouble();
   }
 
   public double getEncoderRadians() {
     return getEncoder() * 2 * Math.PI;
   }
 
-  public Command getBranchCommand() {
+  public Command getL2BranchCommand() {
     this.enabled = true;
-    return this.runOnce(() -> this.branch());
+    return this.runOnce(() -> this.L2Branch());
+  }
+
+  public Command getHighBranchesCommand() {
+    this.enabled = true;
+    return this.runOnce(() -> this.highBranches());
   }
 
   public Command getStationCommand() {
@@ -101,13 +110,19 @@ public class CoralWrist extends SubsystemBase {
     return this.runOnce(() -> this.station());
   }
 
+  private void personalSetGoal(double input) {
+    this.pidController.setGoal(
+        MathUtil.clamp(input, 0.0, WristPositions.upper));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (this.enabled) {
-      updatePID();
-    }
 
+    updatePID();
+
+    SmartDashboard.putNumber("Wrist Setpoint", getSetpoint().position);
+    SmartDashboard.putNumber("Wrist Goal", this.pidController.getGoal().position);
     SmartDashboard.putNumber("Coral Wrist Encoder", getEncoderRadians());
   }
 }
