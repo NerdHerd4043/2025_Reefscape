@@ -107,8 +107,7 @@ public class RobotContainer {
         Commands.parallel(
             elevator.getCollapseCommand(),
             coralIntake.intakeCommand(),
-            coralWrist.getStationCommand(),
-            Commands.run(this::conditionalRumble)));
+            coralWrist.getStationCommand()));
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
     // Coral wrist angle buttons
@@ -125,7 +124,10 @@ public class RobotContainer {
         Commands.parallel(
             elevator.getExtendCommand(2),
             coralWrist.getHighBranchesCommand()));
-    driveStick.a().onTrue(coralWrist.getL2BranchCommand()); // This one is lowest height
+    driveStick.a().onTrue(
+        Commands.parallel(
+            coralWrist.getL2BranchCommand(),
+            elevator.getCollapseCommand())); // This one is lowest height
     driveStick.b().whileTrue(
         Commands.parallel(
             elevator.getCollapseCommand(),
