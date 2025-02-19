@@ -11,12 +11,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class AlgaeIntake extends SubsystemBase {
-  private SparkMax intakeMotor = new SparkMax(Constants.AlgaeIntake.motorID, MotorType.kBrushless);
+  private final SparkMax intakeMotor = new SparkMax(Constants.AlgaeIntake.motorID, MotorType.kBrushless);
 
   /** Creates a new AlgaeIntake. */
   public AlgaeIntake() {
@@ -26,7 +27,7 @@ public class AlgaeIntake extends SubsystemBase {
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(true);
 
-    intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void runIntake(double intakeMotorSpeed) {
@@ -47,8 +48,13 @@ public class AlgaeIntake extends SubsystemBase {
         .finallyDo(this::stop);
   }
 
+  private double getAlgaeIntakeAmps() {
+    return intakeMotor.getOutputCurrent();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Algae Intake Amps", getAlgaeIntakeAmps());
   }
 }
