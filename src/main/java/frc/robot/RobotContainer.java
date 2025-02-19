@@ -30,8 +30,8 @@ public class RobotContainer {
   private static final CoralWrist coralWrist = new CoralWrist();
   private static final CoralIntake coralIntake = new CoralIntake();
 
-  private static final AlgaeWrist algaeWrist = new AlgaeWrist();
-  private static final AlgaeIntake algaeIntake = new AlgaeIntake();
+  // private static final AlgaeWrist algaeWrist = new AlgaeWrist();
+  // private static final AlgaeIntake algaeIntake = new AlgaeIntake();
 
   private SendableChooser<Command> autoChooser;
 
@@ -58,8 +58,8 @@ public class RobotContainer {
   private double[] getScaledXY() {
     double[] xy = new double[2];
 
-    xy[0] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[1] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[0] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[1] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
 
     Util.square2DVector(xy);
 
@@ -120,9 +120,9 @@ public class RobotContainer {
             coralWrist.highBranchesCommand()));
 
     /* Algae buttons for testing */
-    driveStick.rightTrigger().toggleOnTrue(algaeIntake.intakeCommand());
-    driveStick.povUp().onTrue(algaeWrist.upCommand());
-    driveStick.povDown().onTrue(algaeWrist.downCommand());
+    // driveStick.rightTrigger().toggleOnTrue(algaeIntake.intakeCommand());
+    // driveStick.povUp().onTrue(algaeWrist.upCommand());
+    // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Reset gyro button */
     driveStick.povUpLeft().onTrue(drivebase.resetGyroCommand());
