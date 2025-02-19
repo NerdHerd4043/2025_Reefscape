@@ -17,6 +17,8 @@ import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 
+import cowlib.Util;
+
 public class RobotContainer {
 
   private static final CommandXboxController driveStick = new CommandXboxController(0);
@@ -53,10 +55,18 @@ public class RobotContainer {
     }
   }
 
-  private double[] getXY() {
+  private double[] getScaledXY() {
     double[] xy = new double[2];
-    xy[1] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
-    xy[0] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+
+    xy[0] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
+    xy[1] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+
+    Util.square2DVector(xy);
+
+    var scaling = drivebase.getMaxVelocity() * this.getElevatorSpeedRatio();
+    xy[0] *= scaling;
+    xy[1] *= scaling;
+
     return xy;
   }
 
@@ -66,31 +76,6 @@ public class RobotContainer {
     } else {
       return 1;
     }
-  }
-
-  private double[] getScaledXY() {
-    double[] xy = this.getXY();
-
-    // Converting to Polar coordinates (uses coordinates (r, theta) where `r` is
-    // magnitude and `theta` is the angle relative to 0. Usually 0 is in the
-    // positive direction of a cartesian graph's x axis, and increases positively
-    // with counterclockwise rotation).
-    double r = Math.sqrt(xy[0] * xy[0] + xy[1] * xy[1]);
-    double theta = Math.atan2(xy[0], xy[1]);
-
-    // Square radius and scale by max velocity. This allows for slower speed when
-    // the drivestick is closer to the center without limiting the max speed because
-    // 1 is the max output of the drivestick and 1 * 1 = 1.
-    r = r * r * drivebase.getMaxVelocity();
-
-    // Convert to Cartesian coordinates (uses coordinates (x,y)) by getting the `x`
-    // and `y` legs of the right triangle where `r` is the hypotenuse and `x` and
-    // `y` are the legs. Learn trigonometry *shrug*. Also multiplies by 0.5 if the
-    // elevator is in use so the robot has smaller chances of tipping.
-    xy[1] = r * Math.cos(theta) * this.getElevatorSpeedRatio();
-    xy[0] = r * Math.sin(theta) * this.getElevatorSpeedRatio();
-
-    return xy;
   }
 
   private double scaleRotationAxis(double input) {
