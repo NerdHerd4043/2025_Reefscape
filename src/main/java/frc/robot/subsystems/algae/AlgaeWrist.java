@@ -27,15 +27,14 @@ import frc.robot.Constants.AlgaeWrist.WristPositionsA;
 
 public class AlgaeWrist extends SubsystemBase {
   private final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
+  private final RelativeEncoder encoder = wristMotor.getEncoder();
+
+  private boolean enabled = false;
 
   private ArmFeedforward feedforward = new ArmFeedforward(
       Constants.AlgaeWrist.FeedForwardValuesA.kS,
       Constants.AlgaeWrist.FeedForwardValuesA.kG,
       Constants.AlgaeWrist.FeedForwardValuesA.kV);
-
-  private double ffOutput;
-
-  private RelativeEncoder encoder = wristMotor.getEncoder();
 
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesA.p,
@@ -65,6 +64,22 @@ public class AlgaeWrist extends SubsystemBase {
   @NotLogged
   public TrapezoidProfile.State getSetpoint() {
     return this.pidController.getSetpoint();
+  }
+
+  public void creepUpward() {
+    this.wristMotor.set(Constants.AlgaeWrist.creepSpeed);
+  }
+
+  public void stop() {
+    this.wristMotor.stopMotor();
+  }
+
+  public void enable() {
+    this.enabled = true;
+  }
+
+  public void disable() {
+    this.enabled = false;
   }
 
   public void setGoal(double target) {
@@ -97,12 +112,9 @@ public class AlgaeWrist extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    this.updatePID();
-
-    // if (wristMotor.getForwardLimitSwitch().isPressed()) {
-    // resetPosition();
-    // }
+    if (this.enabled) {
+      this.updatePID();
+    }
 
     SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
   }

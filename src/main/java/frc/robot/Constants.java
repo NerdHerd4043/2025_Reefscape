@@ -94,6 +94,12 @@ public class Constants {
     public static final int motorID = 51;
     public static final int currentLimit = 30;
 
+    // FIXME: Tune
+    public static final double zeroThreshold = 1.0;
+
+    // FIXME: Tune speed and direction
+    public static final double creepSpeed = -0.01;
+
     // FIXME: Find Constraints
     public static final TrapezoidProfile.Constraints constraintsA = new TrapezoidProfile.Constraints(
         0, 0);
