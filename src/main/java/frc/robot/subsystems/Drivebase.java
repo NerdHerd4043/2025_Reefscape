@@ -196,6 +196,14 @@ public class Drivebase extends SubsystemBase {
     return this.odometry.getPoseMeters();
   }
 
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[modules.length];
+    for (int i = 0; i < modules.length; i++) {
+      states[i] = modules[i].getState();
+    }
+    return states;
+  }
+
   public SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[this.modules.length];
     for (int i = 0; i < this.modules.length; i++) {
@@ -210,6 +218,14 @@ public class Drivebase extends SubsystemBase {
 
   public void resetGyro() {
     this.gyro.reset();
+  }
+
+  public void resetPose(Pose2d pose2d) {
+    this.odometry.resetPosition(this.gyro.getRotation2d(), this.getModulePositions(), pose2d);
+  }
+
+  public ChassisSpeeds getCurrentSpeeds() {
+    return kinematics.toChassisSpeeds(getModuleStates());
   }
 
   public Command resetGyroCommand() {
