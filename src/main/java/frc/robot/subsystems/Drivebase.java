@@ -14,6 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,8 +32,6 @@ import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 
 public class Drivebase extends SubsystemBase {
-
-  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
 
   private SwerveModule frontLeft = new SwerveModule(
       SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
@@ -51,6 +51,8 @@ public class Drivebase extends SubsystemBase {
       ModuleLocations.backLeft,
       ModuleLocations.backRight);
 
+  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+
   private SwerveDriveOdometry odometry;
 
   private Field2d field = new Field2d();
@@ -63,6 +65,9 @@ public class Drivebase extends SubsystemBase {
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
 
   private BooleanEntry fieldOrientedEntry;
+
+  final DoubleArraySubscriber botFieldPose;
+  final DoubleArrayTopic doubleArrayTopic;
 
   /** Creates a new Drivebase. */
   public Drivebase() {
@@ -85,7 +90,19 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
 
-    this.odometry = new SwerveDriveOdometry(this.kinematics, this.gyro.getRotation2d(), this.getModulePositions());
+    this.odometry = new SwerveDriveOdometry(
+        this.kinematics,
+        this.gyro.getRotation2d(),
+        this.getModulePositions());
+
+    this.doubleArrayTopic;
+    this.botFieldPose = doubleArrayTopic
+        .subscribe(NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue")
+            .getDoubleArray(new double[0]));
+    // NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue").getDoubleArray(0);
+    this.botFieldPose.get(NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue")
+        .getDoubleArray(new double[0]));
+
   }
 
   public double getFieldAngle() {
