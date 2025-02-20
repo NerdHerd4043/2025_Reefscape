@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+
 import cowlib.SwerveModuleConfig;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
@@ -81,6 +85,26 @@ public class Constants {
       public static final Translation2d frontRight = new Translation2d(moduleLocationLength, -moduleLocationLength);
       public static final Translation2d backLeft = new Translation2d(-moduleLocationLength, moduleLocationLength);
       public static final Translation2d backRight = new Translation2d(-moduleLocationLength, -moduleLocationLength);
+    }
+
+    public static final class RobotConfigInfo {
+      public static final ModuleConfig moduleConfig = new ModuleConfig(
+          wheelDiameter,
+          2.75, // FIXME: estimate more correctly
+          0.7, // FIXME: estimate more correctly
+          DCMotor.getNEO(1),
+          driveReduction,
+          DriveConstants.currentLimit,
+          1); // FIXME: what is the numMotors thingy? figure out again later
+
+      public static final RobotConfig robotConfig = new RobotConfig(
+          66.68, // FIXME: estimate more correctly
+          3.682, // FIXME: estimate more correctly
+          moduleConfig,
+          ModuleLocations.frontLeft,
+          ModuleLocations.frontRight,
+          ModuleLocations.backLeft,
+          ModuleLocations.backRight);
     }
   }
 

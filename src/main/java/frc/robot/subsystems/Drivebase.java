@@ -20,11 +20,21 @@ import edu.wpi.first.networktables.DoubleArrayTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -33,6 +43,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
+import frc.robot.Constants.PathPlannerConstants.RotationPID;
+import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 
 public class Drivebase extends SubsystemBase {
 
@@ -100,6 +112,34 @@ public class Drivebase extends SubsystemBase {
     NetworkTable LLTable = inst.getTable("limelight-one");
     DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("TBD");
     this.botFieldPose = botPoseTopic.subscribe(new double[6]);
+
+    RobotConfig config;
+
+    try {
+      config = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      e.printStackTrace();
+      config = Constants.DriveConstants.RobotConfigInfo.robotConfig;
+    }
+
+    AutoBuilder.configure(
+        this::getRobotPose,
+        this::resetPose,
+        this::getCurrentSpeeds,
+        this::drive,
+        new PPHolonomicDriveController(
+            new PIDConstants(TranslationPID.p, TranslationPID.i, TranslationPID.d),
+            new PIDConstants(RotationPID.p, RotationPID.i, RotationPID.d)),
+        config,
+        () -> {
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Blue;
+          } else {
+            return false;
+          }
+        },
+        this);
   }
 
   public double getFieldAngle() {
