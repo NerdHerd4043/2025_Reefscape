@@ -42,7 +42,8 @@ public class Drivebase extends SubsystemBase {
   private SwerveModule backRight = new SwerveModule(
       SwerveModules.backRight, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
 
-  private SwerveModule[] modules = new SwerveModule[] { frontLeft, frontRight, backLeft, backRight };
+  private SwerveModule[] modules = new SwerveModule[] { this.frontLeft, this.frontRight, this.backLeft,
+      this.backRight };
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       ModuleLocations.frontLeft,
@@ -84,16 +85,16 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
 
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), getModulePositions());
+    this.odometry = new SwerveDriveOdometry(this.kinematics, this.gyro.getRotation2d(), this.getModulePositions());
   }
 
   public double getFieldAngle() {
-    return -gyro.getYaw();
+    return -this.gyro.getYaw();
   }
 
   public void fieldOrientedDrive(double speedX, double speedY, double rot) {
     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rot,
-        Rotation2d.fromDegrees(getFieldAngle()));
+        Rotation2d.fromDegrees(this.getFieldAngle()));
     this.drive(speeds);
   }
 
@@ -108,20 +109,20 @@ public class Drivebase extends SubsystemBase {
 
   public void defaultDrive(double speedX, double speedY, double rot, boolean slew) {
     if (slew) {
-      speedX = slewRateX.calculate(speedX);
-      speedY = slewRateY.calculate(speedY);
+      speedX = this.slewRateX.calculate(speedX);
+      speedY = this.slewRateY.calculate(speedY);
     }
-    if (this.fieldOrientedEntry.get(getDefaultDrive())) {
-      fieldOrientedDrive(speedX, speedY, rot);
+    if (this.fieldOrientedEntry.get(this.getDefaultDrive())) {
+      this.fieldOrientedDrive(speedX, speedY, rot);
     } else {
-      robotOrientedDrive(speedX, speedY, rot);
+      this.robotOrientedDrive(speedX, speedY, rot);
     }
   }
 
   private void drive(ChassisSpeeds speeds) {
-    SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+    SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity * getRobotSpeedRatio());
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity * this.getRobotSpeedRatio());
 
     this.frontLeft.drive(moduleStates[0]);
     this.frontRight.drive(moduleStates[1]);
@@ -138,13 +139,13 @@ public class Drivebase extends SubsystemBase {
   }
 
   public Pose2d getRobotPose() {
-    return odometry.getPoseMeters();
+    return this.odometry.getPoseMeters();
   }
 
   public SwerveModulePosition[] getModulePositions() {
-    SwerveModulePosition[] positions = new SwerveModulePosition[modules.length];
-    for (int i = 0; i < modules.length; i++) {
-      positions[i] = modules[i].getPosition();
+    SwerveModulePosition[] positions = new SwerveModulePosition[this.modules.length];
+    for (int i = 0; i < this.modules.length; i++) {
+      positions[i] = this.modules[i].getPosition();
     }
     return positions;
   }
@@ -154,10 +155,10 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void resetGyro() {
-    gyro.reset();
+    this.gyro.reset();
   }
 
-  public Command getResetGyroCommand() {
+  public Command resetGyroCommand() {
     return this.runOnce(() -> this.resetGyro());
   }
 
@@ -165,21 +166,13 @@ public class Drivebase extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    var positions = getModulePositions();
+    var positions = this.getModulePositions();
 
-    odometry.update(gyro.getRotation2d(), positions);
-    var pose = getRobotPose();
+    this.odometry.update(this.gyro.getRotation2d(), positions);
 
     // Everything below is unnecessary for running the robot
-    var translation = pose.getTranslation();
-    var x = translation.getX();
-    var y = translation.getY();
-    var rotation = pose.getRotation().getDegrees();
-    SmartDashboard.putNumber("x", x);
-    SmartDashboard.putNumber("y", y);
-    SmartDashboard.putNumber("rot", rotation);
-    field.setRobotPose(getRobotPose());
+    this.field.setRobotPose(this.getRobotPose());
 
-    SmartDashboard.putNumber("Speed Ratio", getRobotSpeedRatio());
+    SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
   }
 }

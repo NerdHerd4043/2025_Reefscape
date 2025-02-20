@@ -12,8 +12,12 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.algae.AlgaeIntake;
+import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
+
+import cowlib.Util;
 
 public class RobotContainer {
 
@@ -22,22 +26,27 @@ public class RobotContainer {
   private static final Drivebase drivebase = new Drivebase();
 
   private static final Elevator elevator = new Elevator();
+
   private static final CoralWrist coralWrist = new CoralWrist();
   private static final CoralIntake coralIntake = new CoralIntake();
+
+  // private static final AlgaeWrist algaeWrist = new AlgaeWrist();
+  // private static final AlgaeIntake algaeIntake = new AlgaeIntake();
 
   private SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-
     drivebase.setDefaultCommand(
         new Drive(
             drivebase,
-            () -> getScaledXY(),
+            this::getScaledXY,
             () -> scaleRotationAxis(driveStick.getRightX())));
 
-    configureBindings();
+    this.configureBindings();
   }
 
+  // Used to create an area around the center of the joystick where the input is
+  // 0, so as to avoid stick drift.
   private double deadband(double input, double deadband) {
     if (Math.abs(input) < deadband) {
       return 0;
@@ -46,48 +55,31 @@ public class RobotContainer {
     }
   }
 
-  private double[] getXY() {
+  private double[] getScaledXY() {
     double[] xy = new double[2];
-    xy[1] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
+
     xy[0] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
+    xy[1] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
+
+    Util.square2DVector(xy);
+
+    var scaling = drivebase.getMaxVelocity() * this.getElevatorSpeedRatio();
+    xy[0] *= scaling;
+    xy[1] *= scaling;
+
     return xy;
   }
 
   private double getElevatorSpeedRatio() {
-    if (elevator.isElevatorExtended()) {
+    if (elevator.elevatorExtended()) {
       return 0.5;
     } else {
       return 1;
     }
   }
 
-  private double[] getScaledXY() {
-    double[] xy = getXY();
-
-    // Converting to Polar coordinates (uses coordinates (r, theta) where `r` is
-    // magnitude and `theta` is the angle relative to 0. Usually 0 is in the
-    // positive direction of a cartesian graph's x axis, and increases positively
-    // with counterclockwise rotation).
-    double r = Math.sqrt(xy[0] * xy[0] + xy[1] * xy[1]);
-    double theta = Math.atan2(xy[0], xy[1]);
-
-    // Square radius and scale by max velocity. This allows for slower speed when
-    // the drivestick is closer to the center without limiting the max speed because
-    // 1 is the max output of the drivestick and 1 * 1 = 1.
-    r = r * r * drivebase.getMaxVelocity();
-
-    // Convert to Cartesian coordinates (uses coordinates (x,y)) by getting the `x`
-    // and `y` legs of the right triangle where `r` is the hypotenuse and `x` and
-    // `y` are the legs. Learn trigonometry *shrug*. Also multiplies by 0.5 if the
-    // elevator is in use so the robot has smaller chances of tipping.
-    xy[1] = r * Math.cos(theta) * getElevatorSpeedRatio();
-    xy[0] = r * Math.sin(theta) * getElevatorSpeedRatio();
-
-    return xy;
-  }
-
   private double scaleRotationAxis(double input) {
-    return deadband(squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * 0.6;
+    return this.deadband(this.squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * 0.6;
   }
 
   private double squared(double input) {
@@ -95,36 +87,45 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Intake/Output buttons
+    /* Intake/Output buttons */
+    // Intake
     driveStick.leftBumper().whileTrue(
         Commands.parallel(
-            elevator.getCollapseCommand(),
+            elevator.collapseCommand(),
             coralIntake.intakeCommand(),
-            coralWrist.getStationCommand()));
+            coralWrist.stationCommand()));
+    // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
-    // Coral wrist angle buttons
-    driveStick.povUp().onTrue(this.coralWrist.getStationCommand());
-    driveStick.povRight().onTrue(this.coralWrist.getL2BranchCommand());
-    driveStick.povDown().onTrue(this.coralWrist.getHighBranchesCommand());
+    /* Coral wrist angle buttons */
+    driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist straightish
 
-    // Elevator height and coral wrist angle (at the same time) buttons
-    driveStick.y().onTrue(
-        Commands.parallel(
-            elevator.getExtendCommand(3),
-            coralWrist.getHighBranchesCommand()));
-    driveStick.x().onTrue(
-        Commands.parallel(
-            elevator.getExtendCommand(2),
-            coralWrist.getHighBranchesCommand()));
-    driveStick.a().onTrue(coralWrist.getL2BranchCommand()); // This one is lowest height
+    /* Elevator height and coral wrist angle (at the same time) buttons */
+    // Coral station position
     driveStick.b().whileTrue(
         Commands.parallel(
-            elevator.getCollapseCommand(),
-            coralWrist.getStationCommand()));
+            elevator.collapseCommand(),
+            coralWrist.stationCommand()));
+    // L2
+    driveStick.a().onTrue(coralWrist.L2BranchCommand());
+    // L3
+    driveStick.x().onTrue(
+        Commands.parallel(
+            elevator.extendCommand(2),
+            coralWrist.highBranchesCommand()));
+    // L4
+    driveStick.y().onTrue(
+        Commands.parallel(
+            elevator.extendCommand(3),
+            coralWrist.highBranchesCommand()));
 
-    // Reset gyro button
-    driveStick.povUpLeft().onTrue(drivebase.getResetGyroCommand());
+    /* Algae buttons for testing */
+    // driveStick.rightTrigger().toggleOnTrue(algaeIntake.intakeCommand());
+    // driveStick.povUp().onTrue(algaeWrist.upCommand());
+    // driveStick.povDown().onTrue(algaeWrist.downCommand());
+
+    /* Reset gyro button */
+    driveStick.povUpLeft().onTrue(drivebase.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
