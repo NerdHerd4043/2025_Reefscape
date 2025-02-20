@@ -14,8 +14,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
+import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleArrayTopic;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -66,13 +69,12 @@ public class Drivebase extends SubsystemBase {
 
   private BooleanEntry fieldOrientedEntry;
 
-  final DoubleArraySubscriber botFieldPose;
-  final DoubleArrayTopic doubleArrayTopic;
+  private final DoubleArraySubscriber botFieldPose;
 
   /** Creates a new Drivebase. */
   public Drivebase() {
-    var inst = NetworkTableInstance.getDefault();
-    var table = inst.getTable("SmartDashboard");
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
     this.driveSpeedChooser = new SendableChooser<>();
@@ -95,14 +97,9 @@ public class Drivebase extends SubsystemBase {
         this.gyro.getRotation2d(),
         this.getModulePositions());
 
-    this.doubleArrayTopic;
-    this.botFieldPose = doubleArrayTopic
-        .subscribe(NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue")
-            .getDoubleArray(new double[0]));
-    // NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue").getDoubleArray(0);
-    this.botFieldPose.get(NetworkTableInstance.getDefault().getTable("limelight-one").getEntry("botpose_wpiblue")
-        .getDoubleArray(new double[0]));
-
+    NetworkTable LLTable = inst.getTable("limelight-one");
+    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("TBD");
+    this.botFieldPose = botPoseTopic.subscribe(new double[6]);
   }
 
   public double getFieldAngle() {
