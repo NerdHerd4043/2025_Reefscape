@@ -110,7 +110,7 @@ public class Drivebase extends SubsystemBase {
         this.getModulePositions());
 
     NetworkTable LLTable = inst.getTable("limelight-one");
-    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("TBD");
+    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_wpiblue");
     this.botFieldPose = botPoseTopic.subscribe(new double[6]);
 
     RobotConfig config;
@@ -244,5 +244,7 @@ public class Drivebase extends SubsystemBase {
     this.field.setRobotPose(this.getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
+
+    SmartDashboard.putNumberArray("Limelight Array", this.botFieldPose.get());
   }
 }
