@@ -274,6 +274,6 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]); // Probably roll
     SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]); // Probably pitch
     SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]); // Probably yaw
-    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]); // Probably latency
+    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[6]); // Probably latency
   }
 }
