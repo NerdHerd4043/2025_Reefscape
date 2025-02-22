@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import org.ejml.equation.IntegerSequence.Range;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -80,6 +82,8 @@ public class Drivebase extends SubsystemBase {
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
 
+  private SendableChooser<Double> inputValue = new SendableChooser<>();
+
   private BooleanEntry fieldOrientedEntry;
 
   private final DoubleArraySubscriber botFieldPose;
@@ -94,6 +98,8 @@ public class Drivebase extends SubsystemBase {
     this.driveSpeedChooser = new SendableChooser<>();
     this.fieldOriented = new SendableChooser<>();
 
+    this.inputValue = new SendableChooser<>();
+
     this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
     this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
     this.driveSpeedChooser.addOption("Half Speed", 0.5);
@@ -102,6 +108,13 @@ public class Drivebase extends SubsystemBase {
 
     this.fieldOriented.setDefaultOption("Field Oriented", true);
     this.fieldOriented.addOption("Robot Oriented", false);
+
+    // FIXME: Test
+    this.inputValue.setDefaultOption("Default", 0);
+    for(int i = 0; i < 1; i+0.04) {
+      // System.out.println(i);
+      this.inputValue.addOption(i, i);
+    }
 
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
