@@ -45,6 +45,7 @@ import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
+import frc.robot.util.LimelightUtil;
 
 public class Drivebase extends SubsystemBase {
 
@@ -242,18 +243,24 @@ public class Drivebase extends SubsystemBase {
     this.odometry.update(this.gyro.getRotation2d(), positions);
 
     // Everything below is unnecessary for running the robot
-    this.field.setRobotPose(this.getRobotPose());
+    // FIXME: Need to test (Does this field use meters and WPILib blue aliance
+    // origin?)
+    this.field.setRobotPose(LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray, this.gyro));
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
     this.botFieldPoseArray = this.botFieldPose.get();
 
-    SmartDashboard.putNumberArray("Limelight Array", this.botFieldPoseArray);
+    // SmartDashboard.putNumberArray("Limelight Array", this.botFieldPoseArray);
 
-    SmartDashboard.putNumber("Item 1", this.botFieldPoseArray[0]);
-    SmartDashboard.putNumber("Item 2", this.botFieldPoseArray[1]);
-    SmartDashboard.putNumber("Item 3", this.botFieldPoseArray[2]);
-    SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]);
-    SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]);
-    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]);
+    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]);
+    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]);
+
+    // FIXME: now that the Limelight's IMU mode is set to 2 when we start the robot
+    // code, we need to test the other values
+    SmartDashboard.putNumber("Item 3", this.botFieldPoseArray[2]); // Probably z
+    SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]); // Probably roll
+    SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]); // Probably pitch
+    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]); // Probably yaw
+    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]); // Probably latency
   }
 }

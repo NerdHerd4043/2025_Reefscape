@@ -17,6 +17,8 @@ import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 
+import frc.robot.util.LimelightHelpers;
+
 import cowlib.Util;
 
 public class RobotContainer {
@@ -43,6 +45,10 @@ public class RobotContainer {
             () -> scaleRotationAxis(driveStick.getRightX())));
 
     this.configureBindings();
+
+    LimelightHelpers.SetIMUMode("limelight-right", 2);
+    int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+    LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
   }
 
   // Used to create an area around the center of the joystick where the input is
