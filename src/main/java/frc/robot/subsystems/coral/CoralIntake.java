@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.coral;
 
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -19,6 +21,8 @@ import frc.robot.Constants;
 public class CoralIntake extends SubsystemBase {
   private final SparkMax intakeMotor = new SparkMax(Constants.CoralIntake.motorId, MotorType.kBrushless);
 
+  private Rev2mDistanceSensor distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
+
   /** Creates a new CoralIntake. */
   public CoralIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
@@ -28,6 +32,8 @@ public class CoralIntake extends SubsystemBase {
     motorConfig.inverted(true);
 
     this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    this.distanceSensor.setAutomaticMode(true);
   }
 
   public void runIntake(double intakeMotorSpeed) {
@@ -54,7 +60,12 @@ public class CoralIntake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // This method will be called once per scheduler run.
+    if (this.distanceSensor.isRangeValid() || true) {
+      SmartDashboard.putNumber("Distance Sensor", this.distanceSensor.getRange());
+    }
+
+    SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);
 
     SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
   }
