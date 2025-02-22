@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.List;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -83,7 +85,7 @@ public class Drivebase extends SubsystemBase {
   private BooleanEntry fieldOrientedEntry;
 
   private final DoubleArraySubscriber botFieldPose;
-  private double[] botFieldPoseArray;
+  private double[] botFieldPoseArray = new double[6];
 
   /** Creates a new Drivebase. */
   public Drivebase() {
@@ -107,6 +109,7 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
+    SmartDashboard.putData("Field", this.field);
 
     this.odometry = new SwerveDriveOdometry(
         this.kinematics,
@@ -180,7 +183,7 @@ public class Drivebase extends SubsystemBase {
   private void drive(ChassisSpeeds speeds) {
     SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity * this.getRobotSpeedRatio());
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity);
 
     this.frontLeft.drive(moduleStates[0]);
     this.frontRight.drive(moduleStates[1]);
@@ -189,7 +192,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double getMaxVelocity() {
-    return DriveConstants.maxVelocity;
+    return DriveConstants.maxVelocity * this.getRobotSpeedRatio();
   }
 
   public double getMaxAngularVelocity() {
@@ -236,6 +239,33 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
+  public Command getAlignCommand() {
+    // var fieldPose = LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray,
+    // this.gyro);
+    var finalRotation = Rotation2d.kZero;
+    var zeroPose = new Pose2d(0, 0, finalRotation);
+
+    this.resetPose(zeroPose);
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        zeroPose,
+        new Pose2d(0.5, 0, finalRotation));
+
+    PathConstraints constraints = new PathConstraints(
+        2.0, // Max Velocity
+        1.5, // Max Acceleration
+        270, // Max Angular Velocity
+        180 // Max Angular Acceleration
+    );
+
+    PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
+        new GoalEndState(0.0, finalRotation));
+
+    path.preventFlipping = true;
+
+    return AutoBuilder.followPath(path);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -244,25 +274,25 @@ public class Drivebase extends SubsystemBase {
 
     this.odometry.update(this.gyro.getRotation2d(), positions);
 
+    this.botFieldPoseArray = this.botFieldPose.get();
+
     // Everything below is unnecessary for running the robot
     // FIXME: Need to test (Does this field use meters and WPILib blue aliance
     // origin?)
     this.field.setRobotPose(LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray, this.gyro));
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
-    this.botFieldPoseArray = this.botFieldPose.get();
 
     // SmartDashboard.putNumberArray("Limelight Array", this.botFieldPoseArray);
 
-    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]);
-    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]);
+    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field Y Pose
+    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field Y Pose
 
     // FIXME: now that the Limelight's IMU mode is set to 2 when we start the robot
     // code, we need to test the other values
     SmartDashboard.putNumber("Item 3", this.botFieldPoseArray[2]); // Probably z
     SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]); // Probably roll
     SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]); // Probably pitch
-    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]); // Probably yaw
-    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[6]); // Probably latency
+    SmartDashboard.putNumber("Latency", this.botFieldPoseArray[5]); // Latency
   }
 }
