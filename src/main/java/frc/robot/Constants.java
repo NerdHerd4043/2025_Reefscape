@@ -147,6 +147,9 @@ public class Constants {
     public static final int motorId = 30;
     public static final double intakeSpeed = 0.8;
     public static final int currentLimit = 30;
+
+    public static final double distSensorLow = 1.4;
+    public static final double distSensorHigh = 15.7;
   }
 
   public static final class CoralWrist {

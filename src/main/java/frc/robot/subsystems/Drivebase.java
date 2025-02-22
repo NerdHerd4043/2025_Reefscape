@@ -82,6 +82,7 @@ public class Drivebase extends SubsystemBase {
   private BooleanEntry fieldOrientedEntry;
 
   private final DoubleArraySubscriber botFieldPose;
+  private double[] botFieldPoseArray;
 
   /** Creates a new Drivebase. */
   public Drivebase() {
@@ -109,8 +110,8 @@ public class Drivebase extends SubsystemBase {
         this.gyro.getRotation2d(),
         this.getModulePositions());
 
-    NetworkTable LLTable = inst.getTable("limelight-one");
-    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_wpiblue");
+    NetworkTable LLTable = inst.getTable("limelight-right");
+    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_orb_wpiblue");
     this.botFieldPose = botPoseTopic.subscribe(new double[6]);
 
     RobotConfig config;
@@ -244,7 +245,15 @@ public class Drivebase extends SubsystemBase {
     this.field.setRobotPose(this.getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
+    this.botFieldPoseArray = this.botFieldPose.get();
 
-    SmartDashboard.putNumberArray("Limelight Array", this.botFieldPose.get());
+    SmartDashboard.putNumberArray("Limelight Array", this.botFieldPoseArray);
+
+    SmartDashboard.putNumber("Item 1", this.botFieldPoseArray[0]);
+    SmartDashboard.putNumber("Item 2", this.botFieldPoseArray[1]);
+    SmartDashboard.putNumber("Item 3", this.botFieldPoseArray[2]);
+    SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]);
+    SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]);
+    SmartDashboard.putNumber("Item 6", this.botFieldPoseArray[5]);
   }
 }
