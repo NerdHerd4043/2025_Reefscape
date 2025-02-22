@@ -4,8 +4,6 @@
 
 package frc.robot.util;
 
-import java.util.Map;
-
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
