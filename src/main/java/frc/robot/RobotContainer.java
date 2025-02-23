@@ -19,6 +19,11 @@ import frc.robot.subsystems.coral.CoralWrist;
 
 import frc.robot.util.LimelightHelpers;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import cowlib.Util;
 
 public class RobotContainer {
@@ -134,10 +139,10 @@ public class RobotContainer {
     driveStick.rightTrigger().onTrue(drivebase.getAlignCommand());
 
     /* Reset gyro button */
-    driveStick.povUpLeft().onTrue(drivebase.resetGyroCommand());
+    driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return drivebase.getAlignCommand();
   }
 }

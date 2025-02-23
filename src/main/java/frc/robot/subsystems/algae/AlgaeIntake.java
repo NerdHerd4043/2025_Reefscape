@@ -55,6 +55,6 @@ public class AlgaeIntake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Algae Intake Amps", getAlgaeIntakeAmps());
+    // SmartDashboard.putNumber("Algae Intake Amps", getAlgaeIntakeAmps());
   }
 }

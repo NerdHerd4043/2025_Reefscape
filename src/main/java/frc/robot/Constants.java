@@ -28,7 +28,8 @@ public class Constants {
     // (https://www.swervedrivespecialties.com/products/mk4i-swerve-module)
     // L1: 1.0 / 8.14 ; L2: 1.0 / 6.75 ; L3: 1.0 / 6.12
     // ALSO CHANGE IN COWLIB.SWERVEMODULE!!!!!!!!!!!!!!!!!!!!!! <----------
-    public static final double driveReduction = 1.0 / 6.12;
+    public static final double driveGearing = 6.12;
+    public static final double driveReduction = 1.0 / driveGearing;
 
     // Get from website, divide by 60 since the number that the
     // website gives is in rotations per minute and we want
@@ -90,16 +91,16 @@ public class Constants {
     public static final class RobotConfigInfo {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
-          2.75, // FIXME: estimate more correctly
-          0.7, // FIXME: estimate more correctly
+          8, // FIXME: estimate more correctly
+          1, // FIXME: estimate more correctly
           DCMotor.getNEO(1),
-          driveReduction,
+          driveGearing,
           DriveConstants.currentLimit,
           1); // FIXME: what is the numMotors thingy? figure out again later
 
       public static final RobotConfig robotConfig = new RobotConfig(
-          66.68, // FIXME: estimate more correctly
-          3.682, // FIXME: estimate more correctly
+          65, // FIXME: estimate more correctly
+          25, // FIXME: estimate more correctly
           moduleConfig,
           ModuleLocations.frontLeft,
           ModuleLocations.frontRight,
@@ -225,7 +226,7 @@ public class Constants {
     }
 
     public static final class RotationPID {
-      public static final double p = 6;
+      public static final double p = 1;
       public static final double i = 0;
       public static final double d = 0;
     }

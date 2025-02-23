@@ -160,13 +160,15 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
+    // SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
 
-    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+    // SmartDashboard.putNumber("Setpoint",
+    // this.pidController.getSetpoint().position);
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitchPressed());
+    // SmartDashboard.putBoolean("Elevator Limit Switch",
+    // this.limitSwitchPressed());
 
-    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
-    SmartDashboard.putBoolean("Elevator Extended", this.extended);
+    // SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
+    // SmartDashboard.putBoolean("Elevator Extended", this.extended);
   }
 }

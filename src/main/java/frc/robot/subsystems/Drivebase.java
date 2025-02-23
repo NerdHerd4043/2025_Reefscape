@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.List;
@@ -113,7 +114,7 @@ public class Drivebase extends SubsystemBase {
 
     this.odometry = new SwerveDriveOdometry(
         this.kinematics,
-        this.gyro.getRotation2d(),
+        this.getRotation2d(),
         this.getModulePositions());
 
     NetworkTable LLTable = inst.getTable("limelight-right");
@@ -122,12 +123,12 @@ public class Drivebase extends SubsystemBase {
 
     RobotConfig config;
 
-    try {
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      e.printStackTrace();
-      config = Constants.DriveConstants.RobotConfigInfo.robotConfig;
-    }
+    // try {
+    // config = RobotConfig.fromGUISettings();
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    config = Constants.DriveConstants.RobotConfigInfo.robotConfig;
+    // }
 
     AutoBuilder.configure(
         this::getRobotPose,
@@ -151,6 +152,10 @@ public class Drivebase extends SubsystemBase {
 
   public double getFieldAngle() {
     return -this.gyro.getYaw();
+  }
+
+  public Rotation2d getRotation2d() {
+    return Rotation2d.fromDegrees(-this.getFieldAngle());
   }
 
   public void fieldOrientedDrive(double speedX, double speedY, double rot) {
@@ -228,7 +233,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void resetPose(Pose2d pose2d) {
-    this.odometry.resetPosition(this.gyro.getRotation2d(), this.getModulePositions(), pose2d);
+    this.odometry.resetPosition(this.getRotation2d(), this.getModulePositions(), pose2d);
   }
 
   public ChassisSpeeds getCurrentSpeeds() {
@@ -243,17 +248,16 @@ public class Drivebase extends SubsystemBase {
     // var fieldPose = LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray,
     // this.gyro);
     var finalRotation = Rotation2d.kZero;
-    var zeroPose = new Pose2d(0, 0, finalRotation);
-
-    this.resetPose(zeroPose);
+    var zeroPose = new Pose2d(2, 7, finalRotation);
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
-        new Pose2d(0.5, 0, finalRotation));
+        new Pose2d(2, 7.5, finalRotation),
+        new Pose2d(2.5, 7.5, finalRotation));
 
     PathConstraints constraints = new PathConstraints(
-        2.0, // Max Velocity
-        1.5, // Max Acceleration
+        8, // Max Velocity
+        3, // Max Acceleration
         270, // Max Angular Velocity
         180 // Max Angular Acceleration
     );
@@ -263,7 +267,7 @@ public class Drivebase extends SubsystemBase {
 
     path.preventFlipping = true;
 
-    return AutoBuilder.followPath(path);
+    return Commands.sequence(this.runOnce(() -> this.resetPose(zeroPose)), AutoBuilder.followPath(path));
   }
 
   @Override
@@ -272,14 +276,16 @@ public class Drivebase extends SubsystemBase {
 
     var positions = this.getModulePositions();
 
-    this.odometry.update(this.gyro.getRotation2d(), positions);
+    this.odometry.update(this.getRotation2d(), positions);
 
     this.botFieldPoseArray = this.botFieldPose.get();
 
     // Everything below is unnecessary for running the robot
     // FIXME: Need to test (Does this field use meters and WPILib blue aliance
     // origin?)
-    this.field.setRobotPose(LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray, this.gyro));
+    this.field.setRobotPose(this.getRobotPose());
+
+    SmartDashboard.putNumber("Gyro", this.getRotation2d().getDegrees());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
 
