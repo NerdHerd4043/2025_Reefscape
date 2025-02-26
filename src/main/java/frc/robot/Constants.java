@@ -226,7 +226,7 @@ public class Constants {
     }
 
     public static final class RotationPID {
-      public static final double p = 1;
+      public static final double p = 0.1;
       public static final double i = 0;
       public static final double d = 0;
     }

@@ -247,7 +247,7 @@ public class Drivebase extends SubsystemBase {
   public Command getAlignCommand() {
     // var fieldPose = LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray,
     // this.gyro);
-    var finalRotation = Rotation2d.k180deg;
+    var finalRotation = Rotation2d.kZero;
     var zeroPose = new Pose2d(2, 7, new Rotation2d(90));
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(

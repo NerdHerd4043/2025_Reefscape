@@ -136,7 +136,7 @@ public class RobotContainer {
     // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Auto testing buttons */
-    driveStick.rightTrigger().onTrue(drivebase.getAlignCommand());
+    driveStick.start().onTrue(drivebase.getAlignCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
