@@ -151,11 +151,11 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double getFieldAngle() {
-    return -this.gyro.getYaw();
+    return -this.gyro.getAngle();
   }
 
   public Rotation2d getRotation2d() {
-    return Rotation2d.fromDegrees(-this.getFieldAngle());
+    return Rotation2d.fromDegrees(this.getFieldAngle());
   }
 
   public void fieldOrientedDrive(double speedX, double speedY, double rot) {
@@ -247,13 +247,12 @@ public class Drivebase extends SubsystemBase {
   public Command getAlignCommand() {
     // var fieldPose = LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray,
     // this.gyro);
-    var finalRotation = Rotation2d.kZero;
-    var zeroPose = new Pose2d(2, 7, finalRotation);
+    var finalRotation = Rotation2d.k180deg;
+    var zeroPose = new Pose2d(2, 7, new Rotation2d(90));
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
-        new Pose2d(2, 7.5, finalRotation),
-        new Pose2d(2.5, 7.5, finalRotation));
+        new Pose2d(4, 7, finalRotation));
 
     PathConstraints constraints = new PathConstraints(
         8, // Max Velocity
@@ -285,7 +284,7 @@ public class Drivebase extends SubsystemBase {
     // origin?)
     this.field.setRobotPose(this.getRobotPose());
 
-    SmartDashboard.putNumber("Gyro", this.getRotation2d().getDegrees());
+    SmartDashboard.putNumber("Get Angle", this.getFieldAngle());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
 
