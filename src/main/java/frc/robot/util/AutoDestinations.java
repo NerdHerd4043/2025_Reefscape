@@ -91,6 +91,10 @@ public class AutoDestinations {
   }
 
   public static Pose2d destinationPose(int tagID, ReefSide side, double sensorValue) {
+    // The .plus function does extra math behind the scenes (rotating the
+    // transforms) to add the Transform2ds to the Pose2d in a way that keeps the
+    // original field-relative format of the Pose2d but adds the target-realtive
+    // Transform2d correctly.
     return tagPosition(tagID)
         .plus(robotOffset)
         .plus(sideOffset(side))
