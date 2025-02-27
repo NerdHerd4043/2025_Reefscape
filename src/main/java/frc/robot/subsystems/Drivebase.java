@@ -36,7 +36,8 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-
+import com.revrobotics.Rev2mDistanceSensor;
+import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -70,11 +71,11 @@ public class Drivebase extends SubsystemBase {
       ModuleLocations.backLeft,
       ModuleLocations.backRight);
 
-  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-
   private SwerveDriveOdometry odometry;
 
   private Field2d field = new Field2d();
+
+  private BooleanEntry fieldOrientedEntry;
 
   // Limits speed of changes in direction
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
@@ -82,13 +83,13 @@ public class Drivebase extends SubsystemBase {
 
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
-
   private SendableChooser<Double> inputValue = new SendableChooser<>();
-
-  private BooleanEntry fieldOrientedEntry;
 
   private final DoubleArraySubscriber botFieldPose;
   private double[] botFieldPoseArray = new double[6];
+
+  private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  private final Rev2mDistanceSensor distanceSensor;
 
   /** Creates a new Drivebase. */
   public Drivebase() {
@@ -150,6 +151,9 @@ public class Drivebase extends SubsystemBase {
           }
         },
         this);
+
+    this.distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
+    this.distanceSensor.setAutomaticMode(true);
   }
 
   public double getFieldAngle() {
@@ -246,18 +250,25 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
-  public Command getAlignCommand(double offset) {
+  public double getDistanceSensorMeters() {
+    if (this.distanceSensor.isRangeValid()) {
+      return this.distanceSensor.GetRange() / 100;
+    } else {
+      return -1;
+    }
+  }
+
+  public Command getAlignCommand() {
 
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
         this.botFieldPoseArray,
         this.gyro);
-
     // Final Pose and Final Roation
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
         ReefSide.LEFT,
-        offset);
+        this.getDistanceSensorMeters());
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         fieldPose,
@@ -311,14 +322,16 @@ public class Drivebase extends SubsystemBase {
     // This method will be called once per scheduler run
 
     var positions = this.getModulePositions();
-
     this.odometry.update(this.getRotation2d(), positions);
+
+    if (this.distanceSensor.isRangeValid()) {
+      SmartDashboard.putNumber("Range Onboard", this.getDistanceSensorMeters());
+    }
+
+    // Everything below is unnecessary for running the robot
 
     this.botFieldPoseArray = this.botFieldPose.get();
 
-    // Everything below is unnecessary for running the robot
-    // FIXME: Need to test (Does this field use meters and WPILib blue aliance
-    // origin?)
     this.field.setRobotPose(this.getRobotPose());
 
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
