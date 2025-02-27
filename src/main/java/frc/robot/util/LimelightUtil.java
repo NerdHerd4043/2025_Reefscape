@@ -7,25 +7,28 @@ package frc.robot.util;
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
 public class LimelightUtil {
-    public int myID;
 
-    // FIXME: Necessary?
-    public int getID() {
-        RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("limelight-right");
+    public static int getID(String LL_Name) {
+        RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(LL_Name);
+        int[] ID = new int[1];
         for (RawFiducial fiducial : fiducials) {
-            this.myID = fiducial.id;
+            ID[0] = fiducial.id;
         }
-
-        return myID;
+        return ID[0];
     }
 
     // FIXME: Test
     public static Pose2d getRobotFieldPose2D(double[] limelightArray, AHRS gyro) {
-        Pose2d pose = new Pose2d(limelightArray[0], limelightArray[1], gyro.getRotation2d());
+        Pose2d pose = new Pose2d(
+                limelightArray[0], // x
+                limelightArray[1], // y
+                gyro.getRotation2d()); // Yaw
         return pose;
     }
 }

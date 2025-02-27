@@ -136,13 +136,13 @@ public class RobotContainer {
     // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Auto testing buttons */
-    driveStick.start().onTrue(drivebase.getAlignCommand());
+    driveStick.start().onTrue(drivebase.autoPathTestCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.getAlignCommand();
+    return drivebase.autoPathTestCommand();
   }
 }

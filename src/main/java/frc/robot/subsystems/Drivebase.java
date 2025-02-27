@@ -46,7 +46,9 @@ import frc.robot.Constants.DriveConstants.ModuleLocations;
 import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
+import frc.robot.util.AutoDestinations;
 import frc.robot.util.LimelightUtil;
+import frc.robot.util.AutoDestinations.ReefSide;
 
 public class Drivebase extends SubsystemBase {
 
@@ -244,11 +246,46 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
-  public Command getAlignCommand() {
-    // var fieldPose = LimelightUtil.getRobotFieldPose2D(this.botFieldPoseArray,
-    // this.gyro);
+  public Command getAlignCommand(double offset) {
+
+    // Initial Pose/Zero Pose
+    var fieldPose = LimelightUtil.getRobotFieldPose2D(
+        this.botFieldPoseArray,
+        this.gyro);
+
+    // Final Pose and Final Roation
+    var targetPose = AutoDestinations.destinationPose(
+        LimelightUtil.getID("limelight-right"),
+        ReefSide.LEFT,
+        offset);
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        fieldPose,
+        targetPose);
+
+    PathConstraints constraints = new PathConstraints(
+        8, // Max Velocity
+        3, // Max Acceleration
+        270, // Max Angular Velocity
+        180 // Max Angular Acceleration
+    );
+
+    PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null,
+        new GoalEndState(0.0, targetPose.getRotation()));
+
+    path.preventFlipping = true;
+
+    return Commands.sequence(
+        this.runOnce(() -> this.resetPose(fieldPose)),
+        AutoBuilder.followPath(path));
+  }
+
+  public Command autoPathTestCommand() {
     var finalRotation = Rotation2d.kZero;
-    var zeroPose = new Pose2d(2, 7, new Rotation2d(90));
+    var zeroPose = new Pose2d(2, 7, new Rotation2d(0));
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
@@ -284,20 +321,12 @@ public class Drivebase extends SubsystemBase {
     // origin?)
     this.field.setRobotPose(this.getRobotPose());
 
-    SmartDashboard.putNumber("Get Angle", this.getFieldAngle());
-
     SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
 
-    // SmartDashboard.putNumberArray("Limelight Array", this.botFieldPoseArray);
+    SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
 
     SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field Y Pose
     SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field Y Pose
-
-    // FIXME: now that the Limelight's IMU mode is set to 2 when we start the robot
-    // code, we need to test the other values
-    SmartDashboard.putNumber("Item 3", this.botFieldPoseArray[2]); // Probably z
-    SmartDashboard.putNumber("Item 4", this.botFieldPoseArray[3]); // Probably roll
-    SmartDashboard.putNumber("Item 5", this.botFieldPoseArray[4]); // Probably pitch
-    SmartDashboard.putNumber("Latency", this.botFieldPoseArray[5]); // Latency
+    SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
   }
 }
