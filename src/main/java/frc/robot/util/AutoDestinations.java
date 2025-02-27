@@ -53,7 +53,7 @@ public class AutoDestinations {
   // 0.451 ~half robot width in meters
   private static final Transform2d robotOffset = new Transform2d(
       // X offset
-      // normal axis (perpendicular) of the tag
+      // normal axis of the tag
       0.451,
       // Y offset
       // positive is left when facing in the direction of the fiducial's normal
@@ -67,7 +67,8 @@ public class AutoDestinations {
   private static Transform2d calculateSensorTransform(double sensorValue) {
     return new Transform2d(
         0,
-        cowlib.Util.mapDouble(sensorValue, // Scales the sensor value to match the robot's offset movement
+        // Scales the sensor value to match the robot's offset range
+        cowlib.Util.mapDouble(sensorValue,
             sensorLowerBound, sensorUpperBound,
             offsetLowerBound, offsetUpperBound),
         Rotation2d.kZero);

@@ -22,6 +22,8 @@ public class LimelightUtil {
     }
 
     // FIXME: Test
+    // Constructs the robot's field location as a Pose2d using information from the
+    // aquired limelight position array.
     public static Pose2d getRobotFieldPose2D(double[] limelightArray, AHRS gyro) {
         Pose2d pose = new Pose2d(
                 limelightArray[0], // x

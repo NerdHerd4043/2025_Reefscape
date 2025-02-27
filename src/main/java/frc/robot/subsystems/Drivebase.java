@@ -81,11 +81,21 @@ public class Drivebase extends SubsystemBase {
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
+  // Creates Sendables on the dashboard that can be interacted with to affect the
+  // robot without pushing new code. These ones end up being used for scaling the
+  // robot's drive speed and choosing between field and robot oriented drive.
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
-  private SendableChooser<Double> inputValue = new SendableChooser<>();
 
+  // The Subscriber "subscribes" to a piece of information, allowing the
+  // information to be recieved and updated. Source:
+  // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
   private final DoubleArraySubscriber botFieldPose;
+  // This double array is used later to hold information we get from the
+  // subscriber. Limelight documentation (as of now) doesn't use a subscriber, but
+  // our subscriber is getting the same values that the `botpose_wpiblue` gets,
+  // and those values are best stored in a double array. Source:
+  // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#apriltag-and-3d-data
   private double[] botFieldPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
@@ -97,22 +107,30 @@ public class Drivebase extends SubsystemBase {
     NetworkTable table = inst.getTable("SmartDashboard");
     this.fieldOrientedEntry = table.getBooleanTopic("Field Oriented").getEntry(true);
 
+    // Initializes the Sendables
     this.driveSpeedChooser = new SendableChooser<>();
     this.fieldOriented = new SendableChooser<>();
 
-    this.inputValue = new SendableChooser<>();
-
+    // Sets the default value of the drive speed ratio. Without this, the robot
+    // won't move because it has not value to use to calculate its speed.
     this.driveSpeedChooser.setDefaultOption("Full Speed", 1.0);
+    // Adds additional options for the drive speed ratio.
     this.driveSpeedChooser.addOption("Three-Quarter Speed", 0.75);
     this.driveSpeedChooser.addOption("Half Speed", 0.5);
     this.driveSpeedChooser.addOption("Quarter Speed", 0.25);
     this.driveSpeedChooser.addOption("No Speed", 0.0);
 
+    // Sets the default drive to Field Oriented. Without a default here, the robot
+    // will not enable correctly.
     this.fieldOriented.setDefaultOption("Field Oriented", true);
+    // Adds Robot Oriented as an option.
     this.fieldOriented.addOption("Robot Oriented", false);
 
+    // Putting Sendables on the dashboard so they can be used.
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
+
+    // Putting the field on the dashboard
     SmartDashboard.putData("Field", this.field);
 
     this.odometry = new SwerveDriveOdometry(
@@ -120,18 +138,15 @@ public class Drivebase extends SubsystemBase {
         this.getRotation2d(),
         this.getModulePositions());
 
+    // Getting the Limelight's field position array from network tables.
     NetworkTable LLTable = inst.getTable("limelight-right");
     DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_orb_wpiblue");
     this.botFieldPose = botPoseTopic.subscribe(new double[6]);
 
+    // Setting up auto capabilities
     RobotConfig config;
 
-    // try {
-    // config = RobotConfig.fromGUISettings();
-    // } catch (Exception e) {
-    // e.printStackTrace();
     config = Constants.DriveConstants.RobotConfigInfo.robotConfig;
-    // }
 
     AutoBuilder.configure(
         this::getRobotPose,
@@ -152,6 +167,7 @@ public class Drivebase extends SubsystemBase {
         },
         this);
 
+    // Initializing distance sensor
     this.distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
     this.distanceSensor.setAutomaticMode(true);
   }
@@ -230,6 +246,8 @@ public class Drivebase extends SubsystemBase {
     return positions;
   }
 
+  // Gets the currently selected ratio for the speed, as chosen on the driver
+  // station dashboard.
   public double getRobotSpeedRatio() {
     return this.driveSpeedChooser.getSelected();
   }
@@ -250,25 +268,34 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
-  public double getDistanceSensorMeters() {
+  // Reading from the distance sensor that's physically located in the coral
+  // intake.
+  public double getDistanceSensorRange() {
     if (this.distanceSensor.isRangeValid()) {
-      return this.distanceSensor.GetRange() / 100;
+      return this.distanceSensor.GetRange();
     } else {
       return -1;
     }
   }
 
+  // Command to drive from the robot's current position (found by the Limelights)
+  // to the robot's target position (calculated using the information given to
+  // `AutoDestinations.getRobotFieldPose2D()`)
   public Command getAlignCommand() {
 
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
         this.botFieldPoseArray,
         this.gyro);
-    // Final Pose and Final Roation
+
+    // Final Pose
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
         ReefSide.LEFT,
-        this.getDistanceSensorMeters());
+        this.getDistanceSensorRange());
+
+    // Final rotation should match the final position's rotation
+    var finalRotation = targetPose.getRotation();
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         fieldPose,
@@ -285,7 +312,7 @@ public class Drivebase extends SubsystemBase {
         waypoints,
         constraints,
         null,
-        new GoalEndState(0.0, targetPose.getRotation()));
+        new GoalEndState(0.0, finalRotation));
 
     path.preventFlipping = true;
 
@@ -294,6 +321,7 @@ public class Drivebase extends SubsystemBase {
         AutoBuilder.followPath(path));
   }
 
+  // Only for testing now
   public Command autoPathTestCommand() {
     var finalRotation = Rotation2d.kZero;
     var zeroPose = new Pose2d(2, 7, new Rotation2d(0));
@@ -319,27 +347,30 @@ public class Drivebase extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    /* This method will be called once per scheduler run */
 
+    // Updating odometry
     var positions = this.getModulePositions();
     this.odometry.update(this.getRotation2d(), positions);
 
-    if (this.distanceSensor.isRangeValid()) {
-      SmartDashboard.putNumber("Range Onboard", this.getDistanceSensorMeters());
-    }
+    // Update the double array storing the field pose by getting the values from the
+    // Subscriber.
+    this.botFieldPoseArray = this.botFieldPose.get();
 
     // Everything below is unnecessary for running the robot
 
-    this.botFieldPoseArray = this.botFieldPose.get();
+    this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
 
-    this.field.setRobotPose(this.getRobotPose());
-
-    SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio());
+    SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio()); // Displays speed ratio (not interactable)
 
     SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
 
     SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field Y Pose
     SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field Y Pose
     SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
+
+    if (this.distanceSensor.isRangeValid()) {
+      SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
+    }
   }
 }

@@ -88,6 +88,7 @@ public class Constants {
       public static final Translation2d backRight = new Translation2d(-moduleLocationLength, -moduleLocationLength);
     }
 
+    // This replaces the config in the PathPlanner app GUI
     public static final class RobotConfigInfo {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
@@ -100,12 +101,26 @@ public class Constants {
 
       public static final RobotConfig robotConfig = new RobotConfig(
           65, // FIXME: estimate more correctly
-          25, // FIXME: estimate more correctly
+          25, // Equation: Mass * radius^2 FIXME: estimate more correctly
           moduleConfig,
           ModuleLocations.frontLeft,
           ModuleLocations.frontRight,
           ModuleLocations.backLeft,
           ModuleLocations.backRight);
+    }
+  }
+
+  public static final class PathPlannerConstants {
+    public static final class TranslationPID {
+      public static final double p = 5;
+      public static final double i = 0;
+      public static final double d = 0;
+    }
+
+    public static final class RotationPID {
+      public static final double p = 0.1;
+      public static final double i = 0;
+      public static final double d = 0;
     }
   }
 
@@ -194,16 +209,21 @@ public class Constants {
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
 
-    public static final double maxElevatorHeight = 134.49; // This is an encoder value
+    // This is an encoder value found by manually raising the elevator to max height
+    // after it was zeroed at the bottom and while the encoder value was put on the
+    // dashboard.
+    public static final double maxElevatorHeight = 134.49;
 
     public static final double[] elevatorHeights = {
-        0.0, // L1 / Colapse
+        0.0, // L1 and Colapse
         0.0, // L2 (we don't use this, it's a placeholder)
         63, // L3
         maxElevatorHeight * 0.99 // L4
     };
 
     // FIXME: Fine-tune
+    // Tuned manually. Practice here (different than the arm):
+    // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class PIDValuesE {
       public static final double p = 1;
       public static final double i = 0;
@@ -211,6 +231,8 @@ public class Constants {
     }
 
     // FIXME: Fine-tune
+    // Tuned manually. Practice here (different than the arm):
+    // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class FeedForwardValues {
       public static final double kS = 0;
       public static final double kG = 0.33;
@@ -218,17 +240,4 @@ public class Constants {
     }
   }
 
-  public static final class PathPlannerConstants {
-    public static final class TranslationPID {
-      public static final double p = 5;
-      public static final double i = 0;
-      public static final double d = 0;
-    }
-
-    public static final class RotationPID {
-      public static final double p = 0.1;
-      public static final double i = 0;
-      public static final double d = 0;
-    }
-  }
 }

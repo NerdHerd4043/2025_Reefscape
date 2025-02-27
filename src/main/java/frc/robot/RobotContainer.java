@@ -51,6 +51,7 @@ public class RobotContainer {
 
     this.configureBindings();
 
+    // Limits which IDs of April Tags the Limelight is able to target.
     LimelightHelpers.SetIMUMode("limelight-right", 2);
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
@@ -74,6 +75,7 @@ public class RobotContainer {
 
     Util.square2DVector(xy);
 
+    // Scales the max drive speed when the elevator is enabled.
     var scaling = drivebase.getMaxVelocity() * this.getElevatorSpeedRatio();
     xy[0] *= scaling;
     xy[1] *= scaling;
@@ -81,6 +83,7 @@ public class RobotContainer {
     return xy;
   }
 
+  // Used to scale the drive speed when the elevator is enabled.
   private double getElevatorSpeedRatio() {
     if (elevator.elevatorExtended()) {
       return 0.5;
