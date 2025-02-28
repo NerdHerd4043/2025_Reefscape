@@ -28,10 +28,6 @@ import frc.robot.Constants.Climber.ClimberPositionsC;
 
 @Logged
 public class Climber extends SubsystemBase {
-
-
-  
-
   @NotLogged
   private final SparkMax wristMotor = new SparkMax(Constants.Climber.motorId, MotorType.kBrushless);
 
