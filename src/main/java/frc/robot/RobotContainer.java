@@ -16,6 +16,8 @@ import frc.robot.subsystems.algae.AlgaeIntake;
 import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
+import frc.robot.subsystems.Climber;
+
 
 import frc.robot.util.LimelightHelpers;
 
@@ -36,6 +38,8 @@ public class RobotContainer {
 
   private static final CoralWrist coralWrist = new CoralWrist();
   private static final CoralIntake coralIntake = new CoralIntake();
+
+  private static final Climber climber = new Climber();
 
   // private static final AlgaeWrist algaeWrist = new AlgaeWrist();
   // private static final AlgaeIntake algaeIntake = new AlgaeIntake();
