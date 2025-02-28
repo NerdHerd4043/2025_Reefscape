@@ -100,6 +100,14 @@ public class RobotContainer {
     return Math.copySign(input * input, input);
   }
 
+  public void resetGyro() {
+    drivebase.resetGyroCommand();
+  }
+
+  public void resetCoralPID() {
+    coralWrist.resetPIDCommand();
+  }
+
   private void configureBindings() {
     /* Intake/Output buttons */
     // Intake

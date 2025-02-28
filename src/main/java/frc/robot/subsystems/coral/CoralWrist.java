@@ -20,6 +20,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralWrist.PIDValuesC;
@@ -55,7 +56,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   private void updatePID() {
-    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+    this.wristMotor.setVoltage(pidController.calculate(this.getEncoderRadians()));
   }
 
   @NotLogged
@@ -102,6 +103,14 @@ public class CoralWrist extends SubsystemBase {
   private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0.0, WristPositionsC.upper));
+  }
+
+  public void resetPID() {
+    this.pidController.reset(this.getEncoderRadians());
+  }
+
+  public Command resetPIDCommand() {
+    return Commands.runOnce(() -> this.resetPID());
   }
 
   @Override
