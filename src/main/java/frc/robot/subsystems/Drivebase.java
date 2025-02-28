@@ -170,6 +170,8 @@ public class Drivebase extends SubsystemBase {
     // Initializing distance sensor
     this.distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
     this.distanceSensor.setAutomaticMode(true);
+
+    this.gyro.reset();
   }
 
   public double getFieldAngle() {

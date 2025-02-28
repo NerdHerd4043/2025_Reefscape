@@ -104,8 +104,8 @@ public class RobotContainer {
     drivebase.resetGyroCommand();
   }
 
-  public void resetCoralPID() {
-    coralWrist.resetPIDCommand();
+  public Command resetCoralPID() {
+    return coralWrist.resetPIDCommand();
   }
 
   private void configureBindings() {
