@@ -203,9 +203,9 @@ public class Constants {
 
   //todo: give climber actual values
   public static final class Climber {
-    public static final int motorId = 31;
-    public static final int encoderID = 32;
-    public static final int currentLimit = 30;
+    public static final int motorId = 60;
+    public static final int encoderID = 61;
+    public static final int currentLimit = 40;
 
     public static final double maxClimberRotation = 1.23;
 
