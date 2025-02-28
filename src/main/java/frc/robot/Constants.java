@@ -227,7 +227,8 @@ public class Constants {
     public static final class ClimberPositionsC {
       public static final double lower = 0;
       public static final double upper = 1.23;
-
+      public static final double upPos = 0.43;
+      public static final double downPos = 0;
     }
   }
 

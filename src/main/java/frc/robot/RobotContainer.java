@@ -111,6 +111,7 @@ public class RobotContainer {
         Commands.parallel(
             elevator.collapseCommand(),
             coralIntake.intakeCommand(),
+            climber.stationCommand(),
             coralWrist.stationCommand()));
     // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
@@ -123,7 +124,10 @@ public class RobotContainer {
     driveStick.b().whileTrue(
         Commands.parallel(
             elevator.collapseCommand(),
+            climber.stationCommand(),
+
             coralWrist.stationCommand()));
+            
     // L2
     driveStick.a().onTrue(coralWrist.L2BranchCommand());
     // L3

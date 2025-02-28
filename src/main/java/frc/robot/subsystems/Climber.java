@@ -23,10 +23,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Climber.PIDValuesC;
+import frc.robot.Constants.CoralWrist.WristPositionsC;
 import frc.robot.Constants.Climber.ClimberPositionsC;
 
 @Logged
 public class Climber extends SubsystemBase {
+
+
+  
+
   @NotLogged
   private final SparkMax wristMotor = new SparkMax(Constants.Climber.motorId, MotorType.kBrushless);
 
@@ -61,6 +66,30 @@ public class Climber extends SubsystemBase {
   @NotLogged
   public TrapezoidProfile.State getSetpoint() {
     return this.pidController.getSetpoint();
+  }
+
+  public Command stationCommand() {
+    return this.runOnce(this::station);
+  }
+
+  public Command highPosCommand() {
+    return this.runOnce(this::setHighPos);
+  }
+
+  public Command highLowCommand() {
+    return this.runOnce(this::setLowPos);
+  }
+
+  public void station() {
+    this.setGoal(ClimberPositionsC.downPos);
+  }
+
+  public void setHighPos() {
+    this.setGoal(ClimberPositionsC.upPos);
+  }
+
+  public void setLowPos() {
+    this.setGoal(ClimberPositionsC.downPos);
   }
 
   public void setTarget(double target) {
