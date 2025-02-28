@@ -210,7 +210,8 @@ public class Drivebase extends SubsystemBase {
   private void drive(ChassisSpeeds speeds) {
     SwerveModuleState[] moduleStates = this.kinematics.toSwerveModuleStates(speeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, DriveConstants.maxVelocity);
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates,
+        DriveConstants.maxVelocity);
 
     this.frontLeft.drive(moduleStates[0]);
     this.frontRight.drive(moduleStates[1]);
@@ -328,10 +329,10 @@ public class Drivebase extends SubsystemBase {
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
-        new Pose2d(4, 7, finalRotation));
+        new Pose2d(3, 7, finalRotation));
 
     PathConstraints constraints = new PathConstraints(
-        8, // Max Velocity
+        7, // Max Velocity
         3, // Max Acceleration
         270, // Max Angular Velocity
         180 // Max Angular Acceleration

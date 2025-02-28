@@ -70,8 +70,8 @@ public class RobotContainer {
   private double[] getScaledXY() {
     double[] xy = new double[2];
 
-    xy[0] = deadband(driveStick.getLeftY(), DriveConstants.deadband);
-    xy[1] = deadband(driveStick.getLeftX(), DriveConstants.deadband);
+    xy[0] = deadband(-driveStick.getLeftY(), DriveConstants.deadband);
+    xy[1] = deadband(-driveStick.getLeftX(), DriveConstants.deadband);
 
     Util.square2DVector(xy);
 
@@ -93,7 +93,7 @@ public class RobotContainer {
   }
 
   private double scaleRotationAxis(double input) {
-    return this.deadband(this.squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * 0.6;
+    return this.deadband(this.squared(input), DriveConstants.deadband) * drivebase.getMaxAngularVelocity() * -0.6;
   }
 
   private double squared(double input) {

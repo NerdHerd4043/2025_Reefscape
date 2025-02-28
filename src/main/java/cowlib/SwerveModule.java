@@ -99,10 +99,10 @@ public class SwerveModule {
   }
 
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(-this.speedEncoder.getPosition(), this.getRotation());
+    return new SwerveModulePosition(this.speedEncoder.getPosition(), this.getRotation());
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(-this.speedEncoder.getVelocity(), this.getRotation());
+    return new SwerveModuleState(this.speedEncoder.getVelocity(), this.getRotation());
   }
 }

@@ -61,10 +61,10 @@ public class Constants {
     // Creates SwerveModules for use in Drivebase. Sets IDs for the motors and
     // encoder of each module, as well as direction of drive.
     public static final class SwerveModules {
-      public static final SwerveModuleConfig frontLeft = new SwerveModuleConfig(1, 11, 21, false);
-      public static final SwerveModuleConfig frontRight = new SwerveModuleConfig(2, 12, 22, false);
-      public static final SwerveModuleConfig backLeft = new SwerveModuleConfig(3, 13, 23, false);
-      public static final SwerveModuleConfig backRight = new SwerveModuleConfig(4, 14, 24, false);
+      public static final SwerveModuleConfig frontLeft = new SwerveModuleConfig(1, 11, 21, true);
+      public static final SwerveModuleConfig frontRight = new SwerveModuleConfig(2, 12, 22, true);
+      public static final SwerveModuleConfig backLeft = new SwerveModuleConfig(3, 13, 23, true);
+      public static final SwerveModuleConfig backRight = new SwerveModuleConfig(4, 14, 24, true);
     }
 
     public static final class ModuleLocations {
@@ -92,7 +92,7 @@ public class Constants {
     public static final class RobotConfigInfo {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
-          8, // FIXME: estimate more correctly
+          7,
           1, // FIXME: estimate more correctly
           DCMotor.getNEO(1),
           driveGearing,
@@ -100,8 +100,9 @@ public class Constants {
           1); // FIXME: what is the numMotors thingy? figure out again later
 
       public static final RobotConfig robotConfig = new RobotConfig(
-          65, // FIXME: estimate more correctly
-          25, // Equation: Mass * radius^2 FIXME: estimate more correctly
+          50.35,
+          // Equation: Mass * radius^2
+          25.000,
           moduleConfig,
           ModuleLocations.frontLeft,
           ModuleLocations.frontRight,
@@ -112,7 +113,7 @@ public class Constants {
 
   public static final class PathPlannerConstants {
     public static final class TranslationPID {
-      public static final double p = 5;
+      public static final double p = 6;
       public static final double i = 0;
       public static final double d = 0;
     }
