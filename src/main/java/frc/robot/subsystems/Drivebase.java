@@ -99,7 +99,7 @@ public class Drivebase extends SubsystemBase {
   private double[] botFieldPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
-  private double savedGyroYaw;
+  public double savedGyroYaw;
   private double savedAutoYaw;
   private final Rev2mDistanceSensor distanceSensor;
 
@@ -299,7 +299,7 @@ public class Drivebase extends SubsystemBase {
     Pose2d endPose = new Pose2d(
         this.odometry.getPoseMeters().getX(),
         this.odometry.getPoseMeters().getY(),
-        this.getRotation2d());
+        new Rotation2d(this.savedGyroYaw + this.getFieldAngle() - this.savedAutoYaw));
 
     return endPose;
   }
@@ -371,7 +371,9 @@ public class Drivebase extends SubsystemBase {
 
     path.preventFlipping = true;
 
-    return Commands.sequence(this.runOnce(() -> this.resetPose(zeroPose)), AutoBuilder.followPath(path));
+    return Commands.sequence(
+        this.runOnce(() -> this.resetPose(zeroPose)),
+        AutoBuilder.followPath(path));
   }
 
   @Override
