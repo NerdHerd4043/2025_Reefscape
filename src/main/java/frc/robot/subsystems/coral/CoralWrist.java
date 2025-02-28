@@ -110,7 +110,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public Command resetPIDCommand() {
-    return Commands.runOnce(() -> this.resetPID());
+    return Commands.runOnce(this::resetPID);
   }
 
   @Override

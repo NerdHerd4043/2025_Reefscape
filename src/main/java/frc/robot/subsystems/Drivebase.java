@@ -99,8 +99,12 @@ public class Drivebase extends SubsystemBase {
   private double[] botFieldPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
+  private double savedGyroYaw;
+  private double savedAutoYaw;
   private final Rev2mDistanceSensor distanceSensor;
 
+  //
+  //
   /** Creates a new Drivebase. */
   public Drivebase() {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -174,6 +178,8 @@ public class Drivebase extends SubsystemBase {
     this.gyro.reset();
   }
 
+  //
+  //
   public double getFieldAngle() {
     return -this.gyro.getAngle();
   }
@@ -281,6 +287,23 @@ public class Drivebase extends SubsystemBase {
     }
   }
 
+  private void saveGyroYaw() {
+    this.savedGyroYaw = this.getFieldAngle();
+  }
+
+  private void saveAutoYaw() {
+    this.savedAutoYaw = this.getFieldAngle();
+  }
+
+  private Pose2d endAutoPose() {
+    Pose2d endPose = new Pose2d(
+        this.odometry.getPoseMeters().getX(),
+        this.odometry.getPoseMeters().getY(),
+        this.getRotation2d());
+
+    return endPose;
+  }
+
   // Command to drive from the robot's current position (found by the Limelights)
   // to the robot's target position (calculated using the information given to
   // `AutoDestinations.getRobotFieldPose2D()`)
@@ -320,8 +343,11 @@ public class Drivebase extends SubsystemBase {
     path.preventFlipping = true;
 
     return Commands.sequence(
+        this.runOnce(this::saveGyroYaw),
         this.runOnce(() -> this.resetPose(fieldPose)),
-        AutoBuilder.followPath(path));
+        this.runOnce(this::saveAutoYaw),
+        AutoBuilder.followPath(path),
+        this.runOnce(() -> this.resetPose(this.endAutoPose())));
   }
 
   // Only for testing now
