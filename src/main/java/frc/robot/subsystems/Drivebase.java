@@ -184,10 +184,9 @@ public class Drivebase extends SubsystemBase {
     this.distanceSensor.setAutomaticMode(true);
 
     this.gyro.reset();
+    this.gyro.setAngleAdjustment(180);
 
     LimelightHelpers.SetIMUMode("limelight-right", 1);
-    LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
-    LimelightHelpers.SetIMUMode("limelight-right", 2);
   }
 
   //
@@ -331,7 +330,7 @@ public class Drivebase extends SubsystemBase {
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
-        ReefSide.LEFT,
+        ReefSide.RIGHT,
         1.4); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
@@ -352,17 +351,47 @@ public class Drivebase extends SubsystemBase {
     path.preventFlipping = true;
 
     return Commands.sequence(
-        this.runOnce(this::saveGyroYaw),
+      Commands.runOnce(() -> System.out.println(fieldPose.getX())),
+      Commands.runOnce(() -> System.out.println(fieldPose.getY())),
+      Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
         this.runOnce(() -> this.resetPose(fieldPose)),
-        this.runOnce(this::saveAutoYaw),
-        AutoBuilder.followPath(path),
-        this.runOnce(() -> this.resetPose(this.endAutoPose())));
+        AutoBuilder.followPath(path));
   }
 
-  public Command runAlignCommand() {
-    return this.getAlignCommand();
-  }
+  public Command staticScoreCommand() {
+    // Initial Pose/Zero Pose
+    var fieldPose = LimelightUtil.getRobotFieldPose2D(
+        this.botFieldPoseArray,
+        this.gyro);
 
+    if (fieldPose.getX() * fieldPose.getY() == 0) {
+      return Commands.runOnce(() -> System.out.println("No"));
+    }
+    // Final Pose
+    var targetPose = new Pose2d(5.6, 4.07 , fieldPose.getRotation()); // FIXME: Put in dist sensor
+
+    // Final rotation should match the final position's rotation
+    var finalRotation = targetPose.getRotation();
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        fieldPose,
+        targetPose);
+
+    PathConstraints constraints = this.constraints;
+
+    PathPlannerPath path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null,
+        new GoalEndState(0.0, finalRotation));
+
+    path.preventFlipping = true;
+
+    return Commands.sequence(
+        this.runOnce(() -> this.resetPose(fieldPose)),
+        AutoBuilder.followPath(path));
+  }
+  
   // Only for testing now
   public Command autoPathTestCommand() {
     var finalRotation = Rotation2d.kCW_90deg;
@@ -418,6 +447,8 @@ public class Drivebase extends SubsystemBase {
     // Subscriber.
     this.botFieldPoseArray = this.botFieldPose.get();
 
+    LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
+
     // Everything below is unnecessary for running the robot
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
@@ -432,8 +463,6 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
 
-    if (this.distanceSensor.isRangeValid()) {
-      SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
-    }
+    SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
   }
 }

@@ -146,7 +146,7 @@ public class RobotContainer {
     // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Auto testing buttons */
-    driveStick.start().onTrue(drivebase.runAlignCommand());
+    // driveStick.start().onTrue(Commands.runOnce(() -> drivebase.getAlignCommand().schedule()));
 
     driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
 
@@ -155,6 +155,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.runAlignCommand();
+    return drivebase.staticScoreCommand();
   }
 }
