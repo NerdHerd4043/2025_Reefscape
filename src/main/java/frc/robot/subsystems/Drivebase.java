@@ -104,6 +104,13 @@ public class Drivebase extends SubsystemBase {
   private double savedAutoYaw;
   private final Rev2mDistanceSensor distanceSensor;
 
+  private PathConstraints constraints = new PathConstraints(
+      7, // Max Velocity
+      3, // Max Acceleration
+      270, // Max Angular Velocity
+      180 // Max Angular Acceleration
+  );
+
   //
   //
   /** Creates a new Drivebase. */
@@ -180,6 +187,7 @@ public class Drivebase extends SubsystemBase {
 
     LimelightHelpers.SetIMUMode("limelight-right", 1);
     LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetIMUMode("limelight-right", 2);
   }
 
   //
@@ -312,17 +320,19 @@ public class Drivebase extends SubsystemBase {
   // to the robot's target position (calculated using the information given to
   // `AutoDestinations.getRobotFieldPose2D()`)
   public Command getAlignCommand() {
-
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
         this.botFieldPoseArray,
         this.gyro);
 
+    if (fieldPose.getX() * fieldPose.getY() == 0) {
+      return Commands.runOnce(() -> System.out.println("No"));
+    }
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
         ReefSide.LEFT,
-        this.getDistanceSensorRange());
+        1.4); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
     var finalRotation = targetPose.getRotation();
@@ -331,12 +341,7 @@ public class Drivebase extends SubsystemBase {
         fieldPose,
         targetPose);
 
-    PathConstraints constraints = new PathConstraints(
-        8, // Max Velocity
-        3, // Max Acceleration
-        270, // Max Angular Velocity
-        180 // Max Angular Acceleration
-    );
+    PathConstraints constraints = this.constraints;
 
     PathPlannerPath path = new PathPlannerPath(
         waypoints,
@@ -354,6 +359,10 @@ public class Drivebase extends SubsystemBase {
         this.runOnce(() -> this.resetPose(this.endAutoPose())));
   }
 
+  public Command runAlignCommand() {
+    return this.getAlignCommand();
+  }
+
   // Only for testing now
   public Command autoPathTestCommand() {
     var finalRotation = Rotation2d.kCW_90deg;
@@ -363,12 +372,7 @@ public class Drivebase extends SubsystemBase {
         zeroPose,
         new Pose2d(2.25, 7, finalRotation));
 
-    PathConstraints constraints = new PathConstraints(
-        7, // Max Velocity
-        3, // Max Acceleration
-        270, // Max Angular Velocity
-        180 // Max Angular Acceleration
-    );
+    PathConstraints constraints = this.constraints;
 
     PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
         new GoalEndState(0.0, finalRotation));

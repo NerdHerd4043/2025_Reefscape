@@ -52,7 +52,6 @@ public class RobotContainer {
     this.configureBindings();
 
     // Limits which IDs of April Tags the Limelight is able to target.
-    LimelightHelpers.SetIMUMode("limelight-right", 2);
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
   }
@@ -147,13 +146,13 @@ public class RobotContainer {
     // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Auto testing buttons */
-    driveStick.start().onTrue(drivebase.autoPathTestCommand());
+    driveStick.start().onTrue(drivebase.runAlignCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.autoPathTestCommand();
+    return drivebase.runAlignCommand();
   }
 }
