@@ -200,6 +200,39 @@ public class Constants {
     }
   }
 
+
+
+  //todo: give climber actual values
+  public static final class Climber {
+    public static final int motorId = 60;
+    public static final int encoderID = 61;
+    public static final int currentLimit = 40;
+
+    public static final double maxClimberRotation = 1.23;
+
+    // Limits the Climber PID Controller
+    public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+        3.2, 2.5);
+
+    // Tuned manually. Practice here:
+    // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
+    // FIXME: Fine-tune
+    public static final class PIDValuesC {
+      public static final double p = 2.8;
+      public static final double i = 1.4;
+      public static final double d = 0;
+    }
+
+    // Found manually. Put the encoder value on the driver station dashboard and
+    // move the encoder to the desired position, then record the value.
+    public static final class ClimberPositionsC {
+      public static final double lower = 0;
+      public static final double upper = 1.23;
+      public static final double upPos = 0.43;
+      public static final double downPos = 0;
+    }
+  }
+
   public static final class Elevator {
     public static final int currentLimit = 40;
 
