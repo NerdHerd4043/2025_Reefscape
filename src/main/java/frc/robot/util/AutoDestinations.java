@@ -33,7 +33,7 @@ public class AutoDestinations {
   private static final double sensorUpperBound = 15.7;
   private static final double offsetLowerBound = 0;
   // 0.451 ~half robot width in meters
-  private static final double offsetUpperBound = 0.3556;
+  private static final double offsetUpperBound = -0.3556;
 
   public enum ReefSide {
     LEFT,
@@ -54,10 +54,10 @@ public class AutoDestinations {
   private static final Transform2d robotOffset = new Transform2d(
       // X offset
       // normal axis of the tag
-      0.451,
+      0.27,
       // Y offset
       // positive is left when facing in the direction of the fiducial's normal
-      0,
+      -0.34,
       Rotation2d.k180deg // flip robot to face the tag
   );
 

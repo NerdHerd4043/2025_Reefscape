@@ -361,7 +361,7 @@ public class Drivebase extends SubsystemBase {
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
-        new Pose2d(3, 6.5, finalRotation));
+        new Pose2d(2.25, 7, finalRotation));
 
     PathConstraints constraints = new PathConstraints(
         7, // Max Velocity
@@ -404,6 +404,8 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field Y Pose
     SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field Y Pose
     SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
+
+    SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
 
     if (this.distanceSensor.isRangeValid()) {
       SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
