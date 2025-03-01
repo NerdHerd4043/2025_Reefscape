@@ -351,9 +351,9 @@ public class Drivebase extends SubsystemBase {
     path.preventFlipping = true;
 
     return Commands.sequence(
-      Commands.runOnce(() -> System.out.println(fieldPose.getX())),
-      Commands.runOnce(() -> System.out.println(fieldPose.getY())),
-      Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
+        Commands.runOnce(() -> System.out.println(fieldPose.getX())),
+        Commands.runOnce(() -> System.out.println(fieldPose.getY())),
+        Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
         this.runOnce(() -> this.resetPose(fieldPose)),
         AutoBuilder.followPath(path));
   }
@@ -368,7 +368,7 @@ public class Drivebase extends SubsystemBase {
       return Commands.runOnce(() -> System.out.println("No"));
     }
     // Final Pose
-    var targetPose = new Pose2d(5.6, 4.07 , fieldPose.getRotation()); // FIXME: Put in dist sensor
+    var targetPose = new Pose2d(5.6, 4.0, fieldPose.getRotation()); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
     var finalRotation = targetPose.getRotation();
@@ -391,7 +391,7 @@ public class Drivebase extends SubsystemBase {
         this.runOnce(() -> this.resetPose(fieldPose)),
         AutoBuilder.followPath(path));
   }
-  
+
   // Only for testing now
   public Command autoPathTestCommand() {
     var finalRotation = Rotation2d.kCW_90deg;
