@@ -112,7 +112,7 @@ public class RobotContainer {
     // Intake
     driveStick.leftBumper().whileTrue(
         Commands.parallel(
-            elevator.collapseCommand(),
+            elevator.extendCommand(1),
             coralIntake.intakeCommand(),
             coralWrist.stationCommand()));
     // Output
@@ -132,12 +132,12 @@ public class RobotContainer {
     // L3
     driveStick.x().onTrue(
         Commands.parallel(
-            elevator.extendCommand(2),
+            elevator.extendCommand(3),
             coralWrist.highBranchesCommand()));
     // L4
     driveStick.y().onTrue(
         Commands.parallel(
-            elevator.extendCommand(3),
+            elevator.extendCommand(4),
             coralWrist.highBranchesCommand()));
 
     /* Algae buttons for testing */
@@ -147,6 +147,8 @@ public class RobotContainer {
 
     /* Auto testing buttons */
     driveStick.start().onTrue(drivebase.runAlignCommand());
+
+    driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());

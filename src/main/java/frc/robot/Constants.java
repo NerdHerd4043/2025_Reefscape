@@ -217,7 +217,8 @@ public class Constants {
 
     public static final double[] elevatorHeights = {
         0.0, // L1 and Colapse
-        0.0, // L2 (we don't use this, it's a placeholder)
+        5,
+        0.0, // L2 (we don't usse this, it's a placeholder)
         63, // L3
         maxElevatorHeight * 0.99 // L4
     };
