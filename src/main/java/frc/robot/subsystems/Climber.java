@@ -92,6 +92,9 @@ public class Climber extends SubsystemBase {
     this.setGoal(target);
   }
 
+  public void setSpeed(double speed) {
+    this.wristMotor.set(speed);
+  }
 
   public double getEncoder() {
     return -this.encoder.getAbsolutePosition().getValueAsDouble();
@@ -111,13 +114,13 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    this.updatePID();
+    // this.updatePID();
 
     // SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
     // SmartDashboard.putNumber("Wrist Goal",
     // this.pidController.getGoal().position);
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
-    SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
+    // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
   }
 }

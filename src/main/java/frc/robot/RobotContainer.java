@@ -55,6 +55,10 @@ public class RobotContainer {
 
     this.configureBindings();
 
+    climber.setDefaultCommand(climber.run(() -> 
+      climber.setSpeed(
+        driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
+
     // Limits which IDs of April Tags the Limelight is able to target.
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
