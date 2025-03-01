@@ -48,6 +48,7 @@ import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 import frc.robot.util.AutoDestinations;
+import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
 import frc.robot.util.AutoDestinations.ReefSide;
 
@@ -176,6 +177,9 @@ public class Drivebase extends SubsystemBase {
     this.distanceSensor.setAutomaticMode(true);
 
     this.gyro.reset();
+
+    LimelightHelpers.SetIMUMode("limelight-right", 1);
+    LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
   }
 
   //
@@ -352,12 +356,12 @@ public class Drivebase extends SubsystemBase {
 
   // Only for testing now
   public Command autoPathTestCommand() {
-    var finalRotation = Rotation2d.kZero;
+    var finalRotation = Rotation2d.kCW_90deg;
     var zeroPose = new Pose2d(2, 7, new Rotation2d(0));
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
         zeroPose,
-        new Pose2d(3, 7, finalRotation));
+        new Pose2d(3, 6.5, finalRotation));
 
     PathConstraints constraints = new PathConstraints(
         7, // Max Velocity
@@ -373,7 +377,8 @@ public class Drivebase extends SubsystemBase {
 
     return Commands.sequence(
         this.runOnce(() -> this.resetPose(zeroPose)),
-        AutoBuilder.followPath(path));
+        AutoBuilder.followPath(path),
+        Commands.runOnce(() -> System.err.println("WOWWEEEEEEE")));
   }
 
   @Override
