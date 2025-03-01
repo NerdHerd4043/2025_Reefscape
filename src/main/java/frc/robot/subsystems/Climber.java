@@ -92,7 +92,6 @@ public class Climber extends SubsystemBase {
     this.setGoal(target);
   }
 
-
   public double getEncoder() {
     return -this.encoder.getAbsolutePosition().getValueAsDouble();
   }
@@ -101,7 +100,6 @@ public class Climber extends SubsystemBase {
     return this.getEncoder() * 2 * Math.PI;
   }
 
- 
   private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0.0, ClimberPositionsC.upper));
