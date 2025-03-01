@@ -33,7 +33,7 @@ public class AutoDestinations {
   private static final double sensorUpperBound = 15.7;
   private static final double offsetLowerBound = 0;
   // 0.451 ~half robot width in meters
-  private static final double offsetUpperBound = 0.451;
+  private static final double offsetUpperBound = 0.3556;
 
   public enum ReefSide {
     LEFT,
@@ -47,7 +47,7 @@ public class AutoDestinations {
       0,
       // Y offset
       // positive is right when facing the tag
-      -0.451,
+      -0.3175,
       Rotation2d.kZero);
 
   // 0.451 ~half robot width in meters
