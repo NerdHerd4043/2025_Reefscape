@@ -385,6 +385,27 @@ public class Drivebase extends SubsystemBase {
         Commands.runOnce(() -> System.err.println("WOWWEEEEEEE")));
   }
 
+  public Command autoBlueLeaveCommand() {
+    var innitPose = new Pose2d(0, 0, new Rotation2d(0));
+    var targetPose = new Pose2d(-2, 0, new Rotation2d(0));
+    var finalRotation = targetPose.getRotation();
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        innitPose,
+        targetPose);
+
+    PathConstraints constraints = this.constraints;
+
+    PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null,
+        new GoalEndState(0.0, finalRotation));
+
+    path.preventFlipping = true;
+
+    return Commands.sequence(
+        this.runOnce(() -> this.resetPose(innitPose)),
+        AutoBuilder.followPath(path)); // FIXME: add Field Oriented reset once it's tested
+  }
+
   @Override
   public void periodic() {
     /* This method will be called once per scheduler run */
