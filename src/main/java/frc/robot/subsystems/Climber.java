@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.coral;
+package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -20,19 +20,19 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.CoralWrist.PIDValuesC;
+import frc.robot.Constants.Climber.PIDValuesC;
 import frc.robot.Constants.CoralWrist.WristPositionsC;
+import frc.robot.Constants.Climber.ClimberPositionsC;
 
 @Logged
-public class CoralWrist extends SubsystemBase {
+public class Climber extends SubsystemBase {
   @NotLogged
-  private final SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
+  private final SparkMax wristMotor = new SparkMax(Constants.Climber.motorId, MotorType.kBrushless);
 
   @Logged
-  private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID
+  private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); // FIXME: Set ID
 
   // FIXME: Tune
   @Logged
@@ -40,13 +40,13 @@ public class CoralWrist extends SubsystemBase {
       PIDValuesC.p,
       PIDValuesC.i,
       PIDValuesC.d,
-      Constants.CoralWrist.constraints); // FIXME: Tune
+      Constants.Climber.constraints); // FIXME: Tune
 
-  /** Creates a new CoralWrist. */
-  public CoralWrist() {
+  /** Creates a new Climber. */
+  public Climber() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
 
-    motorConfig.smartCurrentLimit(Constants.CoralWrist.currentLimit);
+    motorConfig.smartCurrentLimit(Constants.Climber.currentLimit);
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(false);
 
@@ -56,7 +56,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   private void updatePID() {
-    this.wristMotor.setVoltage(pidController.calculate(this.getEncoderRadians()));
+    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged
@@ -64,20 +64,36 @@ public class CoralWrist extends SubsystemBase {
     return this.pidController.getSetpoint();
   }
 
+  public Command stationCommand() {
+    return this.runOnce(this::station);
+  }
+
+  public Command highPosCommand() {
+    return this.runOnce(this::setHighPos);
+  }
+
+  public Command highLowCommand() {
+    return this.runOnce(this::setLowPos);
+  }
+
+  public void station() {
+    this.setGoal(ClimberPositionsC.downPos);
+  }
+
+  public void setHighPos() {
+    this.setGoal(ClimberPositionsC.upPos);
+  }
+
+  public void setLowPos() {
+    this.setGoal(ClimberPositionsC.downPos);
+  }
+
   public void setTarget(double target) {
     this.setGoal(target);
   }
 
-  public void station() {
-    this.setGoal(WristPositionsC.stationPos);
-  }
-
-  public void L2Branch() {
-    this.setGoal(WristPositionsC.L2BranchPos);
-  }
-
-  public void highBranches() {
-    this.setGoal(WristPositionsC.highBranchesPos);
+  public void setSpeed(double speed) {
+    this.wristMotor.set(speed);
   }
 
   public double getEncoder() {
@@ -88,42 +104,22 @@ public class CoralWrist extends SubsystemBase {
     return this.getEncoder() * 2 * Math.PI;
   }
 
-  public Command L2BranchCommand() {
-    return this.runOnce(this::L2Branch);
-  }
-
-  public Command highBranchesCommand() {
-    return this.runOnce(this::highBranches);
-  }
-
-  public Command stationCommand() {
-    return this.runOnce(this::station);
-  }
-
   private void setGoal(double input) {
     this.pidController.setGoal(
-        MathUtil.clamp(input, 0.0, WristPositionsC.upper));
-  }
-
-  public void resetPID() {
-    this.pidController.reset(this.getEncoderRadians());
-  }
-
-  public Command resetPIDCommand() {
-    return Commands.runOnce(this::resetPID);
+        MathUtil.clamp(input, 0.0, ClimberPositionsC.upper));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    this.updatePID();
+    // this.updatePID();
 
     // SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
     // SmartDashboard.putNumber("Wrist Goal",
     // this.pidController.getGoal().position);
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
-    SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
+    // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
   }
 }

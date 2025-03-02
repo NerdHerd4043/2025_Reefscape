@@ -55,6 +55,12 @@ public class Elevator extends SubsystemBase {
       // The motion profile constraints
       Constants.Elevator.constraints);
 
+  final SparkMaxConfig leftMotorConfigBrake;
+  final SparkMaxConfig rightMotorConfigBrake;
+
+  final SparkMaxConfig leftMotorConfigCoast;
+  final SparkMaxConfig rightMotorConfigCoast;
+
   /** Creates a new Elevator. */
   public Elevator() {
     final SparkMaxConfig baseMotorConfig = new SparkMaxConfig();
@@ -62,22 +68,42 @@ public class Elevator extends SubsystemBase {
     baseMotorConfig.smartCurrentLimit(Constants.Elevator.currentLimit);
     baseMotorConfig.idleMode(IdleMode.kBrake);
 
-    final SparkMaxConfig leftMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
-    final SparkMaxConfig rightMotorConfig = new SparkMaxConfig().apply(baseMotorConfig);
+    leftMotorConfigBrake = new SparkMaxConfig().apply(baseMotorConfig);
+    rightMotorConfigBrake = new SparkMaxConfig().apply(baseMotorConfig);
 
-    leftMotorConfig.follow(Constants.Elevator.rightMotorId, true);
-    rightMotorConfig.inverted(true);
+    leftMotorConfigBrake.follow(Constants.Elevator.rightMotorId, true);
+    rightMotorConfigBrake.inverted(true);
 
-    rightMotorConfig.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+    rightMotorConfigBrake.limitSwitch.reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
-    this.leftMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    this.rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightMotorConfigCoast = new SparkMaxConfig().apply(rightMotorConfigBrake);
+    leftMotorConfigCoast = new SparkMaxConfig().apply(leftMotorConfigBrake);
+
+    rightMotorConfigCoast.idleMode(IdleMode.kCoast);
+    leftMotorConfigCoast.idleMode(IdleMode.kCoast);
+
+    this.leftMotor.configure(leftMotorConfigBrake, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.rightMotor.configure(rightMotorConfigBrake, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
 
     if (this.limitSwitchPressed()) {
       this.resetPosition();
     }
+  }
+
+  public Command coastModeCommand() {
+    return this.startEnd(() -> {
+      this.leftMotor.configure(leftMotorConfigCoast, ResetMode.kNoResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+      this.rightMotor.configure(rightMotorConfigCoast, ResetMode.kNoResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    }, () -> {
+      this.leftMotor.configure(leftMotorConfigBrake, ResetMode.kNoResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+      this.rightMotor.configure(rightMotorConfigBrake, ResetMode.kNoResetSafeParameters,
+          PersistMode.kNoPersistParameters);
+    }).ignoringDisable(true);
   }
 
   private void updatePID() {
@@ -160,13 +186,15 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
+    // SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
 
-    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+    // SmartDashboard.putNumber("Setpoint",
+    // this.pidController.getSetpoint().position);
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", this.limitSwitchPressed());
+    // SmartDashboard.putBoolean("Elevator Limit Switch",
+    // this.limitSwitchPressed());
 
-    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
-    SmartDashboard.putBoolean("Elevator Extended", this.extended);
+    // SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
+    // SmartDashboard.putBoolean("Elevator Extended", this.extended);
   }
 }

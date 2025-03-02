@@ -78,6 +78,7 @@ public class SwerveModule {
 
   public void drive(SwerveModuleState state) {
     state.optimize(new Rotation2d(getEncoderRadians()));
+    state.cosineScale(this.getRotation());
     this.drive(state.speedMetersPerSecond, state.angle.getDegrees());
   }
 
