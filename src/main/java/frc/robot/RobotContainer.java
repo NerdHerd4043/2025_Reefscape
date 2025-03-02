@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -17,7 +18,6 @@ import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 import frc.robot.subsystems.Climber;
-
 
 import frc.robot.util.LimelightHelpers;
 
@@ -55,13 +55,15 @@ public class RobotContainer {
 
     this.configureBindings();
 
-    climber.setDefaultCommand(climber.run(() -> 
-      climber.setSpeed(
+    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
 
     // Limits which IDs of April Tags the Limelight is able to target.
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
+
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   // Used to create an area around the center of the joystick where the input is
@@ -138,7 +140,7 @@ public class RobotContainer {
             climber.stationCommand(),
 
             coralWrist.stationCommand()));
-            
+
     // L2
     driveStick.a().onTrue(coralWrist.L2BranchCommand());
     // L3
@@ -158,15 +160,25 @@ public class RobotContainer {
     // driveStick.povDown().onTrue(algaeWrist.downCommand());
 
     /* Auto testing buttons */
-    // driveStick.start().onTrue(Commands.runOnce(() -> drivebase.getAlignCommand().schedule()));
+    // driveStick.start().onTrue(Commands.runOnce(() ->
+    // drivebase.getAlignCommand().schedule()));
 
     driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
+
+    driveStick.back().whileTrue(elevator.coastModeCommand());
   }
 
   public Command getAutonomousCommand() {
-    return drivebase.staticScoreCommand();
+    return Commands.sequence(
+        drivebase.resetFieldPose(),
+        autoChooser.getSelected(),
+        Commands.race(drivebase.run(() -> drivebase.defaultDrive(0, 0, 0, false)),
+            Commands.sequence(Commands.parallel(elevator.extendCommand(4), coralWrist.highBranchesCommand()),
+                Commands.waitSeconds(5),
+                coralIntake.outtakeCommand().withTimeout(2),
+                elevator.collapseCommand())));
   }
 }

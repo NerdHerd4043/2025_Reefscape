@@ -114,12 +114,12 @@ public class Constants {
   public static final class PathPlannerConstants {
     public static final class TranslationPID {
       public static final double p = 1.55;
-      public static final double i = 0.1; 
-      public static final double d = 1; 
+      public static final double i = 0.1;
+      public static final double d = 1;
     }
 
     public static final class RotationPID {
-      public static final double p = 1.5; 
+      public static final double p = 1.5;
       public static final double i = 0;
       public static final double d = 0;
     }
@@ -162,7 +162,7 @@ public class Constants {
 
   public static final class CoralIntake {
     public static final int motorId = 30;
-    public static final double intakeSpeed = 0.8;
+    public static final double intakeSpeed = 0.6;
     public static final int currentLimit = 30;
 
     public static final double distSensorLow = 1.4;
@@ -200,9 +200,7 @@ public class Constants {
     }
   }
 
-
-
-  //todo: give climber actual values
+  // todo: give climber actual values
   public static final class Climber {
     public static final int motorId = 60;
     public static final int encoderID = 61;

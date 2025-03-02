@@ -315,6 +315,15 @@ public class Drivebase extends SubsystemBase {
     return endPose;
   }
 
+  public Command resetFieldPose() {
+    return this.runOnce(() -> {
+      var fieldPose = LimelightUtil.getRobotFieldPose2D(
+          this.botFieldPoseArray,
+          this.gyro);
+      this.resetPose(fieldPose);
+    });
+  }
+
   // Command to drive from the robot's current position (found by the Limelights)
   // to the robot's target position (calculated using the information given to
   // `AutoDestinations.getRobotFieldPose2D()`)
@@ -368,7 +377,7 @@ public class Drivebase extends SubsystemBase {
       return Commands.runOnce(() -> System.out.println("No"));
     }
     // Final Pose
-    var targetPose = new Pose2d(5.6, 4.0, fieldPose.getRotation()); // FIXME: Put in dist sensor
+    var targetPose = new Pose2d(5.6, 4.07, fieldPose.getRotation()); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
     var finalRotation = targetPose.getRotation();
