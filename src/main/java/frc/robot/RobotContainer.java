@@ -142,7 +142,7 @@ public class RobotContainer {
             coralWrist.stationCommand()));
 
     // L2
-    driveStick.a().onTrue(coralWrist.L2BranchCommand());
+    driveStick.a().onTrue(Commands.parallel(elevator.collapseCommand(), coralWrist.L2BranchCommand()));
     // L3
     driveStick.x().onTrue(
         Commands.parallel(
@@ -174,10 +174,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return Commands.sequence(
         drivebase.resetFieldPose(),
-        autoChooser.getSelected(),
+        drivebase.getAlignCommand(),
         Commands.race(drivebase.run(() -> drivebase.defaultDrive(0, 0, 0, false)),
-            Commands.sequence(Commands.parallel(elevator.extendCommand(4), coralWrist.highBranchesCommand()),
-                Commands.waitSeconds(5),
+            Commands.sequence(Commands.parallel(elevator.extendCommand(4),
+                coralWrist.highBranchesCommand()),
+                Commands.waitSeconds(3),
                 coralIntake.outtakeCommand().withTimeout(2),
                 elevator.collapseCommand())));
   }

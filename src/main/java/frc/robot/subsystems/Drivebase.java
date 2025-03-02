@@ -339,7 +339,7 @@ public class Drivebase extends SubsystemBase {
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
-        ReefSide.RIGHT,
+        ReefSide.LEFT,
         1.4); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
@@ -377,7 +377,7 @@ public class Drivebase extends SubsystemBase {
       return Commands.runOnce(() -> System.out.println("No"));
     }
     // Final Pose
-    var targetPose = new Pose2d(5.6, 4.07, fieldPose.getRotation()); // FIXME: Put in dist sensor
+    var targetPose = new Pose2d(5.63, 3, fieldPose.getRotation()); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
     var finalRotation = targetPose.getRotation();

@@ -46,8 +46,8 @@ public class AutoDestinations {
       // positive is toward the tag
       0,
       // Y offset
-      // positive is right when facing the tag
-      -0.1,
+      // positive is right when facing toward the tag
+      -0.45,
       Rotation2d.kZero);
 
   // 0.451 ~half robot width in meters
@@ -98,7 +98,6 @@ public class AutoDestinations {
     // Transform2d correctly.
     return tagPosition(tagID)
         .plus(robotOffset)
-        .plus(sideOffset(side))
-        .plus(calculateSensorTransform(sensorValue));
+        .plus(sideOffset(side));
   }
 }
