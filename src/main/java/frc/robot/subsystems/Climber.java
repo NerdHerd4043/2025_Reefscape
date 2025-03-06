@@ -29,7 +29,8 @@ import frc.robot.Constants.Climber.ClimberPositionsC;
 @Logged
 public class Climber extends SubsystemBase {
   @NotLogged
-  private final SparkMax wristMotor = new SparkMax(Constants.Climber.motorId, MotorType.kBrushless);
+  private final SparkMax rightWristMotor = new SparkMax(Constants.Climber.rightMotorId, MotorType.kBrushless);
+  private final SparkMax leftWristMotor = new SparkMax(Constants.Climber.leftMotorId, MotorType.kBrushless);
 
   @Logged
   private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); // FIXME: Set ID
@@ -44,19 +45,27 @@ public class Climber extends SubsystemBase {
 
   /** Creates a new Climber. */
   public Climber() {
-    final SparkMaxConfig motorConfig = new SparkMaxConfig();
+    final SparkMaxConfig baseMotorConfig = new SparkMaxConfig();
+    final SparkMaxConfig rightMotorConfig = new SparkMaxConfig();
+    final SparkMaxConfig leftMotorConfig = new SparkMaxConfig();
 
-    motorConfig.smartCurrentLimit(Constants.Climber.currentLimit);
-    motorConfig.idleMode(IdleMode.kBrake);
-    motorConfig.inverted(false);
+    baseMotorConfig.smartCurrentLimit(Constants.Climber.currentLimit);
+    baseMotorConfig.idleMode(IdleMode.kBrake);
+    baseMotorConfig.inverted(false);
 
-    this.wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightMotorConfig.apply(baseMotorConfig);
+    leftMotorConfig.apply(baseMotorConfig);
+
+    leftMotorConfig.follow(Constants.Climber.rightMotorId, true);
+
+    this.rightWristMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.leftWristMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     this.pidController.setGoal(this.getEncoderRadians());
   }
 
   private void updatePID() {
-    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+    this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged
@@ -93,7 +102,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    this.wristMotor.set(speed);
+    this.rightWristMotor.set(speed);
   }
 
   public double getEncoder() {
