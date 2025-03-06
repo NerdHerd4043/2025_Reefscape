@@ -184,7 +184,6 @@ public class Drivebase extends SubsystemBase {
     this.distanceSensor.setAutomaticMode(true);
 
     this.gyro.reset();
-    this.gyro.setAngleAdjustment(180);
 
     LimelightHelpers.SetIMUMode("limelight-right", 1);
   }
@@ -363,6 +362,9 @@ public class Drivebase extends SubsystemBase {
         Commands.runOnce(() -> System.out.println(fieldPose.getX())),
         Commands.runOnce(() -> System.out.println(fieldPose.getY())),
         Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
+        Commands.runOnce(() -> System.out.println(targetPose.getX())),
+        Commands.runOnce(() -> System.out.println(targetPose.getY())),
+        Commands.runOnce(() -> System.out.println(targetPose.getRotation())),
         this.runOnce(() -> this.resetPose(fieldPose)),
         AutoBuilder.followPath(path));
   }
@@ -423,9 +425,9 @@ public class Drivebase extends SubsystemBase {
         Commands.runOnce(() -> System.err.println("WOWWEEEEEEE")));
   }
 
-  public Command autoBlueLeaveCommand() {
+  public Command autoLeaveCommand() {
     var innitPose = new Pose2d(0, 0, new Rotation2d(0));
-    var targetPose = new Pose2d(-2, 0, new Rotation2d(0));
+    var targetPose = new Pose2d(-2.5, 0, new Rotation2d(0));
     var finalRotation = targetPose.getRotation();
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
@@ -473,5 +475,8 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
 
     SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
+
+    SmartDashboard.putNumber("Yaw", this.getFieldAngle());
+
   }
 }

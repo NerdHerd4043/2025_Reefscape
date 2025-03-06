@@ -62,6 +62,34 @@ public class RobotContainer {
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
 
+    NamedCommands.registerCommand("L2 Score",
+        Commands.race(
+            Commands.parallel(
+                coralWrist.L2BranchCommand(),
+                Commands.waitSeconds(2))));
+
+    NamedCommands.registerCommand("L3 Score",
+        Commands.race(
+            Commands.sequence(
+                Commands.parallel(
+                    elevator.extendCommand(3),
+                    coralWrist.highBranchesCommand()),
+                Commands.waitSeconds(4),
+                coralIntake.outtakeCommand().withTimeout(2),
+                elevator.collapseCommand(),
+                coralWrist.stationCommand())));
+
+    NamedCommands.registerCommand("L4",
+        Commands.race(
+            Commands.sequence(
+                Commands.parallel(
+                    elevator.extendCommand(4),
+                    coralWrist.highBranchesCommand()),
+                Commands.waitSeconds(4),
+                coralIntake.outtakeCommand().withTimeout(2),
+                elevator.collapseCommand(),
+                coralWrist.stationCommand())));
+
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
@@ -138,7 +166,6 @@ public class RobotContainer {
         Commands.parallel(
             elevator.collapseCommand(),
             climber.stationCommand(),
-
             coralWrist.stationCommand()));
 
     // L2
@@ -154,11 +181,6 @@ public class RobotContainer {
             elevator.extendCommand(4),
             coralWrist.highBranchesCommand()));
 
-    /* Algae buttons for testing */
-    // driveStick.rightTrigger().toggleOnTrue(algaeIntake.intakeCommand());
-    // driveStick.povUp().onTrue(algaeWrist.upCommand());
-    // driveStick.povDown().onTrue(algaeWrist.downCommand());
-
     /* Auto testing buttons */
     // driveStick.start().onTrue(Commands.runOnce(() ->
     // drivebase.getAlignCommand().schedule()));
@@ -172,14 +194,17 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.sequence(
-        drivebase.resetFieldPose(),
-        drivebase.getAlignCommand(),
-        Commands.race(drivebase.run(() -> drivebase.defaultDrive(0, 0, 0, false)),
-            Commands.sequence(Commands.parallel(elevator.extendCommand(4),
-                coralWrist.highBranchesCommand()),
-                Commands.waitSeconds(3),
-                coralIntake.outtakeCommand().withTimeout(2),
-                elevator.collapseCommand())));
+    return this.autoChooser.getSelected();
+
+    // return Commands.sequence(
+    // drivebase.resetFieldPose(),
+    // this.autoChooser.getSelected(),
+    // Commands.race(drivebase.run(() -> drivebase.defaultDrive(0, 0, 0, false)),
+    // Commands.sequence(Commands.parallel(elevator.extendCommand(4),
+    // coralWrist.highBranchesCommand()),
+    // Commands.waitSeconds(3),
+    // coralIntake.outtakeCommand().withTimeout(2),
+    // elevator.collapseCommand(),
+    // coralWrist.stationCommand())));
   }
 }

@@ -202,7 +202,8 @@ public class Constants {
 
   // todo: give climber actual values
   public static final class Climber {
-    public static final int motorId = 60;
+    public static final int rightMotorId = 60;
+    public static final int leftMotorId = 62;
     public static final int encoderID = 61;
     public static final int currentLimit = 40;
 
@@ -248,8 +249,8 @@ public class Constants {
 
     public static final double[] elevatorHeights = {
         0.0, // L1 and Colapse
-        5,
-        0.0, // L2 (we don't usse this, it's a placeholder)
+        5, // Coral station height (Ours was about 36.5 in)
+        0.0, // L2 (we don't use this, it's a placeholder)
         63, // L3
         maxElevatorHeight * 0.99 // L4
     };
