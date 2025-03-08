@@ -163,6 +163,7 @@ public class Constants {
   public static final class CoralIntake {
     public static final int motorId = 30;
     public static final double intakeSpeed = 0.6;
+    public static final double outtakeSpeed = 0.5;
     public static final int currentLimit = 30;
 
     public static final double distSensorLow = 1.4;
