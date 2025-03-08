@@ -82,7 +82,7 @@ public class AutoDestinations {
         .orElseThrow();
   }
 
-  private static Transform2d sideOffset(ReefSide side) {
+  private static Transform2d sideOffset(AutoDestinations.ReefSide side) {
     switch (side) {
       case RIGHT:
         return reefRightTransform;
@@ -91,7 +91,7 @@ public class AutoDestinations {
     }
   }
 
-  public static Pose2d destinationPose(int tagID, ReefSide side, double sensorValue) {
+  public static Pose2d destinationPose(int tagID, AutoDestinations.ReefSide side, double sensorValue) {
     // The .plus function does extra math behind the scenes (rotating the
     // transforms) to add the Transform2ds to the Pose2d in a way that keeps the
     // original field-relative format of the Pose2d but adds the target-realtive

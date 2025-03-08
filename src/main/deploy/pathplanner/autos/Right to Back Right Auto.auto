@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Up Center"
+            "pathName": "Right to Back Right Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

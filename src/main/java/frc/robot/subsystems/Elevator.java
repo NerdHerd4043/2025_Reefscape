@@ -186,7 +186,7 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    // SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
+    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
 
     // SmartDashboard.putNumber("Setpoint",
     // this.pidController.getSetpoint().position);

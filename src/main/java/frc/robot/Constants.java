@@ -184,8 +184,8 @@ public class Constants {
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
     // FIXME: Fine-tune
     public static final class PIDValuesC {
-      public static final double p = 2.8;
-      public static final double i = 1.4;
+      public static final double p = 3.5;
+      public static final double i = 1;
       public static final double d = 0;
     }
 
@@ -237,7 +237,7 @@ public class Constants {
 
     // FIXME: find limits (fine-tune)
     public static final TrapezoidProfile.Constraints constraints = // I just lost the game
-        new TrapezoidProfile.Constraints(150, 100);
+        new TrapezoidProfile.Constraints(175, 150);
 
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
@@ -249,7 +249,7 @@ public class Constants {
 
     public static final double[] elevatorHeights = {
         0.0, // L1 and Colapse
-        5, // Coral station height (Ours was about 36.5 in)
+        3, // Coral station height (Ours was about 36.5 in)
         0.0, // L2 (we don't use this, it's a placeholder)
         63, // L3
         maxElevatorHeight * 0.99 // L4
@@ -259,7 +259,7 @@ public class Constants {
     // Tuned manually. Practice here (different than the arm):
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class PIDValuesE {
-      public static final double p = 1;
+      public static final double p = 1.5;
       public static final double i = 0;
       public static final double d = 0;
     }

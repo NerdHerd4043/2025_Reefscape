@@ -5,6 +5,7 @@
 package frc.robot.subsystems.algae;
 
 import com.revrobotics.spark.SparkMax;
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -56,5 +57,6 @@ public class AlgaeIntake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumber("Algae Intake Amps", getAlgaeIntakeAmps());
+
   }
 }

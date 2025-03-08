@@ -50,7 +50,7 @@ import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 import frc.robot.util.AutoDestinations;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
-import frc.robot.util.AutoDestinations.ReefSide;
+import frc.robot.util.AutoDestinations;
 
 public class Drivebase extends SubsystemBase {
 
@@ -102,7 +102,6 @@ public class Drivebase extends SubsystemBase {
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   public double savedGyroYaw;
   private double savedAutoYaw;
-  private final Rev2mDistanceSensor distanceSensor;
 
   private PathConstraints constraints = new PathConstraints(
       7, // Max Velocity
@@ -178,10 +177,6 @@ public class Drivebase extends SubsystemBase {
           }
         },
         this);
-
-    // Initializing distance sensor
-    this.distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
-    this.distanceSensor.setAutomaticMode(true);
 
     this.gyro.reset();
 
@@ -287,16 +282,6 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
-  // Reading from the distance sensor that's physically located in the coral
-  // intake.
-  public double getDistanceSensorRange() {
-    if (this.distanceSensor.isRangeValid()) {
-      return this.distanceSensor.GetRange();
-    } else {
-      return -1;
-    }
-  }
-
   private void saveGyroYaw() {
     this.savedGyroYaw = this.getFieldAngle();
   }
@@ -338,7 +323,7 @@ public class Drivebase extends SubsystemBase {
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
         LimelightUtil.getID("limelight-right"),
-        ReefSide.LEFT,
+        AutoDestinations.ReefSide.LEFT,
         1.4); // FIXME: Put in dist sensor
 
     // Final rotation should match the final position's rotation
@@ -473,8 +458,6 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
 
     SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
-
-    SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange()); // Distance Sensor
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 

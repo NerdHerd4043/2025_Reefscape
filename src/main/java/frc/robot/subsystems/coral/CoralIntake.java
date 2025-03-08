@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.coral;
 
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.Rev2mDistanceSensor;
 import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.revrobotics.spark.SparkMax;
@@ -21,7 +22,7 @@ import frc.robot.Constants;
 public class CoralIntake extends SubsystemBase {
   private final SparkMax intakeMotor = new SparkMax(Constants.CoralIntake.motorId, MotorType.kBrushless);
 
-  private Rev2mDistanceSensor distanceSensor = new Rev2mDistanceSensor(Port.kOnboard);
+  private static final TimeOfFlight distanceSensor = new TimeOfFlight(0);
 
   /** Creates a new CoralIntake. */
   public CoralIntake() {
@@ -32,8 +33,6 @@ public class CoralIntake extends SubsystemBase {
     motorConfig.inverted(true);
 
     this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    this.distanceSensor.setAutomaticMode(true);
   }
 
   public void runIntake(double intakeMotorSpeed) {
@@ -50,7 +49,7 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public Command outtakeCommand() {
-    return this.run(() -> this.runIntake(-Constants.CoralIntake.intakeSpeed))
+    return this.run(() -> this.runIntake(-Constants.CoralIntake.outtakeSpeed))
         .finallyDo(this::stop);
   }
 
@@ -58,15 +57,25 @@ public class CoralIntake extends SubsystemBase {
     return this.intakeMotor.getOutputCurrent();
   }
 
+  public double getDistanceSensorRange() {
+    if (this.distanceSensor.isRangeValid()) {
+      return this.distanceSensor.getRange();
+    } else {
+      return -1;
+    }
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run.
     if (this.distanceSensor.isRangeValid() || true) {
-      SmartDashboard.putNumber("Distance Sensor", this.distanceSensor.getRange());
+      SmartDashboard.putNumber("Bool Distance Sensor", this.getDistanceSensorRange());
     }
 
     SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);
 
     SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
+
+    SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
   }
 }

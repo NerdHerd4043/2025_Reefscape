@@ -81,7 +81,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public double getEncoder() {
-    return -this.encoder.getAbsolutePosition().getValueAsDouble();
+    return this.encoder.getAbsolutePosition().getValueAsDouble();
   }
 
   public double getEncoderRadians() {
@@ -125,5 +125,7 @@ public class CoralWrist extends SubsystemBase {
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
     SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
+
+    SmartDashboard.putNumber("Wrist Encoder", this.getEncoderRadians());
   }
 }

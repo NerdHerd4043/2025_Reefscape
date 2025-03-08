@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +25,7 @@ import frc.robot.util.LimelightHelpers;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.playingwithfusion.TimeOfFlight;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import cowlib.Util;
@@ -92,6 +94,8 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
+
+    CameraServer.startAutomaticCapture(0);
   }
 
   // Used to create an area around the center of the joystick where the input is
@@ -122,7 +126,7 @@ public class RobotContainer {
 
   // Used to scale the drive speed when the elevator is enabled.
   private double getElevatorSpeedRatio() {
-    if (elevator.elevatorExtended()) {
+    if (elevator.encoderPosition() > 70) {
       return 0.5;
     } else {
       return 1;
