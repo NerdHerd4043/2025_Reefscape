@@ -124,8 +124,8 @@ public class CoralWrist extends SubsystemBase {
     // this.pidController.getGoal().position);
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
-    SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
+    // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
 
-    SmartDashboard.putNumber("Wrist Encoder", this.getEncoderRadians());
+    // SmartDashboard.putNumber("Wrist Encoder", this.getEncoderRadians());
   }
 }

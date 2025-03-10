@@ -14,6 +14,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +26,8 @@ public class CoralIntake extends SubsystemBase {
 
   private static final TimeOfFlight distanceSensor = new TimeOfFlight(0);
 
+  private SendableChooser<Double> outputSpeedChooser = new SendableChooser<>();
+
   /** Creates a new CoralIntake. */
   public CoralIntake() {
     final SparkMaxConfig motorConfig = new SparkMaxConfig();
@@ -33,6 +37,16 @@ public class CoralIntake extends SubsystemBase {
     motorConfig.inverted(true);
 
     this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    this.outputSpeedChooser = new SendableChooser<>();
+
+    this.outputSpeedChooser.setDefaultOption("0.5", 0.5);
+    this.outputSpeedChooser.addOption("Original", 0.6);
+    this.outputSpeedChooser.addOption("0.4", 0.4);
+    this.outputSpeedChooser.addOption("0.4", 0.45);
+    this.outputSpeedChooser.addOption("0.4", 0.35);
+
+    SmartDashboard.putData(this.outputSpeedChooser);
   }
 
   public void runIntake(double intakeMotorSpeed) {
@@ -49,7 +63,7 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public Command outtakeCommand() {
-    return this.run(() -> this.runIntake(-Constants.CoralIntake.outtakeSpeed))
+    return this.run(() -> this.runIntake(-this.outputSpeedChooser.getSelected()))
         .finallyDo(this::stop);
   }
 
@@ -72,10 +86,10 @@ public class CoralIntake extends SubsystemBase {
       SmartDashboard.putNumber("Bool Distance Sensor", this.getDistanceSensorRange());
     }
 
-    SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);
+    // SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);
 
-    SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
+    // SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
 
-    SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
+    // SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
   }
 }

@@ -81,7 +81,7 @@ public class RobotContainer {
                 elevator.collapseCommand(),
                 coralWrist.stationCommand())));
 
-    NamedCommands.registerCommand("L4",
+    NamedCommands.registerCommand("L4 Score",
         Commands.race(
             Commands.sequence(
                 Commands.parallel(

@@ -449,15 +449,18 @@ public class Drivebase extends SubsystemBase {
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
 
-    SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio()); // Displays speed ratio (not interactable)
+    // SmartDashboard.putNumber("Speed Ratio", this.getRobotSpeedRatio()); //
+    // Displays speed ratio (not interactable)
 
-    SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
+    // SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
 
-    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field Y Pose
-    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field Y Pose
-    SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
+    // SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // Field
+    // Y Pose
+    // SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Field
+    // Y Pose
+    // SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
 
-    SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
+    // SmartDashboard.putNumber("LL Target", LimelightUtil.getID(getName()));
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
