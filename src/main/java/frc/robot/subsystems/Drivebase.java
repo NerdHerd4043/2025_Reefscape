@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -51,6 +52,8 @@ import frc.robot.util.AutoDestinations;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
 import frc.robot.util.AutoDestinations;
+
+import cowlib.Util;
 
 public class Drivebase extends SubsystemBase {
 
@@ -430,6 +433,39 @@ public class Drivebase extends SubsystemBase {
         this.runOnce(() -> this.resetPose(innitPose)),
         AutoBuilder.followPath(path)); // FIXME: add Field Oriented reset once it's tested
   }
+
+  public double getRobotXPoseTargetSpace() {
+    return this.botFieldPoseArray[0];
+  }
+
+  // First try at the align command. We moved it to a command class.
+  // public Command reefAlignCommand() {
+
+  // return Commands.runOnce(
+  // // We may want to use `Constants.maxVelocity` instead of
+  // `this.getMaxVelocity`,
+  // // since the latter is affected by the speed chooser. Also applies to next if
+  // // statement.
+  // () -> {
+  // double robotPoseX = this.botFieldPoseArray[0];
+  // double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
+  // double highOffset = 1; // FIXME: Find range
+  // double lowOffset = -1; // FIXME: Find range
+  // double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, lowOffset,
+  // highOffset);
+
+  // if (deltaX > 0) {
+  // this.robotOrientedDrive(
+  // Util.mapDouble(deltaX, 0, highOffset, 0, this.getMaxVelocity()), 0, 0);
+  // }
+  // if (deltaX < 0) {
+  // this.robotOrientedDrive(
+  // Util.mapDouble(deltaX, lowOffset, 0, 0, -this.getMaxVelocity()), 0, 0);
+  // } else {
+  // Commands.runOnce(() -> this.robotOrientedDrive(0, 0, 0));
+  // }
+  // });
+  // }
 
   @Override
   public void periodic() {
