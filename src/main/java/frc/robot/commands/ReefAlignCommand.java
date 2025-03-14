@@ -15,7 +15,7 @@ public class ReefAlignCommand extends Command {
 
   private final Drivebase drivebase;
 
-  private static boolean finished = false;
+  private boolean finished = false;
 
   /** Creates a new ReefAlignCommand. */
   public ReefAlignCommand(Drivebase drivebase) {
@@ -35,16 +35,17 @@ public class ReefAlignCommand extends Command {
     double robotPoseX = this.drivebase.getRobotXPoseTargetSpace();
     double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
 
-    double highOffset = 1; // FIXME: Find range
-    double lowOffset = -1; // FIXME: Find range
-    double deadband = 0.1;
+    double offset = 1; // FIXME: Find range
+    double deadband = 0.1; // FIXME: Tune
 
-    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, lowOffset, highOffset);
-    double speedX = deltaX * this.drivebase.getMaxVelocity();
+    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, -offset, offset);
+    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, offset, 0, this.drivebase.getMaxVelocity()), deltaX);
 
     if (Math.abs(deltaX) > deadband) {
       this.drivebase.robotOrientedDrive(speedX, 0, 0);
     } else {
+      // We may need extra movement here to cancel our momentum, but we can also
+      // decrease the speed by decreasing the max velocity and see if that works.
       this.finished = true;
     }
   }
