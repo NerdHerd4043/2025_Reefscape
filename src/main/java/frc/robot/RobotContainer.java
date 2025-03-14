@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Drive;
+import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.algae.AlgaeIntake;
@@ -95,7 +96,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
 
-    CameraServer.startAutomaticCapture(0);
+    // CameraServer.startAutomaticCapture(0);
   }
 
   // Used to create an area around the center of the joystick where the input is
@@ -117,7 +118,7 @@ public class RobotContainer {
     Util.square2DVector(xy);
 
     // Scales the max drive speed when the elevator is enabled.
-    var scaling = drivebase.getMaxVelocity() * this.getElevatorSpeedRatio();
+    var scaling = drivebase.getDriverMaxVelocity() * this.getElevatorSpeedRatio();
     xy[0] *= scaling;
     xy[1] *= scaling;
 
@@ -186,8 +187,7 @@ public class RobotContainer {
             coralWrist.highBranchesCommand()));
 
     /* Auto testing buttons */
-    // driveStick.start().onTrue(Commands.runOnce(() ->
-    // drivebase.getAlignCommand().schedule()));
+    driveStick.start().whileTrue(new ReefAlignCommand(drivebase));
 
     driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
 

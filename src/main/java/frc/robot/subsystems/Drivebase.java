@@ -235,8 +235,12 @@ public class Drivebase extends SubsystemBase {
     this.backRight.drive(moduleStates[3]);
   }
 
-  public double getMaxVelocity() {
+  public double getDriverMaxVelocity() {
     return DriveConstants.maxVelocity * this.getRobotSpeedRatio();
+  }
+
+  public double getTrueMaxVelocity() {
+    return DriveConstants.maxVelocity;
   }
 
   public double getMaxAngularVelocity() {
@@ -487,7 +491,7 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
 
-    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // X Pose
+    SmartDashboard.putNumber("Field Pose X", this.getRobotXPoseTargetSpace()); // X Pose
     SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Y Pose
     SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
 
