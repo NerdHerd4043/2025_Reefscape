@@ -154,7 +154,7 @@ public class Drivebase extends SubsystemBase {
 
     // Getting the Limelight's field position array from network tables.
     NetworkTable LLTable = inst.getTable("limelight-right");
-    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_target_space");
+    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_targetspace");
     this.botFieldPose = botPoseTopic.subscribe(new double[6]);
 
     // Setting up auto capabilities
