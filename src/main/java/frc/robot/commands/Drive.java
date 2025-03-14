@@ -23,7 +23,7 @@ public class Drive extends Command {
     this.speedXY = speedXY;
     this.rot = rot;
 
-    addRequirements(this.drivebase);
+    this.addRequirements(this.drivebase);
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +37,7 @@ public class Drive extends Command {
     var xy = this.speedXY.get();
     var r = this.rot.getAsDouble();
 
-    drivebase.defaultDrive(xy[0], xy[1], r, true);
+    this.drivebase.defaultDrive(xy[0], xy[1], r, true);
   }
 
   // Called once the command ends or is interrupted.
