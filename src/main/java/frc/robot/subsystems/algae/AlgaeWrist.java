@@ -104,6 +104,6 @@ public class AlgaeWrist extends SubsystemBase {
     // resetPosition();
     // }
 
-    SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
+    // SmartDashboard.putNumber("Algae Wrist Encoder", this.encoderPosition());
   }
 }

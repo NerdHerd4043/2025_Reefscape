@@ -4,7 +4,7 @@ with pkgs;
 
 mkShell {
   nativeBuildInputs = [
-    zulu17
+    zulu
     gradle
   ];
 }

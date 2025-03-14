@@ -20,6 +20,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralWrist.PIDValuesC;
@@ -55,7 +56,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   private void updatePID() {
-    this.wristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+    this.wristMotor.setVoltage(pidController.calculate(this.getEncoderRadians()));
   }
 
   @NotLogged
@@ -80,7 +81,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public double getEncoder() {
-    return -this.encoder.getAbsolutePosition().getValueAsDouble();
+    return this.encoder.getAbsolutePosition().getValueAsDouble();
   }
 
   public double getEncoderRadians() {
@@ -104,14 +105,27 @@ public class CoralWrist extends SubsystemBase {
         MathUtil.clamp(input, 0.0, WristPositionsC.upper));
   }
 
+  public void resetPID() {
+    this.pidController.reset(this.getEncoderRadians());
+  }
+
+  public Command resetPIDCommand() {
+    return Commands.runOnce(this::resetPID);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
     this.updatePID();
 
-    SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
-    SmartDashboard.putNumber("Wrist Goal", this.pidController.getGoal().position);
-    SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
+    // SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
+    // SmartDashboard.putNumber("Wrist Goal",
+    // this.pidController.getGoal().position);
+    // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
+
+    // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
+
+    // SmartDashboard.putNumber("Wrist Encoder", this.getEncoderRadians());
   }
 }
