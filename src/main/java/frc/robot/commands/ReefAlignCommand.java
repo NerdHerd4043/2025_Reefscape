@@ -15,11 +15,13 @@ public class ReefAlignCommand extends Command {
 
   private final Drivebase drivebase;
 
+  private static boolean finished = false;
+
   /** Creates a new ReefAlignCommand. */
-  public ReefAlignCommand() {
+  public ReefAlignCommand(Drivebase drivebase) {
     // Use addRequirements() here to declare subsystem dependencies.
-    drivebase = new Drivebase();
-    addRequirements(drivebase);
+    this.drivebase = drivebase;
+    this.addRequirements(this.drivebase);
   }
 
   // Called when the command is initially scheduled.
@@ -30,21 +32,20 @@ public class ReefAlignCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double robotPoseX = drivebase.getRobotXPoseTargetSpace();
+    double robotPoseX = this.drivebase.getRobotXPoseTargetSpace();
     double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
+
     double highOffset = 1; // FIXME: Find range
     double lowOffset = -1; // FIXME: Find range
-    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, lowOffset, highOffset);
+    double deadband = 0.1;
 
-    if (deltaX > 0.1) { // FIXME: decide "deadband"
-      drivebase.robotOrientedDrive(
-          Util.mapDouble(deltaX, 0, highOffset, 0, drivebase.getMaxVelocity()), 0, 0);
-    }
-    if (deltaX < -0.1) { // FIXME: decide "deadband"
-      drivebase.robotOrientedDrive(
-          Util.mapDouble(deltaX, lowOffset, 0, 0, -drivebase.getMaxVelocity()), 0, 0);
+    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, lowOffset, highOffset);
+    double speedX = deltaX * this.drivebase.getMaxVelocity();
+
+    if (Math.abs(deltaX) > deadband) {
+      this.drivebase.robotOrientedDrive(speedX, 0, 0);
     } else {
-      this.isFinished();
+      this.finished = true;
     }
   }
 
@@ -56,6 +57,6 @@ public class ReefAlignCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return this.finished;
   }
 }
