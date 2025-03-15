@@ -74,22 +74,22 @@ public class LimelightUtil {
 
     public static int getLimelightID() {
         RawFiducial[] rightFiducials = LimelightHelpers.getRawFiducials("limelight-right");
-        int[] rightID = new int[1];
+        int rightID = 0;
         for (RawFiducial fiducial : rightFiducials) {
-            rightID[0] = fiducial.id;
+            rightID = fiducial.id;
         }
 
         RawFiducial[] leftFiducials = LimelightHelpers.getRawFiducials("limelight-left");
-        int[] leftID = new int[1];
+        int leftID = 0;
         for (RawFiducial fiducial : leftFiducials) {
-            leftID[0] = fiducial.id;
+            leftID = fiducial.id;
         }
 
-        if (rightID[0] > 0) {
-            return rightID[0];
+        if (rightID > 0) {
+            return rightID;
         }
-        if (leftID[0] > 0) {
-            return leftID[0];
+        if (leftID > 0) {
+            return leftID;
         } else {
             return 0;
         }
