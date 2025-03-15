@@ -129,12 +129,12 @@ public class LimelightUtil {
             double[] limelightArray = R_limelightRobotPose.get();
             return limelightArray[5];
         }
+
         if (validLimelight() == "limelight-left") {
             double[] limelightArray = L_limelightRobotPose.get();
             return limelightArray[5];
-        } else {
-            double[] limelightArray = new double[6];
-            return limelightArray[5];
         }
+
+        return 0;
     }
 }
