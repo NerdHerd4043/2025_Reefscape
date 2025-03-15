@@ -94,13 +94,13 @@ public class Drivebase extends SubsystemBase {
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
-  private final DoubleArraySubscriber botFieldPose;
+  private final DoubleArraySubscriber R_limelightRobotPose;
   // This double array is used later to hold information we get from the
   // subscriber. Limelight documentation (as of now) doesn't use a subscriber, but
-  // our subscriber is getting the same values that the `botpose_wpiblue` gets,
-  // and those values are best stored in a double array. Source:
+  // our subscriber is getting the same values that the `botpose_targetspace`
+  // gets, and those values are best stored in a double array. Source:
   // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#apriltag-and-3d-data
-  private double[] botFieldPoseArray = new double[6];
+  private double[] R_limelightRobotPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   public double savedGyroYaw;
@@ -155,7 +155,7 @@ public class Drivebase extends SubsystemBase {
     // Getting the Limelight's field position array from network tables.
     NetworkTable LLTable = inst.getTable("limelight-right");
     DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_targetspace");
-    this.botFieldPose = botPoseTopic.subscribe(new double[6]);
+    this.R_limelightRobotPose = botPoseTopic.subscribe(new double[6]);
 
     // Setting up auto capabilities
     RobotConfig config;
@@ -309,7 +309,6 @@ public class Drivebase extends SubsystemBase {
   public Command resetFieldPose() {
     return this.runOnce(() -> {
       var fieldPose = LimelightUtil.getRobotFieldPose2D(
-          this.botFieldPoseArray,
           this.gyro);
       this.resetPose(fieldPose);
     });
@@ -321,7 +320,6 @@ public class Drivebase extends SubsystemBase {
   public Command getAlignCommand() {
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
-        this.botFieldPoseArray,
         this.gyro);
 
     if (fieldPose.getX() * fieldPose.getY() == 0) {
@@ -329,7 +327,7 @@ public class Drivebase extends SubsystemBase {
     }
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
-        LimelightUtil.getID("limelight-right"),
+        LimelightUtil.getLimelightID(),
         AutoDestinations.ReefSide.LEFT,
         1.4); // FIXME: Put in dist sensor
 
@@ -351,12 +349,6 @@ public class Drivebase extends SubsystemBase {
     path.preventFlipping = true;
 
     return Commands.sequence(
-        Commands.runOnce(() -> System.out.println(fieldPose.getX())),
-        Commands.runOnce(() -> System.out.println(fieldPose.getY())),
-        Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
-        Commands.runOnce(() -> System.out.println(targetPose.getX())),
-        Commands.runOnce(() -> System.out.println(targetPose.getY())),
-        Commands.runOnce(() -> System.out.println(targetPose.getRotation())),
         this.runOnce(() -> this.resetPose(fieldPose)),
         AutoBuilder.followPath(path));
   }
@@ -364,7 +356,6 @@ public class Drivebase extends SubsystemBase {
   public Command staticScoreCommand() {
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
-        this.botFieldPoseArray,
         this.gyro);
 
     if (fieldPose.getX() * fieldPose.getY() == 0) {
@@ -439,7 +430,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public double getRobotXPoseTargetSpace() {
-    return this.botFieldPoseArray[0];
+    return this.R_limelightRobotPoseArray[0];
   }
 
   // First try at the align command. We moved it to a command class.
@@ -481,7 +472,7 @@ public class Drivebase extends SubsystemBase {
 
     // Update the double array storing the field pose by getting the values from the
     // Subscriber.
-    this.botFieldPoseArray = this.botFieldPose.get();
+    this.R_limelightRobotPoseArray = this.R_limelightRobotPose.get();
 
     LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
 
@@ -489,11 +480,11 @@ public class Drivebase extends SubsystemBase {
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
 
-    SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
+    SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
 
-    SmartDashboard.putNumber("Field Pose X", this.getRobotXPoseTargetSpace()); // X Pose
-    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Y Pose
-    SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
+    SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getTargetRobotPoseX()); // X Pose
+    SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
+    SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency()); // Latency
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
   }

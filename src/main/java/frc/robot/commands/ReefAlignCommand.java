@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-
+import frc.robot.util.LimelightUtil;
 import cowlib.Util;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -46,7 +46,7 @@ public class ReefAlignCommand extends Command {
         0,
         0.3556);
 
-    double robotPoseX = this.drivebase.getRobotXPoseTargetSpace();
+    double robotPoseX = LimelightUtil.getTargetRobotPoseX();
     double targetPoseX = 0.03; // FIXME: TUNE BEFORE FULL USE
 
     double maxOffset = 1; // FIXME: Find range
