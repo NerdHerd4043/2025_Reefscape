@@ -15,7 +15,7 @@ import frc.robot.util.LimelightUtil;
 import cowlib.Util;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ReefAlignCommand extends Command {
+public class RightReefAlignCommand extends Command {
 
   private final Drivebase drivebase;
 
@@ -24,7 +24,7 @@ public class ReefAlignCommand extends Command {
   private boolean finished = false;
 
   /** Creates a new ReefAlignCommand. */
-  public ReefAlignCommand(Drivebase drivebase) {
+  public RightReefAlignCommand(Drivebase drivebase) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivebase = drivebase;
     this.addRequirements(this.drivebase);
@@ -52,13 +52,14 @@ public class ReefAlignCommand extends Command {
         0.3556);
 
     double robotPoseX = LimelightUtil.getTargetRobotPoseX();
-    double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
+    // double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
+    double targetPoseX = 0.32;
 
     double maxOffset = 1; // FIXME: Find range
     double deadband = 0.015; // FIXME: Tune
 
     double deltaX = MathUtil.clamp(robotPoseX - targetPoseX + distSensorOffset, -maxOffset, maxOffset);
-    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.65),
+    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.7),
         deltaX);
 
     // In robotOrientedDrive: Positive x moves the robot forward, positive y moves

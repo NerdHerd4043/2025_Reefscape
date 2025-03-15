@@ -18,6 +18,7 @@ public class Constants {
   public static final class DriveConstants {
     // Radius (maybe) of the area that the drivestick input has no effect
     public static final double deadband = 0.09;
+    public static final double autoCancelThreshold = 0.5;
 
     public static final int currentLimit = 40;
 

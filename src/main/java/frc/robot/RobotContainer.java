@@ -10,11 +10,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.ConditionalIntake;
 import frc.robot.commands.Drive;
 import frc.robot.commands.NoDrive;
-import frc.robot.commands.ReefAlignCommand;
+import frc.robot.commands.RightReefAlignCommand;
+import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.algae.AlgaeIntake;
@@ -95,7 +97,7 @@ public class RobotContainer {
                 elevator.collapseCommand(),
                 coralWrist.stationCommand())));
 
-    NamedCommands.registerCommand("Reef Align", new ReefAlignCommand(drivebase));
+    NamedCommands.registerCommand("Reef Align", new LeftReefAlignCommand(drivebase));
 
     NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake));
 
@@ -194,17 +196,23 @@ public class RobotContainer {
             elevator.extendCommand(4),
             coralWrist.highBranchesCommand()));
 
-    driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
-
     /* Reset gyro button */
-    driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
+    driveStick.povLeft().toggleOnTrue(drivebase.resetGyroCommand());
 
-    driveStick.back().toggleOnTrue(
+    driveStick.back().onTrue(
         Commands.sequence(
             elevator.coastModeCommand(),
             elevator.collapseCommand()));
 
-    driveStick.leftStick().onTrue(new ReefAlignCommand(drivebase));
+    Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
+    driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase).until(semiAutoCancel));
+    driveStick.rightStick().toggleOnTrue(new RightReefAlignCommand(drivebase).until(semiAutoCancel));
+  }
+
+  private boolean anyJoystickInput() {
+    return deadband(driveStick.getLeftY(), DriveConstants.autoCancelThreshold) != 0 
+        || deadband(driveStick.getLeftX(), DriveConstants.autoCancelThreshold) != 0 
+        || deadband(driveStick.getRightX(), DriveConstants.autoCancelThreshold) != 0;
   }
 
   public Command getAutonomousCommand() {

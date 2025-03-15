@@ -11,9 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L4 Score"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Reef Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4 Score"
+                }
+              }
+            ]
           }
         }
       ]
