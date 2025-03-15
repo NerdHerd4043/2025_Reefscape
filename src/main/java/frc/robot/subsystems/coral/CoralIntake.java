@@ -24,7 +24,7 @@ import frc.robot.Constants;
 public class CoralIntake extends SubsystemBase {
   private final SparkMax intakeMotor = new SparkMax(Constants.CoralIntake.motorId, MotorType.kBrushless);
 
-  private static final TimeOfFlight distanceSensor = new TimeOfFlight(0);
+  private static final TimeOfFlight distanceSensor = new TimeOfFlight(33);
 
   private SendableChooser<Double> outputSpeedChooser = new SendableChooser<>();
 
@@ -72,18 +72,15 @@ public class CoralIntake extends SubsystemBase {
   }
 
   public double getDistanceSensorRange() {
-    if (this.distanceSensor.isRangeValid()) {
-      return this.distanceSensor.getRange();
-    } else {
-      return -1;
-    }
+    return this.distanceSensor.getRange();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run.
-    if (this.distanceSensor.isRangeValid() || true) {
-      SmartDashboard.putNumber("Bool Distance Sensor", this.getDistanceSensorRange());
+
+    if (this.distanceSensor.isRangeValid()) {
+      SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
     }
 
     // SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);

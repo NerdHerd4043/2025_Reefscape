@@ -166,8 +166,11 @@ public class Constants {
     public static final double outtakeSpeed = 0.5;
     public static final int currentLimit = 30;
 
-    public static final double distSensorLow = 1.4;
-    public static final double distSensorHigh = 15.7;
+    public static final double distSensorLow = 47;
+    public static final double distSensorHigh = 409;
+    public static final double distSensorHighNoCoral = 540;
+
+    public static final int distSensorID = 33;
   }
 
   public static final class CoralWrist {

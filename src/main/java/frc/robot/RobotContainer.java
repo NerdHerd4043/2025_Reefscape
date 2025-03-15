@@ -88,10 +88,12 @@ public class RobotContainer {
                 Commands.parallel(
                     elevator.extendCommand(4),
                     coralWrist.highBranchesCommand()),
-                Commands.waitSeconds(4),
-                coralIntake.outtakeCommand().withTimeout(2),
+                Commands.waitSeconds(2),
+                // coralIntake.outtakeCommand().withTimeout(1),
                 elevator.collapseCommand(),
                 coralWrist.stationCommand())));
+
+    NamedCommands.registerCommand("Reef Align", new ReefAlignCommand(drivebase));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -186,15 +188,17 @@ public class RobotContainer {
             elevator.extendCommand(4),
             coralWrist.highBranchesCommand()));
 
-    /* Auto testing buttons */
-    driveStick.start().whileTrue(new ReefAlignCommand(drivebase));
-
     driveStick.rightStick().whileTrue(coralIntake.intakeCommand());
 
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
 
-    driveStick.back().whileTrue(elevator.coastModeCommand());
+    driveStick.back().whileTrue(
+        Commands.sequence(
+            elevator.coastModeCommand(),
+            elevator.collapseCommand()));
+
+    driveStick.leftStick().onTrue(new ReefAlignCommand(drivebase));
   }
 
   public Command getAutonomousCommand() {

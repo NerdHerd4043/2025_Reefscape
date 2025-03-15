@@ -5,7 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 
 import cowlib.Util;
@@ -15,6 +19,8 @@ public class ReefAlignCommand extends Command {
 
   private final Drivebase drivebase;
 
+  private double time;
+  private boolean timeSet;
   private boolean finished = false;
 
   /** Creates a new ReefAlignCommand. */
@@ -27,19 +33,27 @@ public class ReefAlignCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    this.timeSet = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double distSensorOffset = Util.mapDouble(
+        SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow),
+        Constants.CoralIntake.distSensorLow,
+        Constants.CoralIntake.distSensorHigh,
+        0,
+        0.3556);
+
     double robotPoseX = this.drivebase.getRobotXPoseTargetSpace();
     double targetPoseX = 0.03; // FIXME: TUNE BEFORE FULL USE
 
     double maxOffset = 1; // FIXME: Find range
-    double deadband = 0; // FIXME: Tune
+    double deadband = 0.01; // FIXME: Tune
 
-    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, -maxOffset, maxOffset);
-    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.65),
+    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX + distSensorOffset, -maxOffset, maxOffset);
+    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.55),
         deltaX);
 
     // In robotOrientedDrive: Positive x moves the robot forward, positive y moves
@@ -49,7 +63,22 @@ public class ReefAlignCommand extends Command {
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
       // decrease the speed by decreasing the max velocity and see if that works.
-      this.finished = true;
+      this.drivebase.robotOrientedDrive(0, 0, 0);
+
+      if (!this.timeSet) {
+        this.time = Timer.getFPGATimestamp();
+        this.timeSet = true;
+        System.out.println("Time Set");
+      }
+
+      double deltaTime = Timer.getFPGATimestamp() - this.time;
+      System.out.println(deltaTime);
+
+      if (deltaTime > 1 && deltaX < deadband) {
+        System.err.println("Finished!!!!!!!!!!!!");
+        this.finished = true;
+      }
+
     }
   }
 
