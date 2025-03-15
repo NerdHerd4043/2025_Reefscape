@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Left to Back Left Path"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "L4 Score"
+            "name": "Reef Align"
           }
         }
       ]

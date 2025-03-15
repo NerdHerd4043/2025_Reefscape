@@ -92,7 +92,7 @@ public class Constants {
     public static final class RobotConfigInfo {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
-          7,
+          8,
           1, // FIXME: estimate more correctly
           DCMotor.getNEO(1),
           driveGearing,
@@ -166,7 +166,7 @@ public class Constants {
     public static final double outtakeSpeed = 0.5;
     public static final int currentLimit = 30;
 
-    public static final double distSensorLow = 47;
+    public static final double distSensorLow = 29;
     public static final double distSensorHigh = 409;
     public static final double distSensorHighNoCoral = 540;
 

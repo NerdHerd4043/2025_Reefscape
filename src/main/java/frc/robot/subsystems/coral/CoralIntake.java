@@ -24,7 +24,7 @@ import frc.robot.Constants;
 public class CoralIntake extends SubsystemBase {
   private final SparkMax intakeMotor = new SparkMax(Constants.CoralIntake.motorId, MotorType.kBrushless);
 
-  private static final TimeOfFlight distanceSensor = new TimeOfFlight(33);
+  private final TimeOfFlight distanceSensor = new TimeOfFlight(33);
 
   private SendableChooser<Double> outputSpeedChooser = new SendableChooser<>();
 
@@ -73,6 +73,10 @@ public class CoralIntake extends SubsystemBase {
 
   public double getDistanceSensorRange() {
     return this.distanceSensor.getRange();
+  }
+
+  public boolean pieceAquired() {
+    return this.distanceSensor.getRange() < Constants.CoralIntake.distSensorHighNoCoral - 20;
   }
 
   @Override

@@ -34,8 +34,13 @@ public class ReefAlignCommand extends Command {
   @Override
   public void initialize() {
     this.timeSet = false;
+    this.finished = false;
   }
 
+  public boolean pieceAquired() {
+    return SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow) 
+      < Constants.CoralIntake.distSensorHighNoCoral - 20;
+  }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -47,18 +52,19 @@ public class ReefAlignCommand extends Command {
         0.3556);
 
     double robotPoseX = LimelightUtil.getTargetRobotPoseX();
-    double targetPoseX = 0.03; // FIXME: TUNE BEFORE FULL USE
+    double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
 
     double maxOffset = 1; // FIXME: Find range
-    double deadband = 0.01; // FIXME: Tune
+    double deadband = 0.015; // FIXME: Tune
 
     double deltaX = MathUtil.clamp(robotPoseX - targetPoseX + distSensorOffset, -maxOffset, maxOffset);
-    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.55),
+    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.65),
         deltaX);
 
     // In robotOrientedDrive: Positive x moves the robot forward, positive y moves
     // the robot left
     if (Math.abs(deltaX) > deadband) {
+      this.timeSet = false;
       this.drivebase.robotOrientedDrive(0, speedX, 0);
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
@@ -91,6 +97,6 @@ public class ReefAlignCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return this.finished;
+    return this.finished || !pieceAquired();
   }
 }

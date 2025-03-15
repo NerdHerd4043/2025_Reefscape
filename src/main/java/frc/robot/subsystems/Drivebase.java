@@ -487,5 +487,16 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency()); // Latency
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
+
+    switch(LimelightUtil.validLimelight()) {
+      case "limelight-right":
+      case "limelight-left":
+        SmartDashboard.putBoolean("Valid LL", true);
+        break;
+      default:
+        SmartDashboard.putBoolean("Valid LL", false);
+    }
+
+    SmartDashboard.putNumber("LL Delta", LimelightUtil.getXPoseDelta());
   }
 }

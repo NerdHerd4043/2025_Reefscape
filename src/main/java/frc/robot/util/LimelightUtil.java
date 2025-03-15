@@ -4,6 +4,8 @@
 
 package frc.robot.util;
 
+import java.time.temporal.ValueRange;
+
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,6 +51,10 @@ public class LimelightUtil {
         }
     }
 
+    public static double getXPoseDelta() {
+        return R_limelightRobotPose.get()[0] - L_limelightRobotPose.get()[0];
+    }
+
     public static double getTargetRobotPoseX() {
 
         // This double array is used later to hold information we get from the
@@ -62,10 +68,11 @@ public class LimelightUtil {
         R_LimelightRobotPoseArray = R_limelightRobotPose.get();
         L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
-        if (validLimelight() == "limelight-right") {
+        String validLL = validLimelight();
+        if (validLL == "limelight-right") {
             return R_LimelightRobotPoseArray[0];
         }
-        if (validLimelight() == "limelight-left") {
+        if (validLL == "limelight-left") {
             return L_LimelightRobotPoseArray[0];
         } else {
             return 0;

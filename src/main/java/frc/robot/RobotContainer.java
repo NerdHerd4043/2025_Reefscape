@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.ConditionalIntake;
 import frc.robot.commands.Drive;
+import frc.robot.commands.NoDrive;
 import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
@@ -79,7 +81,7 @@ public class RobotContainer {
                     coralWrist.highBranchesCommand()),
                 Commands.waitSeconds(4),
                 coralIntake.outtakeCommand().withTimeout(2),
-                elevator.collapseCommand(),
+                elevator.collapseCommand().ignoringDisable(true),
                 coralWrist.stationCommand())));
 
     NamedCommands.registerCommand("L4 Score",
@@ -89,16 +91,20 @@ public class RobotContainer {
                     elevator.extendCommand(4),
                     coralWrist.highBranchesCommand()),
                 Commands.waitSeconds(2),
-                // coralIntake.outtakeCommand().withTimeout(1),
+                coralIntake.outtakeCommand().withTimeout(1),
                 elevator.collapseCommand(),
                 coralWrist.stationCommand())));
 
     NamedCommands.registerCommand("Reef Align", new ReefAlignCommand(drivebase));
 
+    NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake));
+
+    NamedCommands.registerCommand("No Drive", new NoDrive(drivebase));
+
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
 
-    // CameraServer.startAutomaticCapture(0);
+    CameraServer.startAutomaticCapture(0);
   }
 
   // Used to create an area around the center of the joystick where the input is
@@ -193,7 +199,7 @@ public class RobotContainer {
     /* Reset gyro button */
     driveStick.povLeft().onTrue(drivebase.resetGyroCommand());
 
-    driveStick.back().whileTrue(
+    driveStick.back().toggleOnTrue(
         Commands.sequence(
             elevator.coastModeCommand(),
             elevator.collapseCommand()));
