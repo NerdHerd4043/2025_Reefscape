@@ -210,8 +210,8 @@ public class RobotContainer {
   }
 
   private boolean anyJoystickInput() {
-    return deadband(driveStick.getLeftY(), DriveConstants.autoCancelThreshold) != 0 
-        || deadband(driveStick.getLeftX(), DriveConstants.autoCancelThreshold) != 0 
+    return deadband(driveStick.getLeftY(), DriveConstants.autoCancelThreshold) != 0
+        || deadband(driveStick.getLeftX(), DriveConstants.autoCancelThreshold) != 0
         || deadband(driveStick.getRightX(), DriveConstants.autoCancelThreshold) != 0;
   }
 

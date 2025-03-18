@@ -87,10 +87,6 @@ public class CoralIntake extends SubsystemBase {
       SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
     }
 
-    // SmartDashboard.putNumber("Uwu", SmartDashboard.getNumber("Uwu", 0) + 1);
-
     // SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
-
-    // SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
   }
 }

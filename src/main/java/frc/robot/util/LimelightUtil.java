@@ -41,11 +41,11 @@ public class LimelightUtil {
         double leftLimelightValid = NetworkTableInstance.getDefault()
                 .getTable("limelight-left").getEntry("tv").getDouble(0);
 
-        if (rightLimelightValid == 1) {
-            return "limelight-right";
-        }
-        if (leftLimelightValid == 1) {
+        if (leftLimelightValid == 1 && smallAngleDelta() == 1) {
             return "limelight-left";
+        }
+        if (rightLimelightValid == 1 && smallAngleDelta() == 2) {
+            return "limelight-right";
         } else {
             return "none";
         }
@@ -55,7 +55,7 @@ public class LimelightUtil {
         return R_limelightRobotPose.get()[0] - L_limelightRobotPose.get()[0];
     }
 
-    public static double getTargetRobotPoseX() {
+    public static double getRobotPoseX() {
 
         // This double array is used later to hold information we get from the
         // subscriber. Limelight documentation (as of now) doesn't use a subscriber, but
@@ -68,11 +68,11 @@ public class LimelightUtil {
         R_LimelightRobotPoseArray = R_limelightRobotPose.get();
         L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
-        String validLL = validLimelight();
-        if (validLL == "limelight-right") {
+        String validLimelightName = validLimelight();
+        if (validLimelightName == "limelight-right") {
             return R_LimelightRobotPoseArray[0];
         }
-        if (validLL == "limelight-left") {
+        if (validLimelightName == "limelight-left") {
             return L_LimelightRobotPoseArray[0];
         } else {
             return 0;
@@ -143,5 +143,16 @@ public class LimelightUtil {
         }
 
         return 0;
+    }
+
+    public static int smallAngleDelta() {
+        if (L_limelightRobotPose.get()[4] < 8) {
+            return 1;
+        }
+        if (R_limelightRobotPose.get()[4] < 8) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 }

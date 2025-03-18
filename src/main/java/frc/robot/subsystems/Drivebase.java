@@ -482,7 +482,7 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
 
-    SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getTargetRobotPoseX()); // X Pose
+    SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getRobotPoseX()); // X Pose
     SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
     SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency()); // Latency
 
