@@ -87,9 +87,12 @@ public class Drivebase extends SubsystemBase {
 
   // Creates Sendables on the dashboard that can be interacted with to affect the
   // robot without pushing new code. These ones end up being used for scaling the
-  // robot's drive speed and choosing between field and robot oriented drive.
+  // robot's drive speed, choosing between field and robot oriented drive, and
+  // choosing the reef positions to move to.
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
+  private SendableChooser<Double> leftReefTargetPose = new SendableChooser<>();
+  private SendableChooser<Double> rightReefTargetPose = new SendableChooser<>();
 
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. Source:
@@ -140,9 +143,27 @@ public class Drivebase extends SubsystemBase {
     // Adds Robot Oriented as an option.
     this.fieldOriented.addOption("Robot Oriented", false);
 
+    this.leftReefTargetPose.setDefaultOption("Original", 0.0);
+    this.leftReefTargetPose.addOption("0.01", 0.01);
+    this.leftReefTargetPose.addOption("0.02", 0.02);
+    this.leftReefTargetPose.addOption("0.03", 0.03);
+    this.leftReefTargetPose.addOption("-0.01", -0.01);
+    this.leftReefTargetPose.addOption("-0.02", -0.02);
+    this.leftReefTargetPose.addOption("-0.03", -0.03);
+
+    this.rightReefTargetPose.setDefaultOption("Original", 0.32);
+    this.rightReefTargetPose.addOption("0.01", 0.33);
+    this.rightReefTargetPose.addOption("0.02", 0.34);
+    this.rightReefTargetPose.addOption("0.03", 0.35);
+    this.rightReefTargetPose.addOption("-0.01", 0.31);
+    this.rightReefTargetPose.addOption("-0.02", 0.30);
+    this.rightReefTargetPose.addOption("-0.03", 0.29);
+
     // Putting Sendables on the dashboard so they can be used.
     SmartDashboard.putData(this.driveSpeedChooser);
     SmartDashboard.putData(this.fieldOriented);
+    SmartDashboard.putData(this.leftReefTargetPose);
+    SmartDashboard.putData(this.rightReefTargetPose);
 
     // Putting the field on the dashboard
     SmartDashboard.putData("Field", this.field);
@@ -433,34 +454,13 @@ public class Drivebase extends SubsystemBase {
     return this.R_limelightRobotPoseArray[0];
   }
 
-  // First try at the align command. We moved it to a command class.
-  // public Command reefAlignCommand() {
+  public double getLeftReefTargetPose() {
+    return this.leftReefTargetPose.getSelected();
+  }
 
-  // return Commands.runOnce(
-  // // We may want to use `Constants.maxVelocity` instead of
-  // `this.getMaxVelocity`,
-  // // since the latter is affected by the speed chooser. Also applies to next if
-  // // statement.
-  // () -> {
-  // double robotPoseX = this.botFieldPoseArray[0];
-  // double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
-  // double highOffset = 1; // FIXME: Find range
-  // double lowOffset = -1; // FIXME: Find range
-  // double deltaX = MathUtil.clamp(robotPoseX - targetPoseX, lowOffset,
-  // highOffset);
-
-  // if (deltaX > 0) {
-  // this.robotOrientedDrive(
-  // Util.mapDouble(deltaX, 0, highOffset, 0, this.getMaxVelocity()), 0, 0);
-  // }
-  // if (deltaX < 0) {
-  // this.robotOrientedDrive(
-  // Util.mapDouble(deltaX, lowOffset, 0, 0, -this.getMaxVelocity()), 0, 0);
-  // } else {
-  // Commands.runOnce(() -> this.robotOrientedDrive(0, 0, 0));
-  // }
-  // });
-  // }
+  public double getRightReefTargetPose() {
+    return this.rightReefTargetPose.getSelected();
+  }
 
   @Override
   public void periodic() {
@@ -488,7 +488,7 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
-    switch(LimelightUtil.validLimelight()) {
+    switch (LimelightUtil.validLimelight()) {
       case "limelight-right":
       case "limelight-left":
         SmartDashboard.putBoolean("Valid LL", true);

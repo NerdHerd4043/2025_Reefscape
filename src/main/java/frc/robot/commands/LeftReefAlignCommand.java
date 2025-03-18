@@ -53,7 +53,7 @@ public class LeftReefAlignCommand extends Command {
         0.3556);
 
     double robotPoseX = LimelightUtil.getTargetRobotPoseX();
-    double targetPoseX = 0; // FIXME: TUNE BEFORE FULL USE
+    double targetPoseX = this.drivebase.getLeftReefTargetPose(); // FIXME: TUNE BEFORE FULL USE
     // double targetPoseX = 0.345;
 
     double maxOffset = 1; // FIXME: Find range
