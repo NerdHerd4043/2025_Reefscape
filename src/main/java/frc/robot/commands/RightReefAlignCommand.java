@@ -38,9 +38,10 @@ public class RightReefAlignCommand extends Command {
   }
 
   public boolean pieceAquired() {
-    return SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow) 
-      < Constants.CoralIntake.distSensorHighNoCoral - 20;
+    return SmartDashboard.getNumber("Distance Sensor",
+        Constants.CoralIntake.distSensorLow) < Constants.CoralIntake.distSensorHighNoCoral - 20;
   }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
