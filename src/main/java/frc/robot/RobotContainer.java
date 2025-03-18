@@ -16,6 +16,7 @@ import frc.robot.commands.ConditionalIntake;
 import frc.robot.commands.Drive;
 import frc.robot.commands.NoDrive;
 import frc.robot.commands.RightReefAlignCommand;
+import frc.robot.commands.RumbleOnIntake;
 import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
@@ -168,7 +169,8 @@ public class RobotContainer {
             elevator.extendCommand(1),
             coralIntake.intakeCommand(),
             climber.stationCommand(),
-            coralWrist.stationCommand()));
+            coralWrist.stationCommand(),
+            new RumbleOnIntake(coralIntake, driveStick)));
     // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
@@ -201,8 +203,7 @@ public class RobotContainer {
 
     driveStick.back().onTrue(
         Commands.sequence(
-            elevator.coastModeCommand(),
-            elevator.collapseCommand()));
+            elevator.coastModeCommand()));
 
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
     driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase).until(semiAutoCancel));
