@@ -5,7 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "path",
+          "data": {
+            "pathName": "Right to Back Right Path"
+          }
+        },
+        {
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -17,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "L4 Score"
                 }
               }
             ]
