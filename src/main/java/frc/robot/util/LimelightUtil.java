@@ -41,17 +41,17 @@ public class LimelightUtil {
         double leftLimelightValid = NetworkTableInstance.getDefault()
                 .getTable("limelight-left").getEntry("tv").getDouble(0);
 
-        if (leftLimelightValid == 1 && smallAngleDelta() == 1) {
+        if (leftLimelightValid == 1 /* && smallAngleDelta() == 1 */) {
             return "limelight-left";
         }
-        if (rightLimelightValid == 1 && smallAngleDelta() == 2) {
+        if (rightLimelightValid == 1 /* && smallAngleDelta() == 2 */) {
             return "limelight-right";
         } else {
             return "none";
         }
     }
 
-    public static double getXPoseDelta() {
+    public static double getXPosesDelta() {
         return R_limelightRobotPose.get()[0] - L_limelightRobotPose.get()[0];
     }
 
@@ -145,14 +145,20 @@ public class LimelightUtil {
         return 0;
     }
 
-    public static int smallAngleDelta() {
-        if (L_limelightRobotPose.get()[4] < 8) {
-            return 1;
+    public static void smallAngleDelta() {
+        if (validLimelight() == "limelight-left") {
+            System.out.println(L_limelightRobotPose.get()[4]);
         }
-        if (R_limelightRobotPose.get()[4] < 8) {
-            return 2;
-        } else {
-            return 0;
+        if (validLimelight() == "limelight-right") {
+            System.out.println(R_limelightRobotPose.get()[4]);
         }
+        // if (L_limelightRobotPose.get()[4] < 8) {
+        // return 1;
+        // }
+        // if (R_limelightRobotPose.get()[4] < 8) {
+        // return 2;
+        // } else {
+        // return 0;
+        // }
     }
 }

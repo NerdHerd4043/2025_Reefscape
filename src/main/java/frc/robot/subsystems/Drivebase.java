@@ -497,6 +497,8 @@ public class Drivebase extends SubsystemBase {
         SmartDashboard.putBoolean("Valid LL", false);
     }
 
-    SmartDashboard.putNumber("LL Delta", LimelightUtil.getXPoseDelta());
+    SmartDashboard.putNumber("LL Delta", LimelightUtil.getXPosesDelta());
+
+    LimelightUtil.smallAngleDelta();
   }
 }
