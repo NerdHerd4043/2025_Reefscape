@@ -279,4 +279,9 @@ public class Constants {
     }
   }
 
+  public static final class CANdleConstants {
+    public static final int CANdleID = 38;
+    public static final int ledCount = 80;
+  }
+
 }
