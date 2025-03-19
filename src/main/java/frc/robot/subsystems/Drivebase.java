@@ -160,10 +160,10 @@ public class Drivebase extends SubsystemBase {
     this.rightReefTargetPose.addOption("-0.03", 0.29);
 
     // Putting Sendables on the dashboard so they can be used.
-    SmartDashboard.putData(this.driveSpeedChooser);
-    SmartDashboard.putData(this.fieldOriented);
-    SmartDashboard.putData(this.leftReefTargetPose);
-    SmartDashboard.putData(this.rightReefTargetPose);
+    SmartDashboard.putData("Drive Speed", this.driveSpeedChooser);
+    SmartDashboard.putData("Drive Orientation", this.fieldOriented);
+    SmartDashboard.putData("Left Reef Target", this.leftReefTargetPose);
+    SmartDashboard.putData("Right Reef Target", this.rightReefTargetPose);
 
     // Putting the field on the dashboard
     SmartDashboard.putData("Field", this.field);
