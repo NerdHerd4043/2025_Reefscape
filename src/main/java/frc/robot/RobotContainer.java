@@ -49,9 +49,6 @@ public class RobotContainer {
 
   private static final CANdleSystem CANdle = new CANdleSystem();
 
-  // private static final AlgaeWrist algaeWrist = new AlgaeWrist();
-  // private static final AlgaeIntake algaeIntake = new AlgaeIntake();
-
   private SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
@@ -209,11 +206,11 @@ public class RobotContainer {
     driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase)
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligning", false)));
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false)));
     driveStick.rightStick().toggleOnTrue(new RightReefAlignCommand(drivebase)
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligning", false)));
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false)));
   }
 
   private boolean anyJoystickInput() {
@@ -224,16 +221,5 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return this.autoChooser.getSelected();
-
-    // return Commands.sequence(
-    // drivebase.resetFieldPose(),
-    // this.autoChooser.getSelected(),
-    // Commands.race(drivebase.run(() -> drivebase.defaultDrive(0, 0, 0, false)),
-    // Commands.sequence(Commands.parallel(elevator.extendCommand(4),
-    // coralWrist.highBranchesCommand()),
-    // Commands.waitSeconds(3),
-    // coralIntake.outtakeCommand().withTimeout(2),
-    // elevator.collapseCommand(),
-    // coralWrist.stationCommand())));
   }
 }

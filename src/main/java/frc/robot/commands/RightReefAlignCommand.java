@@ -101,6 +101,7 @@ public class RightReefAlignCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     this.drivebase.robotOrientedDrive(0, 0, 0);
+    SmartDashboard.putBoolean("Aligning", false);
   }
 
   // Returns true when the command should end.
