@@ -206,8 +206,14 @@ public class RobotContainer {
             elevator.coastModeCommand()));
 
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
-    driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase).until(semiAutoCancel));
-    driveStick.rightStick().toggleOnTrue(new RightReefAlignCommand(drivebase).until(semiAutoCancel));
+    driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase)
+        .until(semiAutoCancel)
+        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+        .andThen(() -> SmartDashboard.putBoolean("Aligning", false)));
+    driveStick.rightStick().toggleOnTrue(new RightReefAlignCommand(drivebase)
+        .until(semiAutoCancel)
+        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+        .andThen(() -> SmartDashboard.putBoolean("Aligning", false)));
   }
 
   private boolean anyJoystickInput() {

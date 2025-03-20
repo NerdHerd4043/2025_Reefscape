@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
     SmartDashboard.putBoolean("Running Autonomous", true);
   }
 
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
     SmartDashboard.putBoolean("Running Autonomous", false);
   }
 

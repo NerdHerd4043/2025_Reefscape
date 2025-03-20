@@ -70,6 +70,7 @@ public class LeftReefAlignCommand extends Command {
     if (Math.abs(deltaX) > deadband) {
       this.timeSet = false;
       this.drivebase.robotOrientedDrive(0, speedX, 0);
+      // This Smart Dashboard value is used by the CANdleSystem.java subsystem
       SmartDashboard.putBoolean("Aligning", true);
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
@@ -88,6 +89,7 @@ public class LeftReefAlignCommand extends Command {
       if (deltaTime > 1 && deltaX < deadband) {
         System.err.println("Finished!!!!!!!!!!!!");
         this.finished = true;
+        // These Smart Dashboard values are used by the CANdleSystem.java subsystem
         SmartDashboard.putBoolean("Aligning", false);
         SmartDashboard.putBoolean("Aligned", true);
       }

@@ -138,27 +138,24 @@ public class CANdleSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // These Smart Dashboard values are set in multiple different palces
     if (SmartDashboard.getBoolean("Running Autonomous", true)) {
       this.setRainbow();
-    }
-    if (SmartDashboard.getBoolean("Piece Aquired", false)) {
-      this.setOrange();
-    }
-    if (SmartDashboard.getBoolean("Aligned", true)) {
+    } else if (SmartDashboard.getBoolean("Aligned", true)) {
       this.setGreen();
-    }
-    if (this.validLimelight()) {
-      this.setPurple();
-    }
-    if (SmartDashboard.getBoolean("Aligning", true)) {
+    } else if (SmartDashboard.getBoolean("Aligning", true)) {
       this.setFlashing();
+    } else if (this.validLimelight()) {
+      this.setPurple();
+    } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
+      this.setOrange();
     } else {
       this.setBlue();
     }
 
     // Animates the LEDs periodically
     if (this.toAnimate != null) {
-      candle.animate(this.toAnimate);
+      this.candle.animate(this.toAnimate);
     } else {
       this.candle.setLEDs(r, g, b);
     }
