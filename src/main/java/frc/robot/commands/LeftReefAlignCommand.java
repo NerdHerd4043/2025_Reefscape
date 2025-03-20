@@ -70,6 +70,7 @@ public class LeftReefAlignCommand extends Command {
     if (Math.abs(deltaX) > deadband) {
       this.timeSet = false;
       this.drivebase.robotOrientedDrive(0, speedX, 0);
+      SmartDashboard.putBoolean("Aligning", true);
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
       // decrease the speed by decreasing the max velocity and see if that works.
@@ -87,6 +88,8 @@ public class LeftReefAlignCommand extends Command {
       if (deltaTime > 1 && deltaX < deadband) {
         System.err.println("Finished!!!!!!!!!!!!");
         this.finished = true;
+        SmartDashboard.putBoolean("Aligning", false);
+        SmartDashboard.putBoolean("Aligned", true);
       }
 
     }

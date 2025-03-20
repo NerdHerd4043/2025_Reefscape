@@ -10,11 +10,15 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANdleConstants;
+import frc.robot.util.LimelightUtil;
+
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 public class CANdleSystem extends SubsystemBase {
@@ -47,15 +51,15 @@ public class CANdleSystem extends SubsystemBase {
 
     config.disableWhenLOS = true;
     config.stripType = LEDStripType.GRB;
-    config.brightnessScalar = 0.8;
+    this.configBrightness(80);
     config.vBatOutputMode = VBatOutputMode.On;
 
-    candle.configAllSettings(config);
+    this.candle.configAllSettings(config);
 
   }
 
   public AnimationType getCurrentAnimation() {
-    return currentAnimation;
+    return this.currentAnimation;
   }
 
   public void setColors(int r, int g, int b) {
@@ -65,54 +69,98 @@ public class CANdleSystem extends SubsystemBase {
   }
 
   public void setOrange() {
-    setColors(255, 25, 0);
-    changeAnimation(null);
+    this.setColors(255, 25, 0);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setBlue() {
-    setColors(0, 0, 255);
-    changeAnimation(null);
+    this.setColors(0, 0, 255);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setGreen() {
-    setColors(0, 255, 0);
-    changeAnimation(null);
+    this.setColors(0, 255, 0);
+    this.changeAnimation(AnimationType.SetAll);
+  }
+
+  public void setPurple() {
+    this.setColors(238, 130, 238);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setFlashing() {
-    changeAnimation(AnimationType.Flash);
+    this.changeAnimation(AnimationType.Flash);
+  }
+
+  public void configBrightness(double percent) {
+    this.candle.configBrightnessScalar(percent, 0);
+  }
+
+  public void setRainbow() {
+    this.changeAnimation(AnimationType.Rainbow);
   }
 
   public void changeAnimation(AnimationType toChange) {
-    currentAnimation = toChange;
+    this.currentAnimation = toChange;
 
-    if (currentAnimation != null) {
-      switch (currentAnimation) {
+    if (this.currentAnimation != null) {
+      switch (this.currentAnimation) {
         case ColorFlow:
-          toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
-          toAnimate.setLedOffset(8);
+          this.toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
+          this.toAnimate.setLedOffset(8);
           break;
         case Flash:
-          toAnimate = new StrobeAnimation(255, 0, 0);
+          this.toAnimate = new StrobeAnimation(238, 130, 238);
           break;
+        case Rainbow:
+          this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
         default:
-          toAnimate = null;
+          this.toAnimate = null;
           break;
       }
     }
   }
 
   public void ledsOff() {
-    setColors(0, 0, 0);
-    changeAnimation(null);
+    this.setColors(0, 0, 0);
+    this.changeAnimation(null);
+  }
+
+  public boolean validLimelight() {
+    switch (LimelightUtil.validLimelight()) {
+      case "limelight-left":
+      case "limelight-right":
+        return true;
+      default:
+        return false;
+    }
   }
 
   @Override
   public void periodic() {
-    if (toAnimate != null) {
-      candle.animate(toAnimate);
+    if (SmartDashboard.getBoolean("Running Autonomous", true)) {
+      this.setRainbow();
+    }
+    if (SmartDashboard.getBoolean("Piece Aquired", false)) {
+      this.setOrange();
+    }
+    if (SmartDashboard.getBoolean("Aligned", true)) {
+      this.setGreen();
+    }
+    if (this.validLimelight()) {
+      this.setPurple();
+    }
+    if (SmartDashboard.getBoolean("Aligning", true)) {
+      this.setFlashing();
     } else {
-      candle.setLEDs(r, g, b);
+      this.setBlue();
+    }
+
+    // Animates the LEDs periodically
+    if (this.toAnimate != null) {
+      candle.animate(this.toAnimate);
+    } else {
+      this.candle.setLEDs(r, g, b);
     }
   }
 }

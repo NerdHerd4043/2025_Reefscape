@@ -47,7 +47,7 @@ public class RobotContainer {
   private static final CoralIntake coralIntake = new CoralIntake();
   private static final Climber climber = new Climber();
 
-  private static final CANdleSystem candle = new CANdleSystem();
+  private static final CANdleSystem CANdle = new CANdleSystem();
 
   // private static final AlgaeWrist algaeWrist = new AlgaeWrist();
   // private static final AlgaeIntake algaeIntake = new AlgaeIntake();
