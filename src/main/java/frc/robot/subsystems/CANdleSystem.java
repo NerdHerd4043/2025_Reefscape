@@ -21,6 +21,8 @@ import frc.robot.util.LimelightUtil;
 
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
+import cowlib.Util;
+
 public class CANdleSystem extends SubsystemBase {
   private final CANdle candle = new CANdle(Constants.CANdleConstants.CANdleID, "rio");
 
@@ -138,6 +140,11 @@ public class CANdleSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    int firstElevatorEncoder = (int) Util.mapDouble(
+        SmartDashboard.getNumber("Elevator Encoder", 0), // Getting the encoder
+        0, Constants.Elevator.maxElevatorHeight, // Encoder range
+        0, 255); // RGB value range
+
     // These Smart Dashboard values are set in multiple different palces
     if (SmartDashboard.getBoolean("Running Autonomous", true)) {
       this.setRainbow();
@@ -150,7 +157,7 @@ public class CANdleSystem extends SubsystemBase {
     } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
       this.setOrange();
     } else {
-      this.setBlue();
+      this.setColors(firstElevatorEncoder, 0, 255 - firstElevatorEncoder);
     }
 
     // Animates the LEDs periodically
