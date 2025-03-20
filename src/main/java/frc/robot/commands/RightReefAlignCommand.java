@@ -89,9 +89,6 @@ public class RightReefAlignCommand extends Command {
       if (deltaTime > 1 && deltaX < deadband) {
         System.err.println("Finished!!!!!!!!!!!!");
         this.finished = true;
-        // These Smart Dashboard values are used by the CANdleSystem.java subsystem
-        SmartDashboard.putBoolean("Aligning", false);
-        SmartDashboard.putBoolean("Aligned", true);
       }
 
     }
@@ -101,7 +98,10 @@ public class RightReefAlignCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     this.drivebase.robotOrientedDrive(0, 0, 0);
+
+    // These Smart Dashboard values are used by the CANdleSystem.java subsystem
     SmartDashboard.putBoolean("Aligning", false);
+    SmartDashboard.putBoolean("Aligned", true);
   }
 
   // Returns true when the command should end.

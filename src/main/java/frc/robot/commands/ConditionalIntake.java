@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.coral.CoralIntake;
@@ -33,18 +34,18 @@ public class ConditionalIntake extends Command {
   @Override
   public void execute() {
     this.coralIntake.runIntake(Constants.CoralIntake.intakeSpeed);
+
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    SmartDashboard.putBoolean("Piece Aquired", true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // this.time = Timer.getFPGATimestamp();
-    // this.deltaTime = Timer.getFPGATimestamp() - this.time;
-    // if (this.deltaTime < 1) {
-    // this.coralIntake.runIntake(Constants.CoralIntake.intakeSpeed * 0.5);
-    // } if (this.deltaTime > 1) {
     this.coralIntake.stop();
-    // }
+
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    SmartDashboard.putBoolean("Piece Aquired", false);
   }
 
   // Returns true when the command should end.
