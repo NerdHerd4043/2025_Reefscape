@@ -90,6 +90,11 @@ public class CANdleSystem extends SubsystemBase {
     this.changeAnimation(null);
   }
 
+  public void setRed() {
+    this.setColors(255, 0, 0);
+    this.changeAnimation(null);
+  }
+
   public void setFlashing() {
     this.changeAnimation(AnimationType.Flash);
   }
@@ -154,11 +159,9 @@ public class CANdleSystem extends SubsystemBase {
     // } else
     if (SmartDashboard.getBoolean("Aligned", true)) {
       this.setGreen();
-    }
-    // else if (SmartDashboard.getBoolean("Aligning", true)) {
-    // this.setFlashing();
-    // }
-    else if (this.validLimelight()) {
+    } else if (SmartDashboard.getBoolean("Aligning", true)) {
+      this.setRed();
+    } else if (this.validLimelight()) {
       this.setPurple();
     } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
       this.setOrange();
