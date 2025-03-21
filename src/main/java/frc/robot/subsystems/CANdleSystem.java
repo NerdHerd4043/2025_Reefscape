@@ -149,13 +149,16 @@ public class CANdleSystem extends SubsystemBase {
         0, 255); // RGB value range
 
     // These Smart Dashboard values are set in multiple different palces
-    if (SmartDashboard.getBoolean("Running Autonomous", true)) {
-      this.setRainbow();
-    } else if (SmartDashboard.getBoolean("Aligned", true)) {
+    // if (SmartDashboard.getBoolean("Running Autonomous", true)) {
+    // this.setRainbow();
+    // } else
+    if (SmartDashboard.getBoolean("Aligned", true)) {
       this.setGreen();
-    } else if (SmartDashboard.getBoolean("Aligning", true)) {
-      this.setFlashing();
-    } else if (this.validLimelight()) {
+    }
+    // else if (SmartDashboard.getBoolean("Aligning", true)) {
+    // this.setFlashing();
+    // }
+    else if (this.validLimelight()) {
       this.setPurple();
     } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
       this.setOrange();
