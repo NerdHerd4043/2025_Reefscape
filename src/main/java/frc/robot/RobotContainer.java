@@ -64,7 +64,7 @@ public class RobotContainer {
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
 
     // Limits which IDs of April Tags the Limelight is able to target.
-    int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+    int[] validIDs = { 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
 
     NamedCommands.registerCommand("L2 Score",
@@ -184,6 +184,7 @@ public class RobotContainer {
 
     // L2
     driveStick.a().onTrue(Commands.parallel(elevator.collapseCommand(), coralWrist.L2BranchCommand()));
+    // driveStick.a().onTrue(elevator.currentPoseCommand());
     // L3
     driveStick.x().onTrue(
         Commands.parallel(
