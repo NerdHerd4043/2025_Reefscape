@@ -34,18 +34,12 @@ public class ConditionalIntake extends Command {
   @Override
   public void execute() {
     this.coralIntake.runIntake(Constants.CoralIntake.intakeSpeed);
-
-    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-    SmartDashboard.putBoolean("Piece Aquired", true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     this.coralIntake.stop();
-
-    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-    SmartDashboard.putBoolean("Piece Aquired", false);
   }
 
   // Returns true when the command should end.

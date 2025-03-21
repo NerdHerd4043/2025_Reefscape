@@ -92,6 +92,8 @@ public class CoralIntake extends SubsystemBase {
       SmartDashboard.putBoolean("Aligned", false);
     }
 
+    SmartDashboard.putBoolean("Piece Acquired", this.pieceAquired());
+
     // SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());
   }
 }

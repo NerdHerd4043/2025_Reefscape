@@ -72,22 +72,22 @@ public class CANdleSystem extends SubsystemBase {
 
   public void setOrange() {
     this.setColors(255, 25, 0);
-    this.changeAnimation(AnimationType.SetAll);
+    this.changeAnimation(null);
   }
 
   public void setBlue() {
     this.setColors(0, 0, 255);
-    this.changeAnimation(AnimationType.SetAll);
+    this.changeAnimation(null);
   }
 
   public void setGreen() {
     this.setColors(0, 255, 0);
-    this.changeAnimation(AnimationType.SetAll);
+    this.changeAnimation(null);
   }
 
   public void setPurple() {
     this.setColors(238, 130, 238);
-    this.changeAnimation(AnimationType.SetAll);
+    this.changeAnimation(null);
   }
 
   public void setFlashing() {
@@ -103,22 +103,25 @@ public class CANdleSystem extends SubsystemBase {
   }
 
   public void changeAnimation(AnimationType toChange) {
-    this.currentAnimation = toChange;
+    if (this.currentAnimation != toChange) {
+      this.currentAnimation = toChange;
 
-    if (this.currentAnimation != null) {
-      switch (this.currentAnimation) {
-        case ColorFlow:
-          this.toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
-          this.toAnimate.setLedOffset(8);
-          break;
-        case Flash:
-          this.toAnimate = new StrobeAnimation(238, 130, 238);
-          break;
-        case Rainbow:
-          this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
-        default:
-          this.toAnimate = null;
-          break;
+      if (this.currentAnimation != null) {
+        switch (this.currentAnimation) {
+          case ColorFlow:
+            this.toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
+            this.toAnimate.setLedOffset(8);
+            break;
+          case Flash:
+            this.toAnimate = new StrobeAnimation(238, 130, 238);
+            break;
+          case Rainbow:
+            this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
+            break;
+          default:
+            this.toAnimate = null;
+            break;
+        }
       }
     }
   }
@@ -157,7 +160,7 @@ public class CANdleSystem extends SubsystemBase {
     } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
       this.setOrange();
     } else {
-      this.setColors(firstElevatorEncoder, 0, 255 - firstElevatorEncoder);
+      this.setColors(firstElevatorEncoder, 0, 255);
     }
 
     // Animates the LEDs periodically
