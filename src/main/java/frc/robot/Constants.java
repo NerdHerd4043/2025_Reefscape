@@ -94,11 +94,11 @@ public class Constants {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
           8,
-          1, // FIXME: estimate more correctly
+          1,
           DCMotor.getNEO(1),
           driveGearing,
           DriveConstants.currentLimit,
-          1); // FIXME: what is the numMotors thingy? figure out again later
+          1);
 
       public static final RobotConfig robotConfig = new RobotConfig(
           50.35,
@@ -129,32 +129,28 @@ public class Constants {
   public static final class AlgaeIntake {
     public static final int motorID = 50;
     public static final int currentLimit = 30;
-    public static final double intakeSpeed = 0; // FIXME
+    public static final double intakeSpeed = 0;
   }
 
   public static final class AlgaeWrist {
     public static final int motorID = 51;
     public static final int currentLimit = 30;
 
-    // FIXME: Find Constraints
     public static final TrapezoidProfile.Constraints constraintsA = new TrapezoidProfile.Constraints(
         0, 0);
 
-    // FIXME: Tune
     public static final class PIDValuesA {
       public static final double p = 0;
       public static final double i = 0;
       public static final double d = 0;
     }
 
-    // FIXME: Tune
     public static final class FeedForwardValuesA {
       public static final double kS = 0;
       public static final double kG = 0;
       public static final double kV = 0;
     }
 
-    // FIXME: Find limits
     public static final class WristPositionsA {
       public static final double lower = 0;
       public static final double upper = 1;
@@ -220,7 +216,6 @@ public class Constants {
 
     // Tuned manually. Practice here:
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
-    // FIXME: Fine-tune
     public static final class PIDValuesC {
       public static final double p = 2.8;
       public static final double i = 1.4;
@@ -240,7 +235,6 @@ public class Constants {
   public static final class Elevator {
     public static final int currentLimit = 40;
 
-    // FIXME: find limits (fine-tune)
     public static final TrapezoidProfile.Constraints constraints = // I just lost the game
         new TrapezoidProfile.Constraints(175, 150);
 
@@ -260,7 +254,6 @@ public class Constants {
         maxElevatorHeight * 0.99 // L4
     };
 
-    // FIXME: Fine-tune
     // Tuned manually. Practice here (different than the arm):
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class PIDValuesE {
@@ -269,7 +262,6 @@ public class Constants {
       public static final double d = 0;
     }
 
-    // FIXME: Fine-tune
     // Tuned manually. Practice here (different than the arm):
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class FeedForwardValues {
