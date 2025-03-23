@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 3.48,
+        "x": 5.0625,
         "y": 7.0
       },
       "prevControl": {
-        "x": 2.48,
+        "x": 4.0625,
         "y": 7.0
       },
       "nextControl": null,
@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Straighten Coral",
+      "waypointRelativePos": 0.04553903345724909,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Straighten Coral"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
