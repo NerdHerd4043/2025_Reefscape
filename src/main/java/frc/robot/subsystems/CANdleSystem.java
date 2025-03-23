@@ -137,7 +137,7 @@ public class CANdleSystem extends SubsystemBase {
   }
 
   public boolean validLimelight() {
-    switch (LimelightUtil.validLimelight()) {
+    switch (LimelightUtil.leftValidLimelight()) {
       case "limelight-left":
       case "limelight-right":
         return true;
@@ -148,25 +148,29 @@ public class CANdleSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    int firstElevatorEncoder = (int) Util.mapDouble(
+    int elevatorEncoder = (int) Util.mapDouble(
         SmartDashboard.getNumber("Elevator Encoder", 0), // Getting the encoder
         0, Constants.Elevator.maxElevatorHeight, // Encoder range
         0, 255); // RGB value range
+    int scaledElevatorEncoder = (int) Util.mapDouble(elevatorEncoder, 0, 255, 0, 25);
 
     // These Smart Dashboard values are set in multiple different palces
     // if (SmartDashboard.getBoolean("Running Autonomous", true)) {
     // this.setRainbow();
     // } else
-    if (SmartDashboard.getBoolean("Aligned", true)) {
+    if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();
-    } else if (SmartDashboard.getBoolean("Aligning", true)) {
+    } else if (SmartDashboard.getBoolean("Aligning", false)) {
       this.setRed();
     } else if (this.validLimelight()) {
       this.setPurple();
-    } else if (SmartDashboard.getBoolean("Piece Aquired", true)) {
-      this.setOrange();
+    } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
+      this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
+      this.changeAnimation(null);
+      // this.setRainbow();
     } else {
-      this.setColors(firstElevatorEncoder, 0, 255);
+      this.setColors(elevatorEncoder, 0, 255);
+      this.changeAnimation(null);
     }
 
     // Animates the LEDs periodically

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,17 +38,17 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import cowlib.Util;
 
+@Logged
 public class RobotContainer {
+  private final CommandXboxController driveStick = new CommandXboxController(0);
 
-  private static final CommandXboxController driveStick = new CommandXboxController(0);
+  private final Drivebase drivebase = new Drivebase();
+  private final Elevator elevator = new Elevator();
+  private final CoralWrist coralWrist = new CoralWrist();
+  private final CoralIntake coralIntake = new CoralIntake();
+  private final Climber climber = new Climber();
 
-  private static final Drivebase drivebase = new Drivebase();
-  private static final Elevator elevator = new Elevator();
-  private static final CoralWrist coralWrist = new CoralWrist();
-  private static final CoralIntake coralIntake = new CoralIntake();
-  private static final Climber climber = new Climber();
-
-  private static final CANdleSystem CANdle = new CANdleSystem();
+  private final CANdleSystem CANdle = new CANdleSystem();
 
   private SendableChooser<Command> autoChooser;
 
@@ -64,8 +65,12 @@ public class RobotContainer {
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
 
     // Limits which IDs of April Tags the Limelight is able to target.
-    int[] validIDs = { 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
+    int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
+    LimelightHelpers.SetFiducialIDFiltersOverride("limelight-left", validIDs);
+
+    LimelightHelpers.setPipelineIndex("limelight-left", 0);
+    LimelightHelpers.setPipelineIndex("limelight-right", 0);
 
     NamedCommands.registerCommand("L2 Score",
         Commands.race(
@@ -100,6 +105,16 @@ public class RobotContainer {
     NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake));
 
     NamedCommands.registerCommand("No Drive", new NoDrive(drivebase));
+
+    NamedCommands.registerCommand("Elevator L4", Commands.parallel(
+        elevator.extendCommand(4),
+        coralWrist.highBranchesCommand()));
+
+    NamedCommands.registerCommand("Score", Commands.sequence(
+        Commands.waitSeconds(2),
+        coralIntake.outtakeCommand().withTimeout(1),
+        elevator.collapseCommand(),
+        coralWrist.stationCommand()));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -172,7 +187,8 @@ public class RobotContainer {
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
     /* Coral wrist angle buttons */
-    driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist straightish
+    // driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist
+    // straightish
 
     /* Elevator height and coral wrist angle (at the same time) buttons */
     // Coral station position
@@ -183,7 +199,8 @@ public class RobotContainer {
             coralWrist.stationCommand()));
 
     // L2
-    driveStick.a().onTrue(Commands.parallel(elevator.collapseCommand(), coralWrist.L2BranchCommand()));
+    driveStick.a().onTrue(Commands.parallel(elevator.collapseCommand(),
+        coralWrist.L2BranchCommand()));
     // driveStick.a().onTrue(elevator.currentPoseCommand());
     // L3
     driveStick.x().onTrue(
@@ -197,21 +214,28 @@ public class RobotContainer {
             coralWrist.highBranchesCommand()));
 
     /* Reset gyro button */
-    driveStick.povLeft().toggleOnTrue(drivebase.resetGyroCommand());
+    driveStick.povUp().toggleOnTrue(drivebase.resetGyroCommand());
 
     driveStick.back().onTrue(
         Commands.sequence(
             elevator.coastModeCommand()));
 
+    /* Align Command Button Logic */
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
-    driveStick.leftStick().toggleOnTrue(new LeftReefAlignCommand(drivebase)
+
+    var leftAlignCommand = new LeftReefAlignCommand(drivebase)
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false)));
-    driveStick.rightStick().toggleOnTrue(new RightReefAlignCommand(drivebase)
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+    driveStick.leftStick().toggleOnTrue(leftAlignCommand);
+    driveStick.povLeft().toggleOnTrue(leftAlignCommand);
+
+    var rightAlignCommand = new RightReefAlignCommand(drivebase)
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false)));
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+    driveStick.rightStick().toggleOnTrue(rightAlignCommand);
+    driveStick.povRight().toggleOnTrue(leftAlignCommand);
   }
 
   private boolean anyJoystickInput() {

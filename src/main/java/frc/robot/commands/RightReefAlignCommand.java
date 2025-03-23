@@ -72,6 +72,7 @@ public class RightReefAlignCommand extends Command {
       this.drivebase.robotOrientedDrive(0, speedX, 0);
       // This Smart Dashboard value is used by the CANdleSystem.java subsystem
       SmartDashboard.putBoolean("Aligning", true);
+      System.err.println(deltaX);
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
       // decrease the speed by decreasing the max velocity and see if that works.

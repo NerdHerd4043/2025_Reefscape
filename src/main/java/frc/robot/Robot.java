@@ -6,7 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 
+import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +23,9 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   public Robot() {
+    Epilogue.bind(this);
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     m_robotContainer = new RobotContainer();
 
     FollowPathCommand.warmupCommand().schedule();
@@ -34,8 +40,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     // Sets the Limelights' detection software to not be looking for anything, so as
     // to save battery.
-    LimelightHelpers.setPipelineIndex("limelight-left", 1);
-    LimelightHelpers.setPipelineIndex("limelight-right", 1);
+    // LimelightHelpers.setPipelineIndex("limelight-left", 1);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 1);
   }
 
   @Override
@@ -49,8 +55,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // Sets the Limelights' detection software to looking for April Tags.
-    LimelightHelpers.setPipelineIndex("limelight-left", 0);
-    LimelightHelpers.setPipelineIndex("limelight-right", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-left", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 0);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -74,8 +80,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // Sets the Limelights' detection software to looking for April Tags.
-    LimelightHelpers.setPipelineIndex("limelight-left", 0);
-    LimelightHelpers.setPipelineIndex("limelight-right", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-left", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 0);
 
     m_robotContainer.resetCoralPID().schedule();
 

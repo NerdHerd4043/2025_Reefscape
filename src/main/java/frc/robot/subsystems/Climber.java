@@ -32,8 +32,9 @@ public class Climber extends SubsystemBase {
   private final SparkMax rightWristMotor = new SparkMax(Constants.Climber.rightMotorId, MotorType.kBrushless);
   private final SparkMax leftWristMotor = new SparkMax(Constants.Climber.leftMotorId, MotorType.kBrushless);
 
-  @Logged
-  private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); // FIXME: Set ID
+  // @Logged
+  // private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); //
+  // FIXME: Set ID
 
   // FIXME: Tune
   @Logged
@@ -61,11 +62,11 @@ public class Climber extends SubsystemBase {
     this.rightWristMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     this.leftWristMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(this.getEncoderRadians());
+    // this.pidController.setGoal(this.getEncoderRadians());
   }
 
   private void updatePID() {
-    this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+    // this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
   }
 
   @NotLogged
@@ -105,13 +106,13 @@ public class Climber extends SubsystemBase {
     this.rightWristMotor.set(speed);
   }
 
-  public double getEncoder() {
-    return -this.encoder.getAbsolutePosition().getValueAsDouble();
-  }
+  // public double getEncoder() {
+  // return -this.encoder.getAbsolutePosition().getValueAsDouble();
+  // }
 
-  public double getEncoderRadians() {
-    return this.getEncoder() * 2 * Math.PI;
-  }
+  // public double getEncoderRadians() {
+  // return this.getEncoder() * 2 * Math.PI;
+  // }
 
   private void setGoal(double input) {
     this.pidController.setGoal(

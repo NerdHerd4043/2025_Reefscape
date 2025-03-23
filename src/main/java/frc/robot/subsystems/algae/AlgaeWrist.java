@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -25,6 +26,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.AlgaeWrist.PIDValuesA;
 import frc.robot.Constants.AlgaeWrist.WristPositionsA;
 
+@Logged
 public class AlgaeWrist extends SubsystemBase {
   private final SparkMax wristMotor = new SparkMax(Constants.AlgaeWrist.motorID, MotorType.kBrushless);
 

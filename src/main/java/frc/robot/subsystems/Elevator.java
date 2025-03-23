@@ -55,10 +55,14 @@ public class Elevator extends SubsystemBase {
       // The motion profile constraints
       Constants.Elevator.constraints);
 
+  @NotLogged
   final SparkMaxConfig leftMotorConfigBrake;
+  @NotLogged
   final SparkMaxConfig rightMotorConfigBrake;
 
+  @NotLogged
   final SparkMaxConfig leftMotorConfigCoast;
+  @NotLogged
   final SparkMaxConfig rightMotorConfigCoast;
 
   /** Creates a new Elevator. */
@@ -109,7 +113,13 @@ public class Elevator extends SubsystemBase {
   private void updatePID() {
     var setpoint = this.getSetpoint();
     var ff = this.feedforward.calculate(setpoint.position, setpoint.velocity);
-    this.rightMotor.setVoltage(ff + this.pidController.calculate(this.encoderPosition()));
+    var output = ff + this.pidController.calculate(this.encoderPosition());
+    SmartDashboard.putNumber("Elevator Output", output);
+    this.rightMotor.setVoltage(output);
+  }
+
+  private void stopMotor() {
+    this.rightMotor.stopMotor();
   }
 
   @NotLogged
@@ -179,6 +189,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     if (!this.extended && this.limitSwitchPressed()) {
+      this.stopMotor();
       this.disable();
       this.resetPosition();
     }
@@ -187,9 +198,12 @@ public class Elevator extends SubsystemBase {
     }
 
     SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
+    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
+    SmartDashboard.putBoolean("Elevator Extended", this.extended);
+    SmartDashboard.putBoolean("Elevator Limit", this.limitSwitchPressed());
 
-    // SmartDashboard.putNumber("Setpoint",
-    // this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Applied Output", this.rightMotor.getAppliedOutput());
 
     // SmartDashboard.putBoolean("Elevator Limit Switch",
     // this.limitSwitchPressed());

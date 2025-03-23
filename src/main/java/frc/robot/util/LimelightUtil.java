@@ -5,6 +5,7 @@
 package frc.robot.util;
 
 import java.time.temporal.ValueRange;
+import java.util.Arrays;
 
 import com.studica.frc.AHRS;
 
@@ -34,7 +35,7 @@ public class LimelightUtil {
 
     // Source:
     // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#basic-targeting-data
-    public static String validLimelight() {
+    public static String leftValidLimelight() {
 
         double rightLimelightValid = NetworkTableInstance.getDefault()
                 .getTable("limelight-right").getEntry("tv").getDouble(0);
@@ -51,10 +52,6 @@ public class LimelightUtil {
         }
     }
 
-    public static double getXPosesDelta() {
-        return R_limelightRobotPose.get()[0] - L_limelightRobotPose.get()[0];
-    }
-
     public static double getRobotPoseX() {
 
         // This double array is used later to hold information we get from the
@@ -68,11 +65,11 @@ public class LimelightUtil {
         R_LimelightRobotPoseArray = R_limelightRobotPose.get();
         L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
-        String validLimelightName = validLimelight();
-        if (validLimelightName == "limelight-right") {
+        String validLimelightName = leftValidLimelight();
+        if (validLimelightName == "limelight-right" && R_LimelightRobotPoseArray.length > 0) {
             return R_LimelightRobotPoseArray[0];
         }
-        if (validLimelightName == "limelight-left") {
+        if (validLimelightName == "limelight-left" && L_LimelightRobotPoseArray.length > 0) {
             return L_LimelightRobotPoseArray[0];
         } else {
             return 0;
@@ -106,16 +103,18 @@ public class LimelightUtil {
     // Constructs the robot's field location as a Pose2d using information from the
     // aquired limelight position array.
     public static Pose2d getRobotFieldPose2D(AHRS gyro) {
-        if (validLimelight() == "limelight-right") {
-            double[] limelightArray = R_limelightRobotPose.get();
+        double[] r_ll_array = R_limelightRobotPose.get();
+        double[] l_ll_array = L_limelightRobotPose.get();
+        if (leftValidLimelight() == "limelight-right" && r_ll_array.length > 0) {
+            double[] limelightArray = r_ll_array;
             Pose2d pose = new Pose2d(
                     limelightArray[0], // x
                     limelightArray[1], // y
                     gyro.getRotation2d()); // Yaw
             return pose;
         }
-        if (validLimelight() == "limelight-left") {
-            double[] limelightArray = L_limelightRobotPose.get();
+        if (leftValidLimelight() == "limelight-left" && l_ll_array.length > 0) {
+            double[] limelightArray = l_ll_array;
             Pose2d pose = new Pose2d(
                     limelightArray[0], // x
                     limelightArray[1], // y
@@ -131,25 +130,25 @@ public class LimelightUtil {
         }
     }
 
-    public static double getLimelightLatency() {
-        if (validLimelight() == "limelight-right") {
-            double[] limelightArray = R_limelightRobotPose.get();
-            return limelightArray[5];
-        }
+    // public static double getLimelightLatency() {
+    // if (validLimelight() == "limelight-right") {
+    // double[] limelightArray = R_limelightRobotPose.get();
+    // return limelightArray[5];
+    // }
 
-        if (validLimelight() == "limelight-left") {
-            double[] limelightArray = L_limelightRobotPose.get();
-            return limelightArray[5];
-        }
+    // if (validLimelight() == "limelight-left") {
+    // double[] limelightArray = L_limelightRobotPose.get();
+    // return limelightArray[5];
+    // }
 
-        return 0;
-    }
+    // return 0;
+    // }
 
     public static void smallAngleDelta() {
-        if (validLimelight() == "limelight-left") {
+        if (leftValidLimelight() == "limelight-left") {
             System.out.println(L_limelightRobotPose.get()[4]);
         }
-        if (validLimelight() == "limelight-right") {
+        if (leftValidLimelight() == "limelight-right") {
             System.out.println(R_limelightRobotPose.get()[4]);
         }
         // if (L_limelightRobotPose.get()[4] < 8) {

@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -55,8 +57,8 @@ import frc.robot.util.AutoDestinations;
 
 import cowlib.Util;
 
+@Logged
 public class Drivebase extends SubsystemBase {
-
   private SwerveModule frontLeft = new SwerveModule(
       SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
   private SwerveModule frontRight = new SwerveModule(
@@ -66,15 +68,22 @@ public class Drivebase extends SubsystemBase {
   private SwerveModule backRight = new SwerveModule(
       SwerveModules.backRight, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
 
-  private SwerveModule[] modules = new SwerveModule[] { this.frontLeft, this.frontRight, this.backLeft,
-      this.backRight };
+  @NotLogged
+  private SwerveModule[] modules = new SwerveModule[] {
+      this.frontLeft,
+      this.frontRight,
+      this.backLeft,
+      this.backRight
+  };
 
+  @NotLogged
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       ModuleLocations.frontLeft,
       ModuleLocations.frontRight,
       ModuleLocations.backLeft,
       ModuleLocations.backRight);
 
+  @NotLogged
   private SwerveDriveOdometry odometry;
 
   private Field2d field = new Field2d();
@@ -82,7 +91,9 @@ public class Drivebase extends SubsystemBase {
   private BooleanEntry fieldOrientedEntry;
 
   // Limits speed of changes in direction
+  @NotLogged
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
+  @NotLogged
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
   // Creates Sendables on the dashboard that can be interacted with to affect the
@@ -97,18 +108,21 @@ public class Drivebase extends SubsystemBase {
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
+  @NotLogged
   private final DoubleArraySubscriber R_limelightRobotPose;
   // This double array is used later to hold information we get from the
   // subscriber. Limelight documentation (as of now) doesn't use a subscriber, but
   // our subscriber is getting the same values that the `botpose_targetspace`
   // gets, and those values are best stored in a double array. Source:
   // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#apriltag-and-3d-data
+  @NotLogged
   private double[] R_limelightRobotPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   public double savedGyroYaw;
   private double savedAutoYaw;
 
+  @NotLogged
   private PathConstraints constraints = new PathConstraints(
       7, // Max Velocity
       3, // Max Acceleration
@@ -484,12 +498,13 @@ public class Drivebase extends SubsystemBase {
 
     SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getRobotPoseX()); // X Pose
     SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
-    SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency()); // Latency
+    // SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency());
+    // // Latency
 
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
     // These Smart Dashboard values are used by the CANdleSystem.java subsystem
-    switch (LimelightUtil.validLimelight()) {
+    switch (LimelightUtil.leftValidLimelight()) {
       case "limelight-right":
       case "limelight-left":
         SmartDashboard.putBoolean("Valid LL", true);
@@ -497,8 +512,6 @@ public class Drivebase extends SubsystemBase {
       default:
         SmartDashboard.putBoolean("Valid LL", false);
     }
-
-    SmartDashboard.putNumber("LL Delta", LimelightUtil.getXPosesDelta());
 
     // LimelightUtil.smallAngleDelta();
   }
