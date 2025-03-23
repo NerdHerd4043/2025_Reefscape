@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left to Back Left Path"
+            "pathName": "Elevator Up + Left to Back Left Path"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4 Score"
+                  "name": "Score"
                 }
               }
             ]
@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Station to Front Left"
+            "pathName": "Elevator Up + Station to Front Left"
           }
         },
         {
@@ -73,7 +73,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4 Score"
+                  "name": "Score"
                 }
               }
             ]
