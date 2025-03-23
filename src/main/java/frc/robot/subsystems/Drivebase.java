@@ -504,7 +504,7 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
     // These Smart Dashboard values are used by the CANdleSystem.java subsystem
-    switch (LimelightUtil.leftValidLimelight()) {
+    switch (LimelightUtil.validLimelight()) {
       case "limelight-right":
       case "limelight-left":
         SmartDashboard.putBoolean("Valid LL", true);

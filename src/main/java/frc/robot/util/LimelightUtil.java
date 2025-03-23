@@ -35,7 +35,7 @@ public class LimelightUtil {
 
     // Source:
     // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#basic-targeting-data
-    public static String leftValidLimelight() {
+    public static String validLimelight() {
 
         double rightLimelightValid = NetworkTableInstance.getDefault()
                 .getTable("limelight-right").getEntry("tv").getDouble(0);
@@ -65,7 +65,7 @@ public class LimelightUtil {
         R_LimelightRobotPoseArray = R_limelightRobotPose.get();
         L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
-        String validLimelightName = leftValidLimelight();
+        String validLimelightName = validLimelight();
         if (validLimelightName == "limelight-right" && R_LimelightRobotPoseArray.length > 0) {
             return R_LimelightRobotPoseArray[0];
         }
@@ -105,7 +105,7 @@ public class LimelightUtil {
     public static Pose2d getRobotFieldPose2D(AHRS gyro) {
         double[] r_ll_array = R_limelightRobotPose.get();
         double[] l_ll_array = L_limelightRobotPose.get();
-        if (leftValidLimelight() == "limelight-right" && r_ll_array.length > 0) {
+        if (validLimelight() == "limelight-right" && r_ll_array.length > 0) {
             double[] limelightArray = r_ll_array;
             Pose2d pose = new Pose2d(
                     limelightArray[0], // x
@@ -113,7 +113,7 @@ public class LimelightUtil {
                     gyro.getRotation2d()); // Yaw
             return pose;
         }
-        if (leftValidLimelight() == "limelight-left" && l_ll_array.length > 0) {
+        if (validLimelight() == "limelight-left" && l_ll_array.length > 0) {
             double[] limelightArray = l_ll_array;
             Pose2d pose = new Pose2d(
                     limelightArray[0], // x
@@ -145,10 +145,10 @@ public class LimelightUtil {
     // }
 
     public static void smallAngleDelta() {
-        if (leftValidLimelight() == "limelight-left") {
+        if (validLimelight() == "limelight-left") {
             System.out.println(L_limelightRobotPose.get()[4]);
         }
-        if (leftValidLimelight() == "limelight-right") {
+        if (validLimelight() == "limelight-right") {
             System.out.println(R_limelightRobotPose.get()[4]);
         }
         // if (L_limelightRobotPose.get()[4] < 8) {

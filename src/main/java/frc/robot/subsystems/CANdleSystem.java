@@ -137,7 +137,7 @@ public class CANdleSystem extends SubsystemBase {
   }
 
   public boolean validLimelight() {
-    switch (LimelightUtil.leftValidLimelight()) {
+    switch (LimelightUtil.validLimelight()) {
       case "limelight-left":
       case "limelight-right":
         return true;
