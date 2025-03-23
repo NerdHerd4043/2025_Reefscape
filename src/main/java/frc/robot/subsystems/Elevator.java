@@ -91,9 +91,7 @@ public class Elevator extends SubsystemBase {
 
     this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
 
-    if (this.limitSwitchPressed()) {
-      this.resetPosition();
-    }
+    this.resetPosition();
   }
 
   public Command coastModeCommand() {
@@ -132,8 +130,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetPosition() {
-    this.positionKnown = true;
-    this.encoder.setPosition(0);
+    if (!this.positionKnown || this.encoderPosition() < 4) {
+      this.positionKnown = true;
+      this.encoder.setPosition(0);
+    }
   }
 
   public void enable() {

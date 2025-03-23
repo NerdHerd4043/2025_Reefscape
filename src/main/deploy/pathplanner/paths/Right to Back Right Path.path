@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.43598055105348377,
       "rotationDegrees": 109.85937975745249
     }
   ],
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "Elevator L4",
-      "waypointRelativePos": 0.3997641509433957,
+      "waypointRelativePos": 0.34851301115241706,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
