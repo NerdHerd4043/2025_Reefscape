@@ -70,31 +70,28 @@ public class CANdleSystem extends SubsystemBase {
     this.r = r;
     this.g = g;
     this.b = b;
+
+    this.setAll();
   }
 
   public void setOrange() {
     this.setColors(255, 25, 0);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setBlue() {
     this.setColors(0, 0, 255);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setGreen() {
     this.setColors(0, 255, 0);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setPurple() {
     this.setColors(238, 130, 238);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setRed() {
     this.setColors(255, 0, 0);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setFlashing() {
@@ -148,7 +145,6 @@ public class CANdleSystem extends SubsystemBase {
 
   public void ledsOff() {
     this.setColors(0, 0, 0);
-    this.changeAnimation(AnimationType.SetAll);
   }
 
   public boolean validLimelight() {
