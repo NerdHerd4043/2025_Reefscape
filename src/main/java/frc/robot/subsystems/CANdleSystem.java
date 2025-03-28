@@ -115,7 +115,7 @@ public class CANdleSystem extends SubsystemBase {
   }
 
   public void changeAnimation(AnimationType toChange) {
-    if (this.currentAnimation != toChange) {
+    if (toChange == AnimationType.SetAll || this.currentAnimation != toChange) {
       this.currentAnimation = toChange;
 
       switch (this.currentAnimation) {
