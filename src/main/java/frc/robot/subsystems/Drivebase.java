@@ -39,8 +39,6 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -53,9 +51,6 @@ import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 import frc.robot.util.AutoDestinations;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
-import frc.robot.util.AutoDestinations;
-
-import cowlib.Util;
 
 @Logged
 public class Drivebase extends SubsystemBase {

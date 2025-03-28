@@ -31,9 +31,6 @@ import frc.robot.subsystems.Climber;
 import frc.robot.util.LimelightHelpers;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.playingwithfusion.TimeOfFlight;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import cowlib.Util;
@@ -58,8 +55,6 @@ public class RobotContainer {
             drivebase,
             this::getScaledXY,
             () -> scaleRotationAxis(driveStick.getRightX())));
-
-    this.configureBindings();
 
     climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
@@ -128,6 +123,8 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", autoChooser);
 
     CameraServer.startAutomaticCapture(0);
+
+    this.configureBindings();
   }
 
   // Used to create an area around the center of the joystick where the input is
