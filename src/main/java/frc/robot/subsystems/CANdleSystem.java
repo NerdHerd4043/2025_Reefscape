@@ -10,8 +10,10 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -72,27 +74,27 @@ public class CANdleSystem extends SubsystemBase {
 
   public void setOrange() {
     this.setColors(255, 25, 0);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setBlue() {
     this.setColors(0, 0, 255);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setGreen() {
     this.setColors(0, 255, 0);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setPurple() {
     this.setColors(238, 130, 238);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setRed() {
     this.setColors(255, 0, 0);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public void setFlashing() {
@@ -107,33 +109,46 @@ public class CANdleSystem extends SubsystemBase {
     this.changeAnimation(AnimationType.Rainbow);
   }
 
+  public void setAll() {
+    this.changeAnimation(AnimationType.SetAll);
+  }
+
+  public void setLarson() {
+    this.changeAnimation(AnimationType.Larson);
+  }
+
   public void changeAnimation(AnimationType toChange) {
     if (this.currentAnimation != toChange) {
       this.currentAnimation = toChange;
 
-      if (this.currentAnimation != null) {
-        switch (this.currentAnimation) {
-          case ColorFlow:
-            this.toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
-            this.toAnimate.setLedOffset(8);
-            break;
-          case Flash:
-            this.toAnimate = new StrobeAnimation(238, 130, 238);
-            break;
-          case Rainbow:
-            this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
-            break;
-          default:
-            this.toAnimate = null;
-            break;
-        }
+      switch (this.currentAnimation) {
+        case ColorFlow:
+          this.toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, CANdleConstants.ledCount, Direction.Forward);
+          this.toAnimate.setLedOffset(8);
+          break;
+        case Flash:
+          this.toAnimate = new StrobeAnimation(238, 130, 238);
+          break;
+        case Rainbow:
+          this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
+          break;
+        case Larson:
+          this.toAnimate = new LarsonAnimation(0, 255, 46, 0, 1, CANdleConstants.ledCount, BounceMode.Front, 3);
+          break;
+        case SetAll:
+          this.toAnimate = null;
+          break;
+        default:
+          this.toAnimate = null;
+          break;
+
       }
     }
   }
 
   public void ledsOff() {
     this.setColors(0, 0, 0);
-    this.changeAnimation(null);
+    this.changeAnimation(AnimationType.SetAll);
   }
 
   public boolean validLimelight() {
@@ -154,23 +169,26 @@ public class CANdleSystem extends SubsystemBase {
         0, 255); // RGB value range
     int scaledElevatorEncoder = (int) Util.mapDouble(elevatorEncoder, 0, 255, 0, 25);
 
-    // These Smart Dashboard values are set in multiple different palces
+    // These Smart Dashboard values are set in multiple different places
     // if (SmartDashboard.getBoolean("Running Autonomous", true)) {
-    // this.setRainbow();
+
     // } else
     if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
       this.setRed();
     } else if (this.validLimelight()) {
-      this.setPurple();
+      // this.setPurple();
+      this.setLarson();
     } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
       this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
-      this.changeAnimation(null);
+      this.changeAnimation(AnimationType.SetAll);
+
       // this.setRainbow();
     } else {
-      this.setColors(elevatorEncoder, 0, 255);
-      this.changeAnimation(null);
+      // this.setColors(elevatorEncoder, 0, 255);
+      // this.changeAnimation(AnimationType.SetAll);
+      this.setRainbow();
     }
 
     // Animates the LEDs periodically
