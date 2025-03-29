@@ -114,8 +114,8 @@ public class RobotContainer {
         coralWrist.highBranchesCommand()));
 
     NamedCommands.registerCommand("Score", Commands.sequence(
-        Commands.waitSeconds(1.5),
-        coralIntake.outtakeCommand().withTimeout(1),
+        Commands.waitSeconds(1),
+        coralIntake.outtakeCommand().withTimeout(0.5),
         elevator.collapseCommand(),
         coralWrist.stationCommand()));
 
