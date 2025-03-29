@@ -18,12 +18,12 @@ public class LimelightUtil {
   // information to be recieved and updated. More classic example in `Drivebase`.
   // Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
-  private static final DoubleArraySubscriber R_limelightRobotPose = NetworkTableInstance.getDefault()
+  public static final DoubleArraySubscriber R_limelightRobotPose = NetworkTableInstance.getDefault()
       .getTable("limelight-right")
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
 
-  private static final DoubleArraySubscriber L_limelightRobotPose = NetworkTableInstance.getDefault()
+  public static final DoubleArraySubscriber L_limelightRobotPose = NetworkTableInstance.getDefault()
       .getTable("limelight-left")
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);

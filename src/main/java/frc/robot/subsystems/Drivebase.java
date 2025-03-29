@@ -487,6 +487,13 @@ public class Drivebase extends SubsystemBase {
 
     // Everything below is unnecessary for running the robot
 
+    double[] R_LimelightRobotPoseArray = LimelightUtil.R_limelightRobotPose.get();
+    double[] L_LimelightRobotPoseArray = LimelightUtil.L_limelightRobotPose.get();
+
+    if (R_LimelightRobotPoseArray.length > 0 && L_LimelightRobotPoseArray.length > 0) {
+      SmartDashboard.putNumber("LL Delta", R_LimelightRobotPoseArray[4] - L_LimelightRobotPoseArray[4]);
+    }
+
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
 
     SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());

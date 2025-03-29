@@ -199,12 +199,7 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
-    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
-    SmartDashboard.putBoolean("Elevator Extended", this.extended);
-    SmartDashboard.putBoolean("Elevator Limit", this.limitSwitchPressed());
-
-    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Setpoint", this.pidController.getSetpoint().position);
     SmartDashboard.putNumber("Elevator Applied Output", this.rightMotor.getAppliedOutput());
 
     // SmartDashboard.putBoolean("Elevator Limit Switch",
