@@ -49,6 +49,14 @@ public class RobotContainer {
 
   private SendableChooser<Command> autoChooser;
 
+  private Command fixCoral = Commands.sequence(
+      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.intakeCommand().withTimeout(0.15),
+      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.intakeCommand().withTimeout(0.15),
+      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.intakeCommand().withTimeout(0.25));
+
   public RobotContainer() {
     drivebase.setDefaultCommand(
         new Drive(
@@ -111,13 +119,7 @@ public class RobotContainer {
         elevator.collapseCommand(),
         coralWrist.stationCommand()));
 
-    NamedCommands.registerCommand("Straighten Coral", Commands.sequence(
-        coralIntake.outtakeCommand().withTimeout(0.1),
-        coralIntake.intakeCommand().withTimeout(0.15),
-        coralIntake.outtakeCommand().withTimeout(0.1),
-        coralIntake.intakeCommand().withTimeout(0.15),
-        coralIntake.outtakeCommand().withTimeout(0.1),
-        coralIntake.intakeCommand().withTimeout(0.25)));
+    NamedCommands.registerCommand("Straighten Coral", this.fixCoral);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -190,6 +192,8 @@ public class RobotContainer {
             new RumbleOnIntake(coralIntake, driveStick)));
     // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
+
+    driveStick.povDown().onTrue(this.fixCoral);
 
     /* Coral wrist angle buttons */
     // driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist
