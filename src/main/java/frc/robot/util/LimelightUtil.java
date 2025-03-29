@@ -4,11 +4,14 @@
 
 package frc.robot.util;
 
+import java.util.Optional;
+
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
@@ -139,13 +142,18 @@ public class LimelightUtil {
   // return 0;
   // }
 
-  public static void smallAngleDelta() {
-    if (validLimelight() == "limelight-left") {
-      System.out.println(L_limelightRobotPose.get()[4]);
+  public static Optional<Double> smallAngleDelta() {
+    double[] r_ll_array = R_limelightRobotPose.get();
+    double[] l_ll_array = L_limelightRobotPose.get();
+
+    if (r_ll_array.length >= 5 && l_ll_array.length >= 5) {
+      SmartDashboard.putNumber("Left LL Angle", l_ll_array[4]);
+      SmartDashboard.putNumber("Right LL Angle", r_ll_array[4]);
+      return Optional.of(l_ll_array[4] - r_ll_array[4]);
+    } else {
+      return Optional.empty();
     }
-    if (validLimelight() == "limelight-right") {
-      System.out.println(R_limelightRobotPose.get()[4]);
-    }
+
     // if (L_limelightRobotPose.get()[4] < 8) {
     // return 1;
     // }
