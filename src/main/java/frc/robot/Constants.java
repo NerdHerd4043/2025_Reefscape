@@ -247,7 +247,7 @@ public class Constants {
     public static final double[] elevatorHeights = {
         0.0, // Colapse
         4, // Coral station height (Ours was about 36.5 in) - 3.125, 4.25+ ; 3.125, 4-
-        0.0, // L2 (we don't use this, it's a placeholder)
+        41, // L2 (we don't use this, it's a placeholder)
         63, // L3
         maxElevatorHeight * 0.99 // L4
     };
