@@ -96,6 +96,10 @@ public class Elevator extends SubsystemBase {
     }
   }
 
+  public Command holdCommand() {
+    return this.runOnce(() -> this.pidController.setGoal(this.encoderPosition()));
+  }
+
   public Command coastModeCommand() {
     return this.startEnd(() -> {
       this.leftMotor.configure(leftMotorConfigCoast, ResetMode.kNoResetSafeParameters,
@@ -104,9 +108,9 @@ public class Elevator extends SubsystemBase {
           PersistMode.kNoPersistParameters);
     }, () -> {
       this.leftMotor.configure(leftMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
       this.rightMotor.configure(rightMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
     }).ignoringDisable(true);
   }
 
