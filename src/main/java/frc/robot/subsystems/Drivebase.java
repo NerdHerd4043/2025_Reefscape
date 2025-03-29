@@ -515,6 +515,13 @@ public class Drivebase extends SubsystemBase {
         SmartDashboard.putBoolean("Valid LL", false);
     }
 
-    // LimelightUtil.smallAngleDelta();
+    var llAngleDelta = LimelightUtil.smallAngleDelta();
+
+    if (llAngleDelta.isPresent()) {
+      SmartDashboard.putNumber("LL Angle Delta", llAngleDelta.get());
+      SmartDashboard.putBoolean("Valid LL Angle Delta", true);
+    } else {
+      SmartDashboard.putBoolean("Valid LL Angle Delta", false);
+    }
   }
 }
