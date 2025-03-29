@@ -10,6 +10,7 @@ import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.LimelightHelpers.RawFiducial;
@@ -30,6 +31,16 @@ public class LimelightUtil {
       .getTable("limelight-left")
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
+
+  public static final DoubleSubscriber l_ll_id = NetworkTableInstance.getDefault()
+      .getTable("limelight-left")
+      .getDoubleTopic("tid")
+      .subscribe(-1);
+
+  public static final DoubleSubscriber r_ll_id = NetworkTableInstance.getDefault()
+      .getTable("limelight-right")
+      .getDoubleTopic("tid")
+      .subscribe(-1);
 
   // Source:
   // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#basic-targeting-data
@@ -142,11 +153,15 @@ public class LimelightUtil {
   // return 0;
   // }
 
+  public static boolean sameId() {
+    return l_ll_id.get() == r_ll_id.get() && l_ll_id.get() != -1;
+  }
+
   public static Optional<Double> smallAngleDelta() {
     double[] r_ll_array = R_limelightRobotPose.get();
     double[] l_ll_array = L_limelightRobotPose.get();
 
-    if (r_ll_array.length >= 5 && l_ll_array.length >= 5) {
+    if (r_ll_array.length >= 5 && l_ll_array.length >= 5 && sameId()) {
       SmartDashboard.putNumber("Left LL Angle", l_ll_array[4]);
       SmartDashboard.putNumber("Right LL Angle", r_ll_array[4]);
       return Optional.of(l_ll_array[4] - r_ll_array[4]);
