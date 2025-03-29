@@ -8,6 +8,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -23,12 +24,14 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  @NotLogged
   private final IntegerPublisher lllThrottleEntry = NetworkTableInstance
       .getDefault()
       .getTable("limelight-left")
       .getIntegerTopic("throttle_set")
       .publish();
 
+  @NotLogged
   private final IntegerPublisher rllThrottleEntry = NetworkTableInstance
       .getDefault()
       .getTable("limelight-right")
