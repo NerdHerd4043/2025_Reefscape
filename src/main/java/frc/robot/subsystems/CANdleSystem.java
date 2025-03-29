@@ -167,10 +167,9 @@ public class CANdleSystem extends SubsystemBase {
     int scaledElevatorEncoder = (int) Util.mapDouble(elevatorEncoder, 0, 255, 0, 25);
 
     // These Smart Dashboard values are set in multiple different places
-    // if (SmartDashboard.getBoolean("Running Autonomous", true)) {
-
-    // } else
-    if (SmartDashboard.getBoolean("Aligned", false)) {
+    if (SmartDashboard.getBoolean("Running Autonomous", false)) {
+      this.setRainbow();
+    } else if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
       this.setRed();
@@ -179,11 +178,9 @@ public class CANdleSystem extends SubsystemBase {
       this.setLarson();
     } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
       this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
-      this.setAll();
-
       // this.setRainbow();
     } else {
-      // this.setColors(elevatorEncoder, 0, 255);
+      this.setColors(elevatorEncoder, 0, 255);
       // this.changeAnimation(AnimationType.SetAll);
       // this.setRainbow();
     }
