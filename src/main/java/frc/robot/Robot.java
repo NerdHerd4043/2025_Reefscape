@@ -8,6 +8,8 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -21,6 +23,18 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private final IntegerPublisher lllThrottleEntry = NetworkTableInstance
+      .getDefault()
+      .getTable("limelight-left")
+      .getIntegerTopic("throttle_set")
+      .publish();
+
+  private final IntegerPublisher rllThrottleEntry = NetworkTableInstance
+      .getDefault()
+      .getTable("limelight-right")
+      .getIntegerTopic("throttle_set")
+      .publish();
+
   public Robot() {
     Epilogue.bind(this);
     DataLogManager.start();
@@ -28,6 +42,9 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     FollowPathCommand.warmupCommand().schedule();
+
+    lllThrottleEntry.set(200);
+    rllThrottleEntry.set(200);
   }
 
   @Override
@@ -41,6 +58,9 @@ public class Robot extends TimedRobot {
     // to save battery.
     // LimelightHelpers.setPipelineIndex("limelight-left", 1);
     // LimelightHelpers.setPipelineIndex("limelight-right", 1);
+
+    lllThrottleEntry.set(200);
+    rllThrottleEntry.set(200);
   }
 
   @Override
@@ -53,6 +73,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
+
     // Sets the Limelights' detection software to looking for April Tags.
     // LimelightHelpers.setPipelineIndex("limelight-left", 0);
     // LimelightHelpers.setPipelineIndex("limelight-right", 0);
@@ -78,6 +101,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
+
     // Sets the Limelights' detection software to looking for April Tags.
     // LimelightHelpers.setPipelineIndex("limelight-left", 0);
     // LimelightHelpers.setPipelineIndex("limelight-right", 0);
