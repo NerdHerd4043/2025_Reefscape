@@ -255,9 +255,9 @@ public class Constants {
     // Tuned manually. Practice here (different than the arm):
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class PIDValuesE {
-      public static final double p = 4;
+      public static final double p = 1.5;
       public static final double i = 0;
-      public static final double d = 0.01;
+      public static final double d = 0;
     }
 
     // Tuned manually. Practice here (different than the arm):
