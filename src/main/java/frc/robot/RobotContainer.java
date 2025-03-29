@@ -228,18 +228,26 @@ public class RobotContainer {
     /* Reset gyro button */
     driveStick.povUp().toggleOnTrue(drivebase.resetGyroCommand());
 
-    driveStick.back().onTrue(
-        Commands.sequence(
-            elevator.coastModeCommand()));
+    driveStick.back().whileTrue(elevator.coastModeCommand());
+
+    Trigger leftTriggerLow = driveStick.leftTrigger(0.1);
+    Trigger leftTriggerHigh = driveStick.leftTrigger(0.75);
+    leftTriggerLow.and(leftTriggerHigh.negate()).whileTrue(
+        Commands.parallel(
+            elevator.collapseCommand(),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand()));
+
+    leftTriggerHigh.whileTrue(
+        Commands.parallel(
+            elevator.extendCommand(2),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand()));
 
     driveStick.rightTrigger().onTrue(
         Commands.sequence(
             elevator.extendCommand(4),
-
-            Commands.either(
-                coralWrist.highBranchesCommand(),
-                coralWrist.L2BranchCommand(),
-                () -> SmartDashboard.getBoolean("Piece Acquired", true)),
+            coralWrist.L2BranchCommand(),
             Commands.waitUntil(
                 () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
             coralIntake.outtakeCommand().withTimeout(2)));
@@ -260,12 +268,6 @@ public class RobotContainer {
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.rightStick().toggleOnTrue(rightAlignCommand);
     // driveStick.povRight().toggleOnTrue(rightAlignCommand);
-
-    driveStick.povRight().whileTrue(
-        Commands.parallel(
-            elevator.collapseCommand(),
-            coralWrist.highBranchesCommand(),
-            coralIntake.intakeCommand()));
   }
 
   private boolean anyJoystickInput() {
