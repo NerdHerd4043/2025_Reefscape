@@ -38,6 +38,17 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "Straighten Coral",
+      "waypointRelativePos": 0.10377358490566037,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Straighten Coral"
+        }
+      }
+    },
+    {
       "name": "Elevator L4",
       "waypointRelativePos": 0.66,
       "endWaypointRelativePos": null,
