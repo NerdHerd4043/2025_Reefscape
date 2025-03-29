@@ -236,7 +236,7 @@ public class Constants {
     public static final int currentLimit = 40;
 
     public static final TrapezoidProfile.Constraints constraints = // I just lost the game
-        new TrapezoidProfile.Constraints(175, 150);
+        new TrapezoidProfile.Constraints(90, 190);
 
     public static final int leftMotorId = 41;
     public static final int rightMotorId = 40;
@@ -257,9 +257,9 @@ public class Constants {
     // Tuned manually. Practice here (different than the arm):
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     public static final class PIDValuesE {
-      public static final double p = 2.25;
+      public static final double p = 4;
       public static final double i = 0;
-      public static final double d = 0;
+      public static final double d = 0.01;
     }
 
     // Tuned manually. Practice here (different than the arm):
