@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -255,14 +256,24 @@ public class RobotContainer {
     /* Align Command Button Logic */
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
 
-    var leftAlignCommand = new LeftReefAlignCommand(drivebase)
+    var leftRumbleCommand = Commands.startEnd(
+        () -> driveStick.setRumble(RumbleType.kLeftRumble, 0.5),
+        () -> driveStick.setRumble(RumbleType.kLeftRumble, 0));
+    var leftAlignCommand = Commands.parallel(
+        leftRumbleCommand.withTimeout(0.5),
+        new LeftReefAlignCommand(drivebase))
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
     // driveStick.povLeft().toggleOnTrue(leftAlignCommand);
 
-    var rightAlignCommand = new RightReefAlignCommand(drivebase)
+    var rightRumbleCommand = Commands.startEnd(
+        () -> driveStick.setRumble(RumbleType.kRightRumble, 0.5),
+        () -> driveStick.setRumble(RumbleType.kRightRumble, 0));
+    var rightAlignCommand = Commands.parallel(
+        rightRumbleCommand.withTimeout(0.5),
+        new RightReefAlignCommand(drivebase))
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
