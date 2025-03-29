@@ -52,9 +52,9 @@ public class RobotContainer {
   private Command fixCoral = Commands.sequence(
       coralIntake.outtakeCommand().withTimeout(0.1),
       coralIntake.intakeCommand().withTimeout(0.15),
-      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.15),
-      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.25));
 
   public RobotContainer() {
@@ -64,8 +64,8 @@ public class RobotContainer {
             this::getScaledXY,
             () -> scaleRotationAxis(driveStick.getRightX())));
 
-    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
-        driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
+    // climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
+    // driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
 
     // Limits which IDs of April Tags the Limelight is able to target.
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
@@ -231,6 +231,18 @@ public class RobotContainer {
     driveStick.back().onTrue(
         Commands.sequence(
             elevator.coastModeCommand()));
+
+    driveStick.rightTrigger().onTrue(
+        Commands.sequence(
+            elevator.extendCommand(4),
+
+            Commands.either(
+                coralWrist.highBranchesCommand(),
+                coralWrist.L2BranchCommand(),
+                () -> SmartDashboard.getBoolean("Piece Acquired", true)),
+            Commands.waitUntil(
+                () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
+            coralIntake.outtakeCommand().withTimeout(2)));
 
     /* Align Command Button Logic */
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
