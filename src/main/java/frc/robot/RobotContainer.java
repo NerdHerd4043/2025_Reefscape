@@ -220,7 +220,10 @@ public class RobotContainer {
     driveStick.y().onTrue(
         Commands.parallel(
             elevator.extendCommand(4),
-            coralWrist.highBranchesCommand()));
+            Commands.either(
+                coralWrist.highBranchesCommand(),
+                coralWrist.L2BranchCommand(),
+                () -> SmartDashboard.getBoolean("Piece Acquired", true))));
 
     /* Reset gyro button */
     driveStick.povUp().toggleOnTrue(drivebase.resetGyroCommand());
