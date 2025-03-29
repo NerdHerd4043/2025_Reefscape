@@ -51,6 +51,8 @@ public class LeftReefAlignCommand extends Command {
         0,
         0.3556);
 
+    SmartDashboard.putNumber("Left Limelight Last Change", LimelightUtil.L_limelightRobotPose.getLastChange());
+    SmartDashboard.putNumber("Right Limelight Last Change", LimelightUtil.R_limelightRobotPose.getLastChange());
     double robotPoseX = LimelightUtil.getRobotPoseX();
     double targetPoseX = this.drivebase.getLeftReefTargetPose();
 
