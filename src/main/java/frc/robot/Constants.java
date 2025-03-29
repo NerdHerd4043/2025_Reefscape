@@ -93,7 +93,7 @@ public class Constants {
     public static final class RobotConfigInfo {
       public static final ModuleConfig moduleConfig = new ModuleConfig(
           wheelDiameter,
-          9,
+          10,
           1,
           DCMotor.getNEO(1),
           driveGearing,
