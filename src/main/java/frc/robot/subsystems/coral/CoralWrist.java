@@ -17,6 +17,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -108,7 +109,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public Command resetPIDCommand() {
-    return Commands.runOnce(this::resetPID);
+    return this.runOnce(this::resetPID);
   }
 
   @Override
@@ -117,9 +118,8 @@ public class CoralWrist extends SubsystemBase {
 
     this.updatePID();
 
-    // SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
-    // SmartDashboard.putNumber("Wrist Goal",
-    // this.pidController.getGoal().position);
+    SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
+    SmartDashboard.putNumber("Wrist Goal", this.pidController.getGoal().position);
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
     // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());

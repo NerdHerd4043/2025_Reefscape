@@ -161,7 +161,7 @@ public class Constants {
     public static final int motorId = 30;
     public static final double intakeSpeed = 0.6;
     public static final double outtakeSpeed = 0.5;
-    public static final int currentLimit = 30;
+    public static final int currentLimit = 40;
 
     public static final double distSensorLow = 29;
     public static final double distSensorHigh = 409;
@@ -175,18 +175,16 @@ public class Constants {
     public static final int encoderID = 32;
     public static final int currentLimit = 30;
 
-    public static final double maxWristRotation = 1.23;
-
     // Limits the CoralWrist PID Controller
     public static final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-        3.2, 2.5);
+        6, 10);
 
     // Tuned manually. Practice here:
     // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html
     // FIXME: Fine-tune
     public static final class PIDValuesC {
-      public static final double p = 3.5;
-      public static final double i = 1;
+      public static final double p = 10;
+      public static final double i = 0;
       public static final double d = 0;
     }
 
@@ -194,8 +192,8 @@ public class Constants {
     // move the encoder to the desired position, then record the value.
     public static final class WristPositionsC {
       public static final double lower = 0;
-      public static final double upper = 1.23;
-      public static final double stationPos = 1.23;
+      public static final double upper = 1.20;
+      public static final double stationPos = 1.20;
       public static final double L2BranchPos = 0.43;
       public static final double highBranchesPos = 0;
     }

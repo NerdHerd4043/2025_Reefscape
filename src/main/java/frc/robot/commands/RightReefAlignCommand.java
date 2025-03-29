@@ -61,8 +61,8 @@ public class RightReefAlignCommand extends Command {
     double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.7),
         deltaX);
 
-    System.out.println("Delta X" + deltaX);
-    System.out.println("Speed X" + speedX);
+    // System.out.println("Delta X" + deltaX);
+    // System.out.println("Speed X" + speedX);
 
     // In robotOrientedDrive: Positive x moves the robot forward, positive y moves
     // the robot left
