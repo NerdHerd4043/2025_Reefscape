@@ -237,14 +237,20 @@ public class RobotContainer {
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
-    driveStick.povLeft().toggleOnTrue(leftAlignCommand);
+    // driveStick.povLeft().toggleOnTrue(leftAlignCommand);
 
     var rightAlignCommand = new RightReefAlignCommand(drivebase)
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.rightStick().toggleOnTrue(rightAlignCommand);
-    driveStick.povRight().toggleOnTrue(leftAlignCommand);
+    // driveStick.povRight().toggleOnTrue(rightAlignCommand);
+
+    driveStick.povRight().whileTrue(
+        Commands.parallel(
+            elevator.collapseCommand(),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand()));
   }
 
   private boolean anyJoystickInput() {

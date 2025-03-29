@@ -55,10 +55,10 @@ public class CANdleSystem extends SubsystemBase {
 
     config.disableWhenLOS = true;
     config.stripType = LEDStripType.GRB;
-    this.configBrightness(80);
     config.vBatOutputMode = VBatOutputMode.On;
 
     this.candle.configAllSettings(config);
+    this.configBrightness(0.1);
 
   }
 
@@ -130,7 +130,8 @@ public class CANdleSystem extends SubsystemBase {
           this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
           break;
         case Larson:
-          this.toAnimate = new LarsonAnimation(0, 255, 46, 0, 1, CANdleConstants.ledCount, BounceMode.Front, 3);
+          this.toAnimate = new LarsonAnimation(0, 255, 46, 0, 0.25, CANdleConstants.ledCount, BounceMode.Front, 7);
+          this.toAnimate.setLedOffset(8);
           break;
         case SetAll:
           this.toAnimate = null;
@@ -178,20 +179,20 @@ public class CANdleSystem extends SubsystemBase {
       this.setLarson();
     } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
       this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
-      this.changeAnimation(AnimationType.SetAll);
+      this.setAll();
 
       // this.setRainbow();
     } else {
       // this.setColors(elevatorEncoder, 0, 255);
       // this.changeAnimation(AnimationType.SetAll);
-      this.setRainbow();
+      // this.setRainbow();
     }
 
     // Animates the LEDs periodically
-    if (this.toAnimate != null) {
-      this.candle.animate(this.toAnimate);
-    } else {
+    if (this.toAnimate == null) {
       this.candle.setLEDs(r, g, b);
     }
+
+    this.candle.animate(this.toAnimate);
   }
 }
