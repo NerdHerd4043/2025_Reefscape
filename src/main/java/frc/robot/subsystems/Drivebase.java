@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -488,33 +489,9 @@ public class Drivebase extends SubsystemBase {
     // Everything below is unnecessary for running the robot
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
-
-    SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
+    SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
     SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getRobotPoseX()); // X Pose
     SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
-    // SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency());
-    // // Latency
-
-    SmartDashboard.putNumber("Yaw", this.getFieldAngle());
-
-    // These Smart Dashboard values are used by the CANdleSystem.java subsystem
-    switch (LimelightUtil.validLimelight()) {
-      case "limelight-right":
-      case "limelight-left":
-        SmartDashboard.putBoolean("Valid LL", true);
-        break;
-      default:
-        SmartDashboard.putBoolean("Valid LL", false);
-    }
-
-    var llAngleDelta = LimelightUtil.smallAngleDelta();
-
-    if (llAngleDelta.isPresent()) {
-      SmartDashboard.putNumber("LL Angle Delta", llAngleDelta.get());
-      SmartDashboard.putBoolean("Valid LL Angle Delta", true);
-    } else {
-      SmartDashboard.putBoolean("Valid LL Angle Delta", false);
-    }
   }
 }
