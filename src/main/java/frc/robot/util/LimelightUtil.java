@@ -196,7 +196,7 @@ public class LimelightUtil {
     double[] r_ll_array = R_limelightRobotPose.get();
     double[] l_ll_array = L_limelightRobotPose.get();
 
-    if (r_ll_array.length >= 1 && l_ll_array.length >= 1 && sameId()) {
+    if (r_ll_array.length >= 5 && l_ll_array.length >= 5 && sameId()) {
       SmartDashboard.putNumber("Left LL Angle", l_ll_array[4]);
       SmartDashboard.putNumber("Right LL Angle", r_ll_array[4]);
       return Optional.of(l_ll_array[4] - r_ll_array[4]);
