@@ -157,25 +157,51 @@ public class LimelightUtil {
     return l_ll_id.get() == r_ll_id.get() && l_ll_id.get() != -1;
   }
 
+  public static Optional<Double> getYDist() {
+    switch (validLimelight()) {
+      case "limelight-left":
+        return Optional.of(L_limelightRobotPose.get()[2]);
+      case "limelight-right":
+        return Optional.of(R_limelightRobotPose.get()[2]);
+      default:
+        return Optional.empty();
+    }
+  }
+
+  public static Optional<Double> getYDelta() {
+    double[] r_ll_array = R_limelightRobotPose.get();
+    double[] l_ll_array = L_limelightRobotPose.get();
+
+    if (r_ll_array.length >= 3 && l_ll_array.length >= 3 && sameId()) {
+      SmartDashboard.putNumber("Left LL Y", l_ll_array[2]);
+      SmartDashboard.putNumber("Right LL Y", r_ll_array[2]);
+      return Optional.of(l_ll_array[2] - r_ll_array[2]);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  public static Optional<Double> getAngle() {
+    switch (validLimelight()) {
+      case "limelight-left":
+        return Optional.of(L_limelightRobotPose.get()[4]);
+      case "limelight-right":
+        return Optional.of(R_limelightRobotPose.get()[4]);
+      default:
+        return Optional.empty();
+    }
+  }
+
   public static Optional<Double> smallAngleDelta() {
     double[] r_ll_array = R_limelightRobotPose.get();
     double[] l_ll_array = L_limelightRobotPose.get();
 
-    if (r_ll_array.length >= 5 && l_ll_array.length >= 5 && sameId()) {
+    if (r_ll_array.length >= 1 && l_ll_array.length >= 1 && sameId()) {
       SmartDashboard.putNumber("Left LL Angle", l_ll_array[4]);
       SmartDashboard.putNumber("Right LL Angle", r_ll_array[4]);
       return Optional.of(l_ll_array[4] - r_ll_array[4]);
     } else {
       return Optional.empty();
     }
-
-    // if (L_limelightRobotPose.get()[4] < 8) {
-    // return 1;
-    // }
-    // if (R_limelightRobotPose.get()[4] < 8) {
-    // return 2;
-    // } else {
-    // return 0;
-    // }
   }
 }

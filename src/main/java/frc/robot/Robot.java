@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.epilogue.Epilogue;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.LimelightUtil;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -50,6 +53,23 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
+
+    // SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency());
+    // // Latency
+
+    // These Smart Dashboard values are used by the CANdleSystem.java subsystem
+    Optional<Double> optionalY = LimelightUtil.getYDist();
+    optionalY.ifPresent(y -> SmartDashboard.putNumber("LL Y Dist", Math.abs(optionalY.get())));
+
+    var llAngleDelta = LimelightUtil.smallAngleDelta();
+    llAngleDelta.ifPresentOrElse(
+        angleDelta -> {
+          SmartDashboard.putNumber("LL Angle Delta", angleDelta);
+          SmartDashboard.putBoolean("Valid LL Angle Delta", true);
+        },
+        () -> SmartDashboard.putBoolean("Valid LL Angle Delta", false));
   }
 
   @Override
