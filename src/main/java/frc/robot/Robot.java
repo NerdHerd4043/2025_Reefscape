@@ -66,11 +66,11 @@ public class Robot extends TimedRobot {
     Optional<Double> optionalY = LimelightUtil.getYDist();
     optionalY.ifPresent(y -> SmartDashboard.putNumber("LL Y Dist", Math.abs(optionalY.get())));
 
-    var llAngleDelta = LimelightUtil.smallAngleDelta();
-    llAngleDelta.ifPresentOrElse(
-        angleDelta -> {
-          SmartDashboard.putNumber("LL Angle Delta", angleDelta);
-          SmartDashboard.putBoolean("Valid LL Angle Delta", true);
+    var llAngle = LimelightUtil.getAngle();
+    llAngle.ifPresentOrElse(
+        angle -> {
+          SmartDashboard.putNumber("LL Angle Delta", angle);
+          SmartDashboard.putBoolean("Valid LL Angle Delta", angle < 5);
         },
         () -> SmartDashboard.putBoolean("Valid LL Angle Delta", false));
   }
