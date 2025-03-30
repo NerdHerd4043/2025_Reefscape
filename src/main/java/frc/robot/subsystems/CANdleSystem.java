@@ -172,10 +172,10 @@ public class CANdleSystem extends SubsystemBase {
     } else if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
-      this.setRed();
+      this.setFlashing();
     } else if (this.validLimelight()) {
-      // this.setPurple();
-      this.setLarson();
+      this.setPurple();
+      // this.setLarson();
     } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
       this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
       // this.setRainbow();
