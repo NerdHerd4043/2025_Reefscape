@@ -73,7 +73,6 @@ public class RightReefAlignCommand extends Command {
       this.drivebase.robotOrientedDrive(0, speedX, 0);
       // This Smart Dashboard value is used by the CANdleSystem.java subsystem
       SmartDashboard.putBoolean("Aligning", true);
-      System.err.println(deltaX);
     } else {
       // We may need extra movement here to cancel our momentum, but we can also
       // decrease the speed by decreasing the max velocity and see if that works.
@@ -82,14 +81,11 @@ public class RightReefAlignCommand extends Command {
       if (!this.timeSet) {
         this.time = Timer.getFPGATimestamp();
         this.timeSet = true;
-        System.out.println("Time Set");
       }
 
       double deltaTime = Timer.getFPGATimestamp() - this.time;
-      System.out.println(deltaTime);
 
       if (deltaTime > 1 && deltaX < deadband) {
-        System.err.println("Finished!!!!!!!!!!!!");
         this.finished = true;
       }
 
@@ -103,7 +99,9 @@ public class RightReefAlignCommand extends Command {
 
     // These Smart Dashboard values are used by the CANdleSystem.java subsystem
     SmartDashboard.putBoolean("Aligning", false);
-    SmartDashboard.putBoolean("Aligned", true);
+    if (!interrupted) {
+      SmartDashboard.putBoolean("Aligned", true);
+    }
   }
 
   // Returns true when the command should end.
