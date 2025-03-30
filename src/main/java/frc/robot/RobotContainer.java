@@ -106,7 +106,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Reef Align", new LeftReefAlignCommand(drivebase));
 
-    NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake));
+    NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake, elevator));
 
     NamedCommands.registerCommand("No Drive", new NoDrive(drivebase));
 
