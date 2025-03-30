@@ -84,6 +84,25 @@
           "data": {
             "pathName": "Front Right to Station"
           }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Conditional Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              }
+            ]
+          }
         }
       ]
     }
