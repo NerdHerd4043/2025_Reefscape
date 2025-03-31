@@ -113,6 +113,7 @@ public class Elevator extends SubsystemBase {
 
   private void updatePID() {
     var setpoint = this.getSetpoint();
+    @SuppressWarnings("removal")
     var ff = this.feedforward.calculate(setpoint.position, setpoint.velocity);
     var output = ff + this.pidController.calculate(this.encoderPosition());
     SmartDashboard.putNumber("Elevator Output", output);

@@ -23,8 +23,6 @@ import frc.robot.commands.RumbleOnIntake;
 import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.algae.AlgaeIntake;
-import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 import frc.robot.subsystems.CANdleSystem;
@@ -48,6 +46,7 @@ public class RobotContainer {
   private final CoralIntake coralIntake = new CoralIntake();
   private final Climber climber = new Climber();
 
+  @SuppressWarnings("unused")
   private final CANdleSystem CANdle = new CANdleSystem();
 
   private SendableChooser<Command> autoChooser;

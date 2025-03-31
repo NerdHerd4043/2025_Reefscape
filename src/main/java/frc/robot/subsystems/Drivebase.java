@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import cowlib.SwerveModule;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -320,14 +318,17 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
+  @SuppressWarnings("unused")
   private void saveGyroYaw() {
     this.savedGyroYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private void saveAutoYaw() {
     this.savedAutoYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private Pose2d endAutoPose() {
     Pose2d endPose = new Pose2d(
         this.odometry.getPoseMeters().getX(),

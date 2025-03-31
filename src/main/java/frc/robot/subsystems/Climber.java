@@ -59,9 +59,9 @@ public class Climber extends SubsystemBase {
     // this.pidController.setGoal(this.getEncoderRadians());
   }
 
-  private void updatePID() {
-    // this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
-  }
+  // private void updatePID() {
+  // this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+  // }
 
   @NotLogged
   public TrapezoidProfile.State getSetpoint() {

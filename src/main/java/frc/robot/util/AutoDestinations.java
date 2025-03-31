@@ -20,6 +20,7 @@ public class AutoDestinations {
       .loadField(AprilTagFields.k2025ReefscapeWelded);
 
   // @formatter:off
+  @SuppressWarnings("unused")
   private static final HashSet<Integer> reefIDs = new HashSet<>() {{
     // InStream.range takes a range [x,y)
     // Red Reef IDs
@@ -64,6 +65,7 @@ public class AutoDestinations {
   private AutoDestinations() {
   }
 
+  @SuppressWarnings("unused")
   private static Transform2d calculateSensorTransform(double sensorValue) {
     return new Transform2d(
         0,
