@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -21,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.DriveConstants.SwervePID;
 
 /** Add your docs here. */
+@Logged
 public class SwerveModule {
   private SparkMax angleMotor;
   private SparkMax speedMotor;

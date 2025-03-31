@@ -29,9 +29,7 @@ import frc.robot.Constants.Elevator.PIDValuesE;
 
 @Logged
 public class Elevator extends SubsystemBase {
-  @NotLogged
   private final SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
-  @NotLogged
   private final SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean positionKnown = false;
@@ -47,7 +45,6 @@ public class Elevator extends SubsystemBase {
       Constants.Elevator.FeedForwardValues.kG,
       Constants.Elevator.FeedForwardValues.kV);
 
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesE.p,
       PIDValuesE.i,

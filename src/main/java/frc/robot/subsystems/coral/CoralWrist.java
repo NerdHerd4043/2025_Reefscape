@@ -27,14 +27,11 @@ import frc.robot.Constants.CoralWrist.WristPositionsC;
 
 @Logged
 public class CoralWrist extends SubsystemBase {
-  @NotLogged
   private final SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
 
-  @Logged
   private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID
 
   // FIXME: Tune
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesC.p,
       PIDValuesC.i,

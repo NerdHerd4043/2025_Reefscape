@@ -24,7 +24,6 @@ import frc.robot.Constants.Climber.ClimberPositionsC;
 
 @Logged
 public class Climber extends SubsystemBase {
-  @NotLogged
   private final SparkMax rightWristMotor = new SparkMax(Constants.Climber.rightMotorId, MotorType.kBrushless);
   private final SparkMax leftWristMotor = new SparkMax(Constants.Climber.leftMotorId, MotorType.kBrushless);
 
@@ -33,7 +32,6 @@ public class Climber extends SubsystemBase {
   // FIXME: Set ID
 
   // FIXME: Tune
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesC.p,
       PIDValuesC.i,
