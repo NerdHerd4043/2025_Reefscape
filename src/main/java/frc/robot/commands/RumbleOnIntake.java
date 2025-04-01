@@ -15,9 +15,6 @@ public class RumbleOnIntake extends Command {
   private CoralIntake coralIntake;
   private CommandXboxController driveStick;
 
-  private boolean timeSet;
-  private double time;
-
   /** Creates a new RumbleOnIntake. */
   public RumbleOnIntake(CoralIntake coralIntake, CommandXboxController driveStick) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,7 +26,6 @@ public class RumbleOnIntake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.timeSet = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
