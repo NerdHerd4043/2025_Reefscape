@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.046,
-        "y": 0.863
+        "x": 0.933,
+        "y": 0.7754145408163253
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.680561224843058,
-        "y": 1.3471864671805753
+        "x": 1.5675612248430584,
+        "y": 1.259601007996901
       },
       "isLocked": false,
       "linkedName": null
@@ -37,6 +37,17 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "Straighten Coral",
+      "waypointRelativePos": 0.10377358490566035,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Straighten Coral"
+        }
+      }
+    },
     {
       "name": "Elevator L4",
       "waypointRelativePos": 0.6049528301886786,

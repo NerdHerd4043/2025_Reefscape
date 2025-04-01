@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +23,6 @@ import frc.robot.commands.RumbleOnIntake;
 import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.algae.AlgaeIntake;
-import frc.robot.subsystems.algae.AlgaeWrist;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
 import frc.robot.subsystems.CANdleSystem;
@@ -37,6 +37,7 @@ import cowlib.Util;
 
 @Logged
 public class RobotContainer {
+  @NotLogged
   private final CommandXboxController driveStick = new CommandXboxController(0);
 
   private final Drivebase drivebase = new Drivebase();
@@ -45,6 +46,7 @@ public class RobotContainer {
   private final CoralIntake coralIntake = new CoralIntake();
   private final Climber climber = new Climber();
 
+  @SuppressWarnings("unused")
   private final CANdleSystem CANdle = new CANdleSystem();
 
   private SendableChooser<Command> autoChooser;
@@ -52,9 +54,9 @@ public class RobotContainer {
   private Command fixCoral = Commands.sequence(
       coralIntake.outtakeCommand().withTimeout(0.1),
       coralIntake.intakeCommand().withTimeout(0.15),
-      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.15),
-      coralIntake.outtakeCommand().withTimeout(0.1),
+      coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.25));
 
   public RobotContainer() {
@@ -64,8 +66,8 @@ public class RobotContainer {
             this::getScaledXY,
             () -> scaleRotationAxis(driveStick.getRightX())));
 
-    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
-        driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
+    // climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
+    // driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
 
     // Limits which IDs of April Tags the Limelight is able to target.
     int[] validIDs = { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
@@ -105,7 +107,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Reef Align", new LeftReefAlignCommand(drivebase));
 
-    NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake));
+    NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake, elevator));
 
     NamedCommands.registerCommand("No Drive", new NoDrive(drivebase));
 
@@ -114,8 +116,8 @@ public class RobotContainer {
         coralWrist.highBranchesCommand()));
 
     NamedCommands.registerCommand("Score", Commands.sequence(
-        Commands.waitSeconds(2),
-        coralIntake.outtakeCommand().withTimeout(1),
+        Commands.waitSeconds(1),
+        coralIntake.outtakeCommand().withTimeout(0.5),
         elevator.collapseCommand(),
         coralWrist.stationCommand()));
 
@@ -220,37 +222,64 @@ public class RobotContainer {
     driveStick.y().onTrue(
         Commands.parallel(
             elevator.extendCommand(4),
-            coralWrist.highBranchesCommand()));
+            Commands.either(
+                coralWrist.highBranchesCommand(),
+                coralWrist.L2BranchCommand(),
+                () -> SmartDashboard.getBoolean("Piece Acquired", true))));
 
     /* Reset gyro button */
     driveStick.povUp().toggleOnTrue(drivebase.resetGyroCommand());
 
-    driveStick.back().onTrue(
-        Commands.sequence(
-            elevator.coastModeCommand()));
+    driveStick.back().whileTrue(elevator.coastModeCommand());
 
-    /* Align Command Button Logic */
-    Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
-
-    var leftAlignCommand = new LeftReefAlignCommand(drivebase)
-        .until(semiAutoCancel)
-        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
-    driveStick.leftStick().toggleOnTrue(leftAlignCommand);
-    // driveStick.povLeft().toggleOnTrue(leftAlignCommand);
-
-    var rightAlignCommand = new RightReefAlignCommand(drivebase)
-        .until(semiAutoCancel)
-        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
-    driveStick.rightStick().toggleOnTrue(rightAlignCommand);
-    // driveStick.povRight().toggleOnTrue(rightAlignCommand);
-
-    driveStick.povRight().whileTrue(
+    Trigger leftTriggerLow = driveStick.leftTrigger(0.1);
+    Trigger leftTriggerHigh = driveStick.leftTrigger(0.75);
+    leftTriggerLow.and(leftTriggerHigh.negate()).whileTrue(
         Commands.parallel(
             elevator.collapseCommand(),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand()));
+
+    leftTriggerHigh.whileTrue(
+        Commands.parallel(
+            elevator.extendCommand(2),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand()));
+
+    driveStick.rightTrigger().onTrue(
+        Commands.sequence(
+            elevator.extendCommand(4),
+            coralWrist.L2BranchCommand(),
+            Commands.waitUntil(
+                () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
+            coralIntake.outtakeCommand().withTimeout(2)));
+
+    /* Align Command Button Logic */
+    Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
+
+    var leftRumbleCommand = Commands.startEnd(
+        () -> driveStick.setRumble(RumbleType.kLeftRumble, 0.5),
+        () -> driveStick.setRumble(RumbleType.kLeftRumble, 0));
+    var leftAlignCommand = Commands.parallel(
+        leftRumbleCommand.withTimeout(0.5),
+        new LeftReefAlignCommand(drivebase))
+        .until(semiAutoCancel)
+        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+    driveStick.leftStick().toggleOnTrue(leftAlignCommand);
+    driveStick.povLeft().toggleOnTrue(leftAlignCommand);
+
+    var rightRumbleCommand = Commands.startEnd(
+        () -> driveStick.setRumble(RumbleType.kRightRumble, 0.5),
+        () -> driveStick.setRumble(RumbleType.kRightRumble, 0));
+    var rightAlignCommand = Commands.parallel(
+        rightRumbleCommand.withTimeout(0.5),
+        new RightReefAlignCommand(drivebase))
+        .until(semiAutoCancel)
+        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+    driveStick.rightStick().toggleOnTrue(rightAlignCommand);
+    driveStick.povRight().toggleOnTrue(rightAlignCommand);
   }
 
   private boolean anyJoystickInput() {

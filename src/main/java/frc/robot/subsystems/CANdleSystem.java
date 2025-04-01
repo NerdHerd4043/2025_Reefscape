@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANdleConstants;
-import frc.robot.util.LimelightUtil;
 
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
@@ -148,16 +147,6 @@ public class CANdleSystem extends SubsystemBase {
     this.setColors(0, 0, 0);
   }
 
-  public boolean validLimelight() {
-    switch (LimelightUtil.validLimelight()) {
-      case "limelight-left":
-      case "limelight-right":
-        return true;
-      default:
-        return false;
-    }
-  }
-
   @Override
   public void periodic() {
     int elevatorEncoder = (int) Util.mapDouble(
@@ -172,10 +161,11 @@ public class CANdleSystem extends SubsystemBase {
     } else if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
-      this.setRed();
-    } else if (this.validLimelight()) {
-      // this.setPurple();
-      this.setLarson();
+      this.setFlashing();
+    } else if (SmartDashboard.getBoolean("Valid LL Angle Delta", false)
+        && SmartDashboard.getNumber("LL Y Dist", 0) < 0.46) {
+      this.setPurple();
+      // this.setLarson();
     } else if (SmartDashboard.getBoolean("Piece Acquired", false)) {
       this.setColors(255, 25 - scaledElevatorEncoder, elevatorEncoder);
       // this.setRainbow();

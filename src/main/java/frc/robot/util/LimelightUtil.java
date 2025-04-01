@@ -4,11 +4,15 @@
 
 package frc.robot.util;
 
+import java.util.Optional;
+
 import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
@@ -18,15 +22,25 @@ public class LimelightUtil {
   // information to be recieved and updated. More classic example in `Drivebase`.
   // Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
-  private static final DoubleArraySubscriber R_limelightRobotPose = NetworkTableInstance.getDefault()
+  public static final DoubleArraySubscriber R_limelightRobotPose = NetworkTableInstance.getDefault()
       .getTable("limelight-right")
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
 
-  private static final DoubleArraySubscriber L_limelightRobotPose = NetworkTableInstance.getDefault()
+  public static final DoubleArraySubscriber L_limelightRobotPose = NetworkTableInstance.getDefault()
       .getTable("limelight-left")
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
+
+  public static final DoubleSubscriber l_ll_id = NetworkTableInstance.getDefault()
+      .getTable("limelight-left")
+      .getDoubleTopic("tid")
+      .subscribe(-1);
+
+  public static final DoubleSubscriber r_ll_id = NetworkTableInstance.getDefault()
+      .getTable("limelight-right")
+      .getDoubleTopic("tid")
+      .subscribe(-1);
 
   // Source:
   // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#basic-targeting-data
@@ -139,20 +153,55 @@ public class LimelightUtil {
   // return 0;
   // }
 
-  public static void smallAngleDelta() {
-    if (validLimelight() == "limelight-left") {
-      System.out.println(L_limelightRobotPose.get()[4]);
+  public static boolean sameId() {
+    return l_ll_id.get() == r_ll_id.get() && l_ll_id.get() != -1;
+  }
+
+  public static Optional<Double> getYDist() {
+    switch (validLimelight()) {
+      case "limelight-left":
+        return Optional.of(L_limelightRobotPose.get()[2]);
+      case "limelight-right":
+        return Optional.of(R_limelightRobotPose.get()[2]);
+      default:
+        return Optional.empty();
     }
-    if (validLimelight() == "limelight-right") {
-      System.out.println(R_limelightRobotPose.get()[4]);
+  }
+
+  public static Optional<Double> getYDelta() {
+    double[] r_ll_array = R_limelightRobotPose.get();
+    double[] l_ll_array = L_limelightRobotPose.get();
+
+    if (r_ll_array.length >= 3 && l_ll_array.length >= 3 && sameId()) {
+      SmartDashboard.putNumber("Left LL Y", l_ll_array[2]);
+      SmartDashboard.putNumber("Right LL Y", r_ll_array[2]);
+      return Optional.of(l_ll_array[2] - r_ll_array[2]);
+    } else {
+      return Optional.empty();
     }
-    // if (L_limelightRobotPose.get()[4] < 8) {
-    // return 1;
-    // }
-    // if (R_limelightRobotPose.get()[4] < 8) {
-    // return 2;
-    // } else {
-    // return 0;
-    // }
+  }
+
+  public static Optional<Double> getAngle() {
+    switch (validLimelight()) {
+      case "limelight-left":
+        return Optional.of(L_limelightRobotPose.get()[4]);
+      case "limelight-right":
+        return Optional.of(R_limelightRobotPose.get()[4]);
+      default:
+        return Optional.empty();
+    }
+  }
+
+  public static Optional<Double> smallAngleDelta() {
+    double[] r_ll_array = R_limelightRobotPose.get();
+    double[] l_ll_array = L_limelightRobotPose.get();
+
+    if (r_ll_array.length >= 5 && l_ll_array.length >= 5 && sameId()) {
+      SmartDashboard.putNumber("Left LL Angle", l_ll_array[4]);
+      SmartDashboard.putNumber("Right LL Angle", r_ll_array[4]);
+      return Optional.of(l_ll_array[4] - r_ll_array[4]);
+    } else {
+      return Optional.empty();
+    }
   }
 }

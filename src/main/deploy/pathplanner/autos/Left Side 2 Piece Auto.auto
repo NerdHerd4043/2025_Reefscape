@@ -78,6 +78,31 @@
               }
             ]
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Front Left to Station"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Conditional Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              }
+            ]
+          }
         }
       ]
     }

@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import cowlib.SwerveModule;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -319,14 +318,17 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
+  @SuppressWarnings("unused")
   private void saveGyroYaw() {
     this.savedGyroYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private void saveAutoYaw() {
     this.savedAutoYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private Pose2d endAutoPose() {
     Pose2d endPose = new Pose2d(
         this.odometry.getPoseMeters().getX(),
@@ -488,26 +490,9 @@ public class Drivebase extends SubsystemBase {
     // Everything below is unnecessary for running the robot
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
-
-    SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
+    SmartDashboard.putNumber("Yaw", this.getFieldAngle());
 
     SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getRobotPoseX()); // X Pose
     SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
-    // SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency());
-    // // Latency
-
-    SmartDashboard.putNumber("Yaw", this.getFieldAngle());
-
-    // These Smart Dashboard values are used by the CANdleSystem.java subsystem
-    switch (LimelightUtil.validLimelight()) {
-      case "limelight-right":
-      case "limelight-left":
-        SmartDashboard.putBoolean("Valid LL", true);
-        break;
-      default:
-        SmartDashboard.putBoolean("Valid LL", false);
-    }
-
-    // LimelightUtil.smallAngleDelta();
   }
 }

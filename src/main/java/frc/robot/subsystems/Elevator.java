@@ -29,9 +29,7 @@ import frc.robot.Constants.Elevator.PIDValuesE;
 
 @Logged
 public class Elevator extends SubsystemBase {
-  @NotLogged
   private final SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
-  @NotLogged
   private final SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean positionKnown = false;
@@ -47,7 +45,6 @@ public class Elevator extends SubsystemBase {
       Constants.Elevator.FeedForwardValues.kG,
       Constants.Elevator.FeedForwardValues.kV);
 
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesE.p,
       PIDValuesE.i,
@@ -96,6 +93,10 @@ public class Elevator extends SubsystemBase {
     }
   }
 
+  public Command holdCommand() {
+    return this.runOnce(() -> this.pidController.setGoal(this.encoderPosition()));
+  }
+
   public Command coastModeCommand() {
     return this.startEnd(() -> {
       this.leftMotor.configure(leftMotorConfigCoast, ResetMode.kNoResetSafeParameters,
@@ -104,14 +105,15 @@ public class Elevator extends SubsystemBase {
           PersistMode.kNoPersistParameters);
     }, () -> {
       this.leftMotor.configure(leftMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
       this.rightMotor.configure(rightMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
     }).ignoringDisable(true);
   }
 
   private void updatePID() {
     var setpoint = this.getSetpoint();
+    @SuppressWarnings("removal")
     var ff = this.feedforward.calculate(setpoint.position, setpoint.velocity);
     var output = ff + this.pidController.calculate(this.encoderPosition());
     SmartDashboard.putNumber("Elevator Output", output);
@@ -199,12 +201,7 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
-    SmartDashboard.putBoolean("Elevator Enabled", this.enabled);
-    SmartDashboard.putBoolean("Elevator Extended", this.extended);
-    SmartDashboard.putBoolean("Elevator Limit", this.limitSwitchPressed());
-
-    SmartDashboard.putNumber("Setpoint", this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Setpoint", this.pidController.getSetpoint().position);
     SmartDashboard.putNumber("Elevator Applied Output", this.rightMotor.getAppliedOutput());
 
     // SmartDashboard.putBoolean("Elevator Limit Switch",
