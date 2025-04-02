@@ -194,18 +194,16 @@ public class RobotContainer {
   }
 
   private void exitClimberMode() {
-    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(0)));
-    climber.stopClimber();
+    climber.removeDefaultCommand();
+    climber.stopCommand().schedule();
     this.climberMode = false;
   }
 
-  public void setClimberMode() {
+  public void toggleClimberMode() {
     if (this.climberMode) {
       exitClimberMode();
-      System.out.println("no climb :(");
     } else {
       enterClimberMode();
-      System.out.println("climb!! :D");
     }
   }
 
@@ -287,6 +285,10 @@ public class RobotContainer {
     /* Align Command Button Logic */
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
 
+    var fullRumbleCommand = Commands.startEnd(
+        () -> driveStick.setRumble(RumbleType.kBothRumble, 0.5),
+        () -> driveStick.setRumble(RumbleType.kBothRumble, 0));
+
     var leftRumbleCommand = Commands.startEnd(
         () -> driveStick.setRumble(RumbleType.kLeftRumble, 0.5),
         () -> driveStick.setRumble(RumbleType.kLeftRumble, 0));
@@ -299,7 +301,9 @@ public class RobotContainer {
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
     driveStick.povLeft().toggleOnTrue(leftAlignCommand);
 
-    driveStick.start().onTrue(Commands.runOnce(() -> this.setClimberMode()));
+    driveStick.start().onTrue(Commands.parallel(
+        Commands.runOnce(() -> this.toggleClimberMode()),
+        fullRumbleCommand.withTimeout(0.5)));
 
     var rightRumbleCommand = Commands.startEnd(
         () -> driveStick.setRumble(RumbleType.kRightRumble, 0.5),

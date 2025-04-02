@@ -117,6 +117,10 @@ public class Climber extends SubsystemBase {
     this.rightWristMotor.stopMotor();
   }
 
+  public Command stopCommand() {
+    return this.runOnce(this::stopClimber);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
