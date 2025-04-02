@@ -130,6 +130,8 @@ public class RobotContainer {
 
     CameraServer.startAutomaticCapture(0);
 
+    this.climberMode = false;
+
     this.configureBindings();
   }
 
@@ -184,16 +186,27 @@ public class RobotContainer {
     return coralWrist.resetPIDCommand();
   }
 
-  public void enterClimberMode() {
-    this.climberMode = true;
+  private void enterClimberMode() {
     climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
+    coralWrist.highBranches();
+    this.climberMode = true;
   }
 
-  public void exitClimberMode() {
-    this.climberMode = false;
-    climber.removeDefaultCommand();
+  private void exitClimberMode() {
+    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(0)));
     climber.stopClimber();
+    this.climberMode = false;
+  }
+
+  public void setClimberMode() {
+    if (this.climberMode) {
+      exitClimberMode();
+      System.out.println("no climb :(");
+    } else {
+      enterClimberMode();
+      System.out.println("climb!! :D");
+    }
   }
 
   private void configureBindings() {
@@ -286,8 +299,7 @@ public class RobotContainer {
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
     driveStick.povLeft().toggleOnTrue(leftAlignCommand);
 
-    driveStick.start().and(climberMode).onTrue(Commands.runOnce(() -> this.enterClimberMode()));
-    driveStick.start().and(climberMode.negate()).onTrue(Commands.runOnce(() -> this.exitClimberMode()));
+    driveStick.start().onTrue(Commands.runOnce(() -> this.setClimberMode()));
 
     var rightRumbleCommand = Commands.startEnd(
         () -> driveStick.setRumble(RumbleType.kRightRumble, 0.5),
