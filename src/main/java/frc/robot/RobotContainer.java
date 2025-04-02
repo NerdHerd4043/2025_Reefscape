@@ -184,10 +184,6 @@ public class RobotContainer {
     return coralWrist.resetPIDCommand();
   }
 
-  public boolean getClimberMode() {
-    return this.climberMode;
-  }
-
   public void enterClimberMode() {
     this.climberMode = true;
     climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
@@ -196,7 +192,7 @@ public class RobotContainer {
 
   public void exitClimberMode() {
     this.climberMode = false;
-    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(0)));
+    climber.removeDefaultCommand();
     climber.stopClimber();
   }
 
@@ -289,6 +285,9 @@ public class RobotContainer {
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
     driveStick.povLeft().toggleOnTrue(leftAlignCommand);
+
+    driveStick.start().and(climberMode).onTrue(Commands.runOnce(() -> this.enterClimberMode()));
+    driveStick.start().and(climberMode.negate()).onTrue(Commands.runOnce(() -> this.exitClimberMode()));
 
     var rightRumbleCommand = Commands.startEnd(
         () -> driveStick.setRumble(RumbleType.kRightRumble, 0.5),
