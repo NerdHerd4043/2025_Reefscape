@@ -59,6 +59,8 @@ public class RobotContainer {
       coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.25));
 
+  public boolean climberMode;
+
   public RobotContainer() {
     drivebase.setDefaultCommand(
         new Drive(
@@ -182,6 +184,22 @@ public class RobotContainer {
     return coralWrist.resetPIDCommand();
   }
 
+  public boolean getClimberMode() {
+    return this.climberMode;
+  }
+
+  public void enterClimberMode() {
+    this.climberMode = true;
+    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
+        driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
+  }
+
+  public void exitClimberMode() {
+    this.climberMode = false;
+    climber.setDefaultCommand(climber.run(() -> climber.setSpeed(0)));
+    climber.stopClimber();
+  }
+
   private void configureBindings() {
     /* Intake/Output buttons */
     // Intake
@@ -234,19 +252,22 @@ public class RobotContainer {
 
     Trigger leftTriggerLow = driveStick.leftTrigger(0.1);
     Trigger leftTriggerHigh = driveStick.leftTrigger(0.75);
-    leftTriggerLow.and(leftTriggerHigh.negate()).whileTrue(
+
+    Trigger climberMode = new Trigger(() -> this.climberMode);
+
+    leftTriggerLow.and(leftTriggerHigh.negate()).and(climberMode.negate()).whileTrue(
         Commands.parallel(
             elevator.collapseCommand(),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand()));
 
-    leftTriggerHigh.whileTrue(
+    leftTriggerHigh.and(climberMode.negate()).whileTrue(
         Commands.parallel(
             elevator.extendCommand(2),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand()));
 
-    driveStick.rightTrigger().onTrue(
+    driveStick.rightTrigger().and(climberMode.negate()).onTrue(
         Commands.sequence(
             elevator.extendCommand(4),
             coralWrist.L2BranchCommand(),

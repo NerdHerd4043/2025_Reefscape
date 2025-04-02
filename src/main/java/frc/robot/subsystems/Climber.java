@@ -113,6 +113,10 @@ public class Climber extends SubsystemBase {
         MathUtil.clamp(input, 0.0, ClimberPositionsC.upper));
   }
 
+  public void stopClimber() {
+    this.rightWristMotor.stopMotor();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
