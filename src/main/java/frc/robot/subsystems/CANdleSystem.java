@@ -156,7 +156,9 @@ public class CANdleSystem extends SubsystemBase {
     int scaledElevatorEncoder = (int) Util.mapDouble(elevatorEncoder, 0, 255, 0, 25);
 
     // These Smart Dashboard values are set in multiple different places
-    if (SmartDashboard.getBoolean("Running Autonomous", false)) {
+    if (SmartDashboard.getBoolean("Climber Mode", false)) {
+      this.setRed();
+    } else if (SmartDashboard.getBoolean("Running Autonomous", false)) {
       this.setRainbow();
     } else if (SmartDashboard.getBoolean("Aligned", false)) {
       this.setGreen();

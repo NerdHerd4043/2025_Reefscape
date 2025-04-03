@@ -191,12 +191,14 @@ public class RobotContainer {
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
     coralWrist.highBranches();
     this.climberMode = true;
+    SmartDashboard.putBoolean("Climber Mode", this.climberMode);
   }
 
   private void exitClimberMode() {
     climber.removeDefaultCommand();
     climber.stopCommand().schedule();
     this.climberMode = false;
+    SmartDashboard.putBoolean("Climber Mode", this.climberMode);
   }
 
   public void toggleClimberMode() {
