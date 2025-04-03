@@ -76,11 +76,9 @@ public class LimelightUtil {
     R_LimelightRobotPoseArray = R_limelightRobotPose.get();
     L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
-    String validLimelightName = validLimelight();
-    if (validLimelightName == "limelight-right" && R_LimelightRobotPoseArray.length > 0) {
+    if (R_LimelightRobotPoseArray.length > 0 && R_LimelightRobotPoseArray[0] != 0) {
       return R_LimelightRobotPoseArray[0];
-    }
-    if (validLimelightName == "limelight-left" && L_LimelightRobotPoseArray.length > 0) {
+    } else if (L_LimelightRobotPoseArray.length > 0 && L_LimelightRobotPoseArray[0] != 0) {
       return L_LimelightRobotPoseArray[0];
     } else {
       return 0;
