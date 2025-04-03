@@ -264,20 +264,23 @@ public class RobotContainer {
 
     Trigger climberMode = new Trigger(() -> this.climberMode);
 
-    leftTriggerLow.and(leftTriggerHigh.negate()).and(climberMode.negate()).whileTrue(
-        Commands.parallel(
+    leftTriggerLow
+        .and(leftTriggerHigh.negate())
+        .and(climberMode.negate()).whileTrue(Commands.parallel(
             elevator.collapseCommand(),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand()));
 
-    leftTriggerHigh.and(climberMode.negate()).whileTrue(
-        Commands.parallel(
+    leftTriggerHigh
+        .and(climberMode.negate())
+        .whileTrue(Commands.parallel(
             elevator.extendCommand(2),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand()));
 
-    driveStick.rightTrigger().and(climberMode.negate()).onTrue(
-        Commands.sequence(
+    driveStick.rightTrigger()
+        .and(climberMode.negate())
+        .onTrue(Commands.sequence(
             elevator.extendCommand(4),
             coralWrist.L2BranchCommand(),
             Commands.waitUntil(
