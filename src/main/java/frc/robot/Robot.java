@@ -49,8 +49,8 @@ public class Robot extends TimedRobot {
 
     FollowPathCommand.warmupCommand().schedule();
 
-    lllThrottleEntry.set(200);
-    rllThrottleEntry.set(200);
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
   }
 
   @Override
