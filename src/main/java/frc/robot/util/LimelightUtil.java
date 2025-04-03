@@ -11,34 +11,36 @@ import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
 public class LimelightUtil {
+  public static NetworkTable left_ll_table = NetworkTableInstance.getDefault()
+      .getTable("limelight-left");
+
+  public static NetworkTable right_ll_table = NetworkTableInstance.getDefault()
+      .getTable("limelight-left");
 
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. More classic example in `Drivebase`.
   // Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
-  public static final DoubleArraySubscriber R_limelightRobotPose = NetworkTableInstance.getDefault()
-      .getTable("limelight-right")
+  public static final DoubleArraySubscriber R_limelightRobotPose = right_ll_table
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
 
-  public static final DoubleArraySubscriber L_limelightRobotPose = NetworkTableInstance.getDefault()
-      .getTable("limelight-left")
+  public static final DoubleArraySubscriber L_limelightRobotPose = left_ll_table
       .getDoubleArrayTopic("botpose_targetspace")
       .subscribe(new double[6]);
 
-  public static final DoubleSubscriber l_ll_id = NetworkTableInstance.getDefault()
-      .getTable("limelight-left")
+  public static final DoubleSubscriber l_ll_id = left_ll_table
       .getDoubleTopic("tid")
       .subscribe(-1);
 
-  public static final DoubleSubscriber r_ll_id = NetworkTableInstance.getDefault()
-      .getTable("limelight-right")
+  public static final DoubleSubscriber r_ll_id = right_ll_table
       .getDoubleTopic("tid")
       .subscribe(-1);
 

@@ -45,7 +45,7 @@ public class CoralIntake extends SubsystemBase {
     this.outputSpeedChooser.addOption("0.4", 0.45);
     this.outputSpeedChooser.addOption("0.4", 0.35);
 
-    SmartDashboard.putData(this.outputSpeedChooser);
+    SmartDashboard.putData("Outtake Speed", this.outputSpeedChooser);
   }
 
   public void runIntake(double intakeMotorSpeed) {
