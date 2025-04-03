@@ -22,7 +22,7 @@ public class LimelightUtil {
       .getTable("limelight-left");
 
   public static NetworkTable right_ll_table = NetworkTableInstance.getDefault()
-      .getTable("limelight-left");
+      .getTable("limelight-right");
 
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. More classic example in `Drivebase`.
