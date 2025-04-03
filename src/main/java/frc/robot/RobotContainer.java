@@ -18,9 +18,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.ConditionalIntake;
 import frc.robot.commands.Drive;
 import frc.robot.commands.NoDrive;
-import frc.robot.commands.RightReefAlignCommand;
+import frc.robot.commands.ReefAlignCommand;
 import frc.robot.commands.RumbleOnIntake;
-import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.coral.CoralIntake;
@@ -29,6 +28,7 @@ import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.Climber;
 
 import frc.robot.util.LimelightHelpers;
+import frc.robot.util.AutoDestinations.ReefSide;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -107,7 +107,7 @@ public class RobotContainer {
                 elevator.collapseCommand(),
                 coralWrist.stationCommand())));
 
-    NamedCommands.registerCommand("Reef Align", new LeftReefAlignCommand(drivebase));
+    NamedCommands.registerCommand("Reef Align", new ReefAlignCommand(drivebase, ReefSide.LEFT));
 
     NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake, elevator));
 
@@ -311,7 +311,7 @@ public class RobotContainer {
         () -> driveStick.setRumble(RumbleType.kLeftRumble, 0));
     var leftAlignCommand = Commands.parallel(
         leftRumbleCommand.withTimeout(0.5),
-        new LeftReefAlignCommand(drivebase))
+        new ReefAlignCommand(drivebase, ReefSide.LEFT))
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
@@ -327,7 +327,7 @@ public class RobotContainer {
         () -> driveStick.setRumble(RumbleType.kRightRumble, 0));
     var rightAlignCommand = Commands.parallel(
         rightRumbleCommand.withTimeout(0.5),
-        new RightReefAlignCommand(drivebase))
+        new ReefAlignCommand(drivebase, ReefSide.RIGHT))
         .until(semiAutoCancel)
         // This Smart Dashboard value is used by the CANdleSystem.java subsystem
         .andThen(() -> SmartDashboard.putBoolean("Aligned", false));

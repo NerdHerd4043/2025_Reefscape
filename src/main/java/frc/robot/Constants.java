@@ -8,6 +8,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 
 import cowlib.SwerveModuleConfig;
+import cowlib.Util;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -166,6 +167,17 @@ public class Constants {
     public static final double distSensorLow = 29;
     public static final double distSensorHigh = 409;
     public static final double distSensorHighNoCoral = 540;
+
+    public static final double offsetLowMeters = 0;
+    public static final double offsetHighMeters = 0.3556;
+
+    public static double mapCoral(double sensor) {
+      return Util.mapDouble(sensor,
+          Constants.CoralIntake.distSensorLow,
+          Constants.CoralIntake.distSensorHigh,
+          Constants.CoralIntake.offsetLowMeters,
+          Constants.CoralIntake.offsetHighMeters);
+    }
 
     public static final int distSensorID = 33;
   }
