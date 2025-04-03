@@ -11,21 +11,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.util.LimelightUtil;
+import frc.robot.util.AutoDestinations.ReefSide;
 import cowlib.Util;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RightReefAlignCommand extends Command {
+public class ReefAlignCommand extends Command {
 
   private final Drivebase drivebase;
+  private ReefSide side;
 
   private double time;
   private boolean timeSet;
   private boolean finished = false;
 
   /** Creates a new ReefAlignCommand. */
-  public RightReefAlignCommand(Drivebase drivebase) {
+  public ReefAlignCommand(Drivebase drivebase, ReefSide side) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivebase = drivebase;
+    this.side = side;
+
     this.addRequirements(this.drivebase);
   }
 
@@ -44,17 +48,13 @@ public class RightReefAlignCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double distSensorOffset = Util.mapDouble(
-        SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow),
-        Constants.CoralIntake.distSensorLow,
-        Constants.CoralIntake.distSensorHigh,
-        0,
-        0.3556);
+    double distSensor = SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow);
+    double distSensorOffset = Constants.CoralIntake.mapCoral(distSensor);
 
     SmartDashboard.putNumber("Left Limelight Last Change", LimelightUtil.L_limelightRobotPose.getLastChange());
     SmartDashboard.putNumber("Right Limelight Last Change", LimelightUtil.R_limelightRobotPose.getLastChange());
     double robotPoseX = LimelightUtil.getRobotPoseX();
-    double targetPoseX = this.drivebase.getRightReefTargetPose();
+    double targetPoseX = this.drivebase.getReefTargetPose(this.side);
 
     double maxOffset = 1;
     double deadband = 0.015;

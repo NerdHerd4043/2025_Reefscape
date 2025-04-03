@@ -48,6 +48,7 @@ import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 import frc.robot.util.AutoDestinations;
+import frc.robot.util.AutoDestinations.ReefSide;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
 
@@ -471,6 +472,16 @@ public class Drivebase extends SubsystemBase {
 
   public double getRightReefTargetPose() {
     return this.rightReefTargetPose.getSelected();
+  }
+
+  public double getReefTargetPose(ReefSide side) {
+    switch (side) {
+      case RIGHT:
+        return getRightReefTargetPose();
+      case LEFT:
+      default:
+        return getLeftReefTargetPose();
+    }
   }
 
   @Override
