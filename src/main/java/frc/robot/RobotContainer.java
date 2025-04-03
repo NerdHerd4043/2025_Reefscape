@@ -272,7 +272,7 @@ public class RobotContainer {
     driveStick.back().whileTrue(elevator.coastModeCommand());
 
     Trigger leftTriggerLow = driveStick.leftTrigger(0.1);
-    Trigger leftTriggerHigh = driveStick.leftTrigger(0.75);
+    Trigger leftTriggerHigh = driveStick.leftTrigger(0.9);
 
     Trigger climberMode = new Trigger(() -> this.climberMode);
 

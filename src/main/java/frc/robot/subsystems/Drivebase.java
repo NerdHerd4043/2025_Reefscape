@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleArrayTopic;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -54,6 +55,10 @@ import frc.robot.util.LimelightUtil;
 
 @Logged
 public class Drivebase extends SubsystemBase {
+  private static NetworkTable alignTable = NetworkTableInstance.getDefault()
+      .getTable("alignment");
+  private static DoublePublisher currentXPub = alignTable.getDoubleTopic("Robot Pose X").publish();
+
   private SwerveModule frontLeft = new SwerveModule(
       SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
   private SwerveModule frontRight = new SwerveModule(
@@ -486,6 +491,7 @@ public class Drivebase extends SubsystemBase {
 
   @Override
   public void periodic() {
+    currentXPub.set(LimelightUtil.getRobotPoseX());
     /* This method will be called once per scheduler run */
 
     // Updating odometry
