@@ -125,6 +125,18 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Straighten Coral", this.fixCoral);
 
+    NamedCommands.registerCommand("Low Algae",
+        Commands.parallel(
+            elevator.collapseCommand(),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand().withTimeout(0.66)));
+
+    NamedCommands.registerCommand("High Algae",
+        Commands.parallel(
+            elevator.extendCommand(2),
+            coralWrist.highBranchesCommand(),
+            coralIntake.intakeCommand().withTimeout(1.1)));
+
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
 
