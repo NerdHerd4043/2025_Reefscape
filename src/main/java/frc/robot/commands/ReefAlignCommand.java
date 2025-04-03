@@ -4,18 +4,25 @@
 
 package frc.robot.commands;
 
+import cowlib.Util;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-import frc.robot.util.LimelightUtil;
 import frc.robot.util.AutoDestinations.ReefSide;
-import cowlib.Util;
+import frc.robot.util.LimelightUtil;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ReefAlignCommand extends Command {
+  private static NetworkTable alignTable = NetworkTableInstance.getDefault()
+      .getTable("alignment");
+
+  private static DoublePublisher currentXPub = alignTable.getDoubleTopic("Robot Pose X").publish();
 
   private final Drivebase drivebase;
   private ReefSide side;
@@ -95,6 +102,7 @@ public class ReefAlignCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    currentXPub.set(0);
     this.drivebase.robotOrientedDrive(0, 0, 0);
 
     // These Smart Dashboard values are used by the CANdleSystem.java subsystem
