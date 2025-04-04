@@ -129,13 +129,21 @@ public class RobotContainer {
         Commands.parallel(
             elevator.collapseCommand(),
             coralWrist.highBranchesCommand(),
-            coralIntake.intakeCommand().withTimeout(0.66)));
+            coralIntake.intakeCommand().withTimeout(2.05)));
 
     NamedCommands.registerCommand("High Algae",
         Commands.parallel(
             elevator.extendCommand(2),
             coralWrist.highBranchesCommand(),
             coralIntake.intakeCommand().withTimeout(1.1)));
+
+    NamedCommands.registerCommand("Net Score", Commands.sequence(
+        elevator.extendCommand(4),
+        coralWrist.L2BranchCommand(),
+        Commands.waitUntil(
+            () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
+        coralIntake.outtakeCommand().withTimeout(2),
+        elevator.collapseCommand()));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);

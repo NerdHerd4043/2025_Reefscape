@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test Path"
+            "pathName": "Center to Back Center Path (No Spin) Path"
           }
         },
         {
@@ -23,7 +23,51 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L4 Score"
+                  "name": "Score"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Low Algae"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Back to Center Path (No Spin) Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Score"
                 }
               }
             ]
