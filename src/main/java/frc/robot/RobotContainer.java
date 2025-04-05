@@ -59,6 +59,24 @@ public class RobotContainer {
       coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.25));
 
+  Command lowAlgaeCommand = Commands.parallel(
+      elevator.collapseCommand(),
+      coralWrist.highBranchesCommand(),
+      coralIntake.intakeCommand().withTimeout(3));
+
+  Command highAlgaeCommand = Commands.parallel(
+      elevator.extendCommand(2),
+      coralWrist.highBranchesCommand(),
+      coralIntake.intakeCommand().withTimeout(1.1));
+
+  Command netScoreCommand = Commands.sequence(
+      elevator.extendCommand(4),
+      coralWrist.L2BranchCommand(),
+      Commands.waitUntil(
+          () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
+      coralIntake.outtakeCommand().withTimeout(2),
+      elevator.collapseCommand());
+
   public boolean climberMode;
 
   public RobotContainer() {
@@ -125,25 +143,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Straighten Coral", this.fixCoral);
 
-    NamedCommands.registerCommand("Low Algae",
-        Commands.parallel(
-            elevator.collapseCommand(),
-            coralWrist.highBranchesCommand(),
-            coralIntake.intakeCommand().withTimeout(2.05)));
+    NamedCommands.registerCommand("Low Algae", lowAlgaeCommand);
 
-    NamedCommands.registerCommand("High Algae",
-        Commands.parallel(
-            elevator.extendCommand(2),
-            coralWrist.highBranchesCommand(),
-            coralIntake.intakeCommand().withTimeout(1.1)));
+    NamedCommands.registerCommand("High Algae", highAlgaeCommand);
 
-    NamedCommands.registerCommand("Net Score", Commands.sequence(
-        elevator.extendCommand(4),
-        coralWrist.L2BranchCommand(),
-        Commands.waitUntil(
-            () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
-        coralIntake.outtakeCommand().withTimeout(2),
-        elevator.collapseCommand()));
+    NamedCommands.registerCommand("Net Score", netScoreCommand);
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -242,7 +246,9 @@ public class RobotContainer {
     // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
-    driveStick.povDown().onTrue(this.fixCoral);
+    // FIXME
+    driveStick.povDown().onTrue(this.lowAlgaeCommand);
+    // driveStick.povDown().onTrue(this.fixCoral);
 
     /* Coral wrist angle buttons */
     // driveStick.povRight().onTrue(coralWrist.L2BranchCommand()); // Wrist
