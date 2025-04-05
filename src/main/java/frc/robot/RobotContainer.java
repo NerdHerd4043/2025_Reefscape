@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.AlgaeReefAlignCommand;
 import frc.robot.commands.ConditionalIntake;
 import frc.robot.commands.Drive;
 import frc.robot.commands.NoDrive;
@@ -67,7 +68,7 @@ public class RobotContainer {
   Command highAlgaeCommand = Commands.parallel(
       elevator.extendCommand(2),
       coralWrist.highBranchesCommand(),
-      coralIntake.intakeCommand().withTimeout(1.1));
+      coralIntake.intakeCommand().withTimeout(3));
 
   Command netScoreCommand = Commands.sequence(
       elevator.extendCommand(4),
@@ -126,6 +127,8 @@ public class RobotContainer {
                 coralWrist.stationCommand())));
 
     NamedCommands.registerCommand("Reef Align", new ReefAlignCommand(drivebase, ReefSide.LEFT));
+
+    NamedCommands.registerCommand("Algae Reef Align", new AlgaeReefAlignCommand(drivebase));
 
     NamedCommands.registerCommand("Conditional Intake", new ConditionalIntake(coralIntake, elevator));
 
