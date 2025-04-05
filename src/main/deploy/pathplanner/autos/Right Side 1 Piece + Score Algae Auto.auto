@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path (No Spin) Path"
+            "pathName": "Right to Back Right Path"
           }
         },
         {
@@ -36,7 +36,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Low Algae"
+                  "name": "High Algae"
                 }
               },
               {
@@ -51,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Center Path (No Spin) Path"
+            "pathName": "Back Right to Net Path"
           }
         },
         {
@@ -61,16 +61,22 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "Net Score"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Score"
+                  "name": "No Drive"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Away from Net Path"
           }
         }
       ]

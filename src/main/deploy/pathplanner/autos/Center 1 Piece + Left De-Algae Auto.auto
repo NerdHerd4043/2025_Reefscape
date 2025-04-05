@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path (No Spin) Path"
+            "pathName": "Center to Back Center Path"
           }
         },
         {
@@ -51,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Center Path (No Spin) Path"
+            "pathName": "Center Back to Back Left Path"
           }
         },
         {
@@ -61,13 +67,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "High Algae"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Score"
+                  "name": "Algae Reef Align"
                 }
               }
             ]

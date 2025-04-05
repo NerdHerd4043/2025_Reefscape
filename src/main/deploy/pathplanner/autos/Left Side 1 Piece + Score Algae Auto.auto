@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path (No Spin) Path"
+            "pathName": "Elevator Up + Left to Back Left Path"
           }
         },
         {
@@ -36,13 +36,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Low Algae"
+                  "name": "Algae Reef Align"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Algae Reef Align"
+                  "name": "High Algae"
                 }
               }
             ]
@@ -51,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Center Path (No Spin) Path"
+            "pathName": "Back Left to Net Path"
           }
         },
         {
@@ -71,6 +71,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Away from Net Path"
           }
         }
       ]

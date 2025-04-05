@@ -7,7 +7,57 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path (No Spin) Path"
+            "pathName": "Elevator Up + Left to Back Left Path"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Reef Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back Left to Station Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Conditional Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station to Front Left Path"
           }
         },
         {
@@ -51,23 +101,23 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Center Path (No Spin) Path"
+            "pathName": "Front Left to Station Path"
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "Conditional Intake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Score"
+                  "name": "No Drive"
                 }
               }
             ]
