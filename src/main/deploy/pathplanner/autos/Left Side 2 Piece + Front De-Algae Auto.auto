@@ -5,15 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 3.0
+            "pathName": "Elevator Up + Left to Back Left Path"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Reef Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path"
+            "pathName": "Back Left to Station Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Conditional Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Elevator Up + Station to Front Left"
           }
         },
         {
@@ -63,32 +107,26 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Net Path"
+            "pathName": "Front Left to Station"
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "Conditional Intake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Score"
+                  "name": "No Drive"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Away from Net Path"
           }
         }
       ]

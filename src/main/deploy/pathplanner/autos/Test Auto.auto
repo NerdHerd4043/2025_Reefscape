@@ -44,6 +44,12 @@
                 "data": {
                   "name": "Low Algae"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Algae Reef Align"
+                }
               }
             ]
           }

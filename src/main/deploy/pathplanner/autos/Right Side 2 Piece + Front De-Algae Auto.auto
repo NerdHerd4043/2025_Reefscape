@@ -5,15 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 3.0
+            "pathName": "Right to Back Right Path"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Reef Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path"
+            "pathName": "Back Right to Station Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Conditional Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Station to Front Right Path"
           }
         },
         {
@@ -63,7 +107,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center Back to Net Path"
+            "pathName": "Front Right to Station"
           }
         },
         {
@@ -73,22 +117,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
+                  "name": "Conditional Intake"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Score"
+                  "name": "No Drive"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Away from Net Path"
           }
         }
       ]

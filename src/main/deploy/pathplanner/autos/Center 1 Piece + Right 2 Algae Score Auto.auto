@@ -59,6 +59,62 @@
               }
             ]
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Back to Net Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Score"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net to Back Right Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "High Algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Algae Reef Align"
+                }
+              }
+            ]
+          }
         }
       ]
     }

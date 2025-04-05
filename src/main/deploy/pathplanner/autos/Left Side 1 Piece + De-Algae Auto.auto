@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path"
+            "pathName": "Elevator Up + Left to Back Left Path"
           }
         },
         {
@@ -48,13 +42,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Low Algae"
+                  "name": "Algae Reef Align"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Algae Reef Align"
+                  "name": "High Algae"
                 }
               }
             ]
