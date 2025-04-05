@@ -21,6 +21,6 @@ public class SparkMaxLogger extends ClassSpecificLogger<SparkMax> {
   protected void update(EpilogueBackend backend, SparkMax motor) {
     backend.log("Applied Output (Duty Cycle)", motor.getAppliedOutput());
     backend.log("Output Current (A)", motor.getOutputCurrent());
-    backend.log("Temperature (C)", motor.getOutputCurrent());
+    backend.log("Temperature (C)", motor.getMotorTemperature());
   }
 }
