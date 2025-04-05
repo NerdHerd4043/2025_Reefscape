@@ -40,11 +40,6 @@ public class AlgaeReefAlignCommand extends Command {
     this.finished = false;
   }
 
-  public boolean pieceAquired() {
-    return SmartDashboard.getNumber("Distance Sensor",
-        Constants.CoralIntake.distSensorLow) < Constants.CoralIntake.distSensorHighNoCoral - 20;
-  }
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -104,6 +99,6 @@ public class AlgaeReefAlignCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return this.finished || !pieceAquired();
+    return this.finished;
   }
 }
