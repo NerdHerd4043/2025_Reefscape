@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right to Back Right Path"
+            "pathName": "Elevator Up + Left to Back Left Path"
           }
         },
         {
@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Back Right to Station Path"
+            "pathName": "Back Left to Station Path"
           }
         },
         {
@@ -82,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Station to Front Right Path"
+            "pathName": "Station to Front Left Path"
           }
         },
         {
@@ -105,38 +105,13 @@
           }
         },
         {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "No Drive"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Low Algae"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Algae Reef Align"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Front Right to Station Path"
+            "pathName": "Front Left to Station Path"
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {

@@ -7,7 +7,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 1.5
           }
         },
         {
@@ -114,6 +114,37 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back Left to Net Path"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "No Drive"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Score"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Away from Net Path"
           }
         }
       ]

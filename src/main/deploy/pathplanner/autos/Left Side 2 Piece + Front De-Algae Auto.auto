@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Elevator Up + Station to Front Left"
+            "pathName": "Station to Front Left Path"
           }
         },
         {
@@ -107,7 +107,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Front Left to Station"
+            "pathName": "Front Left to Station Path"
           }
         },
         {

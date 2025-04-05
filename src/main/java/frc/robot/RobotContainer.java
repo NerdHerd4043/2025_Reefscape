@@ -63,12 +63,12 @@ public class RobotContainer {
   Command lowAlgaeCommand = Commands.parallel(
       elevator.collapseCommand(),
       coralWrist.highBranchesCommand(),
-      coralIntake.intakeCommand().withTimeout(3));
+      coralIntake.intakeCommand().withTimeout(2));
 
   Command highAlgaeCommand = Commands.parallel(
       elevator.extendCommand(2),
       coralWrist.highBranchesCommand(),
-      coralIntake.intakeCommand().withTimeout(3));
+      coralIntake.intakeCommand().withTimeout(2));
 
   Command netScoreCommand = Commands.sequence(
       elevator.extendCommand(4),

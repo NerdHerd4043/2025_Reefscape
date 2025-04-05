@@ -57,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Back Right to Station Path"
+            "pathName": "Back Right to Net Path"
           }
         },
         {
@@ -67,7 +67,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Conditional Intake"
+                  "name": "Net Score"
                 }
               },
               {
@@ -82,76 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Station to Front Right Path"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Reef Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Score"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "No Drive"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Low Algae"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Algae Reef Align"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Front Right to Station Path"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Conditional Intake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "No Drive"
-                }
-              }
-            ]
+            "pathName": "Away from Net Path"
           }
         }
       ]
