@@ -11,7 +11,9 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -20,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.DriveConstants.SwervePID;
 
 /** Add your docs here. */
+@Logged
 public class SwerveModule {
   private SparkMax angleMotor;
   private SparkMax speedMotor;
@@ -38,6 +41,7 @@ public class SwerveModule {
     final SparkMaxConfig speedMotorConfig = new SparkMaxConfig();
 
     speedMotorConfig.inverted(driveInverted);
+    speedMotorConfig.idleMode(IdleMode.kBrake);
 
     double driveReduction = 1.0 / 6.12;
     double WHEEL_DIAMETER = 0.1016;

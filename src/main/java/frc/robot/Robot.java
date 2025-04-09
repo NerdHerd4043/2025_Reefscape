@@ -4,12 +4,22 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.commands.FollowPathCommand;
 
+import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.LimelightUtil;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -17,19 +27,63 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  @NotLogged
+  private final IntegerPublisher lllThrottleEntry = NetworkTableInstance
+      .getDefault()
+      .getTable("limelight-left")
+      .getIntegerTopic("throttle_set")
+      .publish();
+
+  @NotLogged
+  private final IntegerPublisher rllThrottleEntry = NetworkTableInstance
+      .getDefault()
+      .getTable("limelight-right")
+      .getIntegerTopic("throttle_set")
+      .publish();
+
   public Robot() {
+    Epilogue.bind(this);
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     m_robotContainer = new RobotContainer();
 
     FollowPathCommand.warmupCommand().schedule();
+
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    SmartDashboard.putNumber("R Target", LimelightUtil.getLimelightID());
+
+    // SmartDashboard.putNumber("LL Latency", LimelightUtil.getLimelightLatency());
+    // // Latency
+
+    // These Smart Dashboard values are used by the CANdleSystem.java subsystem
+    Optional<Double> optionalY = LimelightUtil.getYDist();
+    optionalY.ifPresent(y -> SmartDashboard.putNumber("LL Y Dist", Math.abs(optionalY.get())));
+
+    var llAngle = LimelightUtil.getAngle();
+    llAngle.ifPresentOrElse(
+        angle -> {
+          SmartDashboard.putNumber("LL Angle Delta", angle);
+          SmartDashboard.putBoolean("Valid LL Angle Delta", angle < 5);
+        },
+        () -> SmartDashboard.putBoolean("Valid LL Angle Delta", false));
   }
 
   @Override
   public void disabledInit() {
+    // Sets the Limelights' detection software to not be looking for anything, so as
+    // to save battery.
+    // LimelightHelpers.setPipelineIndex("limelight-left", 1);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 1);
+
+    lllThrottleEntry.set(200);
+    rllThrottleEntry.set(200);
   }
 
   @Override
@@ -42,6 +96,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
+
+    // Sets the Limelights' detection software to looking for April Tags.
+    // LimelightHelpers.setPipelineIndex("limelight-left", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 0);
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     m_robotContainer.resetCoralPID().schedule();
@@ -53,6 +114,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    SmartDashboard.putBoolean("Running Autonomous", true);
   }
 
   @Override
@@ -61,6 +124,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    lllThrottleEntry.set(0);
+    rllThrottleEntry.set(0);
+
+    // Sets the Limelights' detection software to looking for April Tags.
+    // LimelightHelpers.setPipelineIndex("limelight-left", 0);
+    // LimelightHelpers.setPipelineIndex("limelight-right", 0);
+
     m_robotContainer.resetCoralPID().schedule();
 
     if (m_autonomousCommand != null) {
@@ -70,6 +140,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    SmartDashboard.putBoolean("Running Autonomous", false);
   }
 
   @Override

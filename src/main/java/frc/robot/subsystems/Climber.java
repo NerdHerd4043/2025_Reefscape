@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -15,28 +14,24 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Climber.PIDValuesC;
-import frc.robot.Constants.CoralWrist.WristPositionsC;
 import frc.robot.Constants.Climber.ClimberPositionsC;
 
 @Logged
 public class Climber extends SubsystemBase {
-  @NotLogged
   private final SparkMax rightWristMotor = new SparkMax(Constants.Climber.rightMotorId, MotorType.kBrushless);
   private final SparkMax leftWristMotor = new SparkMax(Constants.Climber.leftMotorId, MotorType.kBrushless);
 
-  @Logged
-  private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); // FIXME: Set ID
+  // @Logged
+  // private CANcoder encoder = new CANcoder(Constants.Climber.encoderID); //
+  // FIXME: Set ID
 
   // FIXME: Tune
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesC.p,
       PIDValuesC.i,
@@ -61,12 +56,12 @@ public class Climber extends SubsystemBase {
     this.rightWristMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     this.leftWristMotor.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    this.pidController.setGoal(this.getEncoderRadians());
+    // this.pidController.setGoal(this.getEncoderRadians());
   }
 
-  private void updatePID() {
-    this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
-  }
+  // private void updatePID() {
+  // this.rightWristMotor.setVoltage(pidController.calculate(getEncoderRadians()));
+  // }
 
   @NotLogged
   public TrapezoidProfile.State getSetpoint() {
@@ -105,17 +100,25 @@ public class Climber extends SubsystemBase {
     this.rightWristMotor.set(speed);
   }
 
-  public double getEncoder() {
-    return -this.encoder.getAbsolutePosition().getValueAsDouble();
-  }
+  // public double getEncoder() {
+  // return -this.encoder.getAbsolutePosition().getValueAsDouble();
+  // }
 
-  public double getEncoderRadians() {
-    return this.getEncoder() * 2 * Math.PI;
-  }
+  // public double getEncoderRadians() {
+  // return this.getEncoder() * 2 * Math.PI;
+  // }
 
   private void setGoal(double input) {
     this.pidController.setGoal(
         MathUtil.clamp(input, 0.0, ClimberPositionsC.upper));
+  }
+
+  public void stopClimber() {
+    this.rightWristMotor.stopMotor();
+  }
+
+  public Command stopCommand() {
+    return this.runOnce(this::stopClimber);
   }
 
   @Override

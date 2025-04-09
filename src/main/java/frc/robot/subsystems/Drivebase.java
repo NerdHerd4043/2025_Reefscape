@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import cowlib.SwerveModule;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleArrayTopic;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,8 +39,6 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-import com.revrobotics.Rev2mDistanceSensor;
-import com.revrobotics.Rev2mDistanceSensor.Port;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
@@ -48,11 +49,15 @@ import frc.robot.Constants.DriveConstants.SwerveModules;
 import frc.robot.Constants.PathPlannerConstants.RotationPID;
 import frc.robot.Constants.PathPlannerConstants.TranslationPID;
 import frc.robot.util.AutoDestinations;
+import frc.robot.util.AutoDestinations.ReefSide;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightUtil;
-import frc.robot.util.AutoDestinations;
 
+@Logged
 public class Drivebase extends SubsystemBase {
+  private static NetworkTable alignTable = NetworkTableInstance.getDefault()
+      .getTable("alignment");
+  private static DoublePublisher currentXPub = alignTable.getDoubleTopic("Robot Pose X").publish();
 
   private SwerveModule frontLeft = new SwerveModule(
       SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
@@ -63,15 +68,22 @@ public class Drivebase extends SubsystemBase {
   private SwerveModule backRight = new SwerveModule(
       SwerveModules.backRight, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
 
-  private SwerveModule[] modules = new SwerveModule[] { this.frontLeft, this.frontRight, this.backLeft,
-      this.backRight };
+  @NotLogged
+  private SwerveModule[] modules = new SwerveModule[] {
+      this.frontLeft,
+      this.frontRight,
+      this.backLeft,
+      this.backRight
+  };
 
+  @NotLogged
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       ModuleLocations.frontLeft,
       ModuleLocations.frontRight,
       ModuleLocations.backLeft,
       ModuleLocations.backRight);
 
+  @NotLogged
   private SwerveDriveOdometry odometry;
 
   private Field2d field = new Field2d();
@@ -79,30 +91,38 @@ public class Drivebase extends SubsystemBase {
   private BooleanEntry fieldOrientedEntry;
 
   // Limits speed of changes in direction
+  @NotLogged
   private SlewRateLimiter slewRateX = new SlewRateLimiter(DriveConstants.slewRate);
+  @NotLogged
   private SlewRateLimiter slewRateY = new SlewRateLimiter(DriveConstants.slewRate);
 
   // Creates Sendables on the dashboard that can be interacted with to affect the
   // robot without pushing new code. These ones end up being used for scaling the
-  // robot's drive speed and choosing between field and robot oriented drive.
+  // robot's drive speed, choosing between field and robot oriented drive, and
+  // choosing the reef positions to move to.
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
+  private SendableChooser<Double> leftReefTargetPose = new SendableChooser<>();
+  private SendableChooser<Double> rightReefTargetPose = new SendableChooser<>();
 
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. Source:
   // https://docs.wpilib.org/en/stable/docs/software/networktables/publish-and-subscribe.html#subscribing-to-a-topic
-  private final DoubleArraySubscriber botFieldPose;
+  @NotLogged
+  private final DoubleArraySubscriber R_limelightRobotPose;
   // This double array is used later to hold information we get from the
   // subscriber. Limelight documentation (as of now) doesn't use a subscriber, but
-  // our subscriber is getting the same values that the `botpose_wpiblue` gets,
-  // and those values are best stored in a double array. Source:
+  // our subscriber is getting the same values that the `botpose_targetspace`
+  // gets, and those values are best stored in a double array. Source:
   // https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api#apriltag-and-3d-data
-  private double[] botFieldPoseArray = new double[6];
+  @NotLogged
+  private double[] R_limelightRobotPoseArray = new double[6];
 
   private final AHRS gyro = new AHRS(NavXComType.kMXP_SPI);
   public double savedGyroYaw;
   private double savedAutoYaw;
 
+  @NotLogged
   private PathConstraints constraints = new PathConstraints(
       7, // Max Velocity
       3, // Max Acceleration
@@ -137,9 +157,27 @@ public class Drivebase extends SubsystemBase {
     // Adds Robot Oriented as an option.
     this.fieldOriented.addOption("Robot Oriented", false);
 
+    this.leftReefTargetPose.setDefaultOption("Original", 0.0);
+    this.leftReefTargetPose.addOption("0.01", 0.01);
+    this.leftReefTargetPose.addOption("0.02", 0.02);
+    this.leftReefTargetPose.addOption("0.03", 0.03);
+    this.leftReefTargetPose.addOption("-0.01", -0.01);
+    this.leftReefTargetPose.addOption("-0.02", -0.02);
+    this.leftReefTargetPose.addOption("-0.03", -0.03);
+
+    this.rightReefTargetPose.setDefaultOption("Original", 0.32);
+    this.rightReefTargetPose.addOption("0.01", 0.33);
+    this.rightReefTargetPose.addOption("0.02", 0.34);
+    this.rightReefTargetPose.addOption("0.03", 0.35);
+    this.rightReefTargetPose.addOption("-0.01", 0.31);
+    this.rightReefTargetPose.addOption("-0.02", 0.30);
+    this.rightReefTargetPose.addOption("-0.03", 0.29);
+
     // Putting Sendables on the dashboard so they can be used.
-    SmartDashboard.putData(this.driveSpeedChooser);
-    SmartDashboard.putData(this.fieldOriented);
+    SmartDashboard.putData("Drive Speed", this.driveSpeedChooser);
+    SmartDashboard.putData("Drive Orientation", this.fieldOriented);
+    SmartDashboard.putData("Left Reef Target", this.leftReefTargetPose);
+    SmartDashboard.putData("Right Reef Target", this.rightReefTargetPose);
 
     // Putting the field on the dashboard
     SmartDashboard.putData("Field", this.field);
@@ -151,8 +189,8 @@ public class Drivebase extends SubsystemBase {
 
     // Getting the Limelight's field position array from network tables.
     NetworkTable LLTable = inst.getTable("limelight-right");
-    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_target_space");
-    this.botFieldPose = botPoseTopic.subscribe(new double[6]);
+    DoubleArrayTopic botPoseTopic = LLTable.getDoubleArrayTopic("botpose_targetspace");
+    this.R_limelightRobotPose = botPoseTopic.subscribe(new double[6]);
 
     // Setting up auto capabilities
     RobotConfig config;
@@ -232,8 +270,12 @@ public class Drivebase extends SubsystemBase {
     this.backRight.drive(moduleStates[3]);
   }
 
-  public double getMaxVelocity() {
+  public double getDriverMaxVelocity() {
     return DriveConstants.maxVelocity * this.getRobotSpeedRatio();
+  }
+
+  public double getTrueMaxVelocity() {
+    return DriveConstants.maxVelocity;
   }
 
   public double getMaxAngularVelocity() {
@@ -282,14 +324,17 @@ public class Drivebase extends SubsystemBase {
     return this.runOnce(() -> this.resetGyro());
   }
 
+  @SuppressWarnings("unused")
   private void saveGyroYaw() {
     this.savedGyroYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private void saveAutoYaw() {
     this.savedAutoYaw = this.getFieldAngle();
   }
 
+  @SuppressWarnings("unused")
   private Pose2d endAutoPose() {
     Pose2d endPose = new Pose2d(
         this.odometry.getPoseMeters().getX(),
@@ -302,7 +347,6 @@ public class Drivebase extends SubsystemBase {
   public Command resetFieldPose() {
     return this.runOnce(() -> {
       var fieldPose = LimelightUtil.getRobotFieldPose2D(
-          this.botFieldPoseArray,
           this.gyro);
       this.resetPose(fieldPose);
     });
@@ -314,7 +358,6 @@ public class Drivebase extends SubsystemBase {
   public Command getAlignCommand() {
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
-        this.botFieldPoseArray,
         this.gyro);
 
     if (fieldPose.getX() * fieldPose.getY() == 0) {
@@ -322,7 +365,7 @@ public class Drivebase extends SubsystemBase {
     }
     // Final Pose
     var targetPose = AutoDestinations.destinationPose(
-        LimelightUtil.getID("limelight-right"),
+        LimelightUtil.getLimelightID(),
         AutoDestinations.ReefSide.LEFT,
         1.4); // FIXME: Put in dist sensor
 
@@ -344,12 +387,6 @@ public class Drivebase extends SubsystemBase {
     path.preventFlipping = true;
 
     return Commands.sequence(
-        Commands.runOnce(() -> System.out.println(fieldPose.getX())),
-        Commands.runOnce(() -> System.out.println(fieldPose.getY())),
-        Commands.runOnce(() -> System.out.println(fieldPose.getRotation())),
-        Commands.runOnce(() -> System.out.println(targetPose.getX())),
-        Commands.runOnce(() -> System.out.println(targetPose.getY())),
-        Commands.runOnce(() -> System.out.println(targetPose.getRotation())),
         this.runOnce(() -> this.resetPose(fieldPose)),
         AutoBuilder.followPath(path));
   }
@@ -357,7 +394,6 @@ public class Drivebase extends SubsystemBase {
   public Command staticScoreCommand() {
     // Initial Pose/Zero Pose
     var fieldPose = LimelightUtil.getRobotFieldPose2D(
-        this.botFieldPoseArray,
         this.gyro);
 
     if (fieldPose.getX() * fieldPose.getY() == 0) {
@@ -431,8 +467,31 @@ public class Drivebase extends SubsystemBase {
         AutoBuilder.followPath(path)); // FIXME: add Field Oriented reset once it's tested
   }
 
+  public double getRobotXPoseTargetSpace() {
+    return this.R_limelightRobotPoseArray[0];
+  }
+
+  public double getLeftReefTargetPose() {
+    return this.leftReefTargetPose.getSelected();
+  }
+
+  public double getRightReefTargetPose() {
+    return this.rightReefTargetPose.getSelected();
+  }
+
+  public double getReefTargetPose(ReefSide side) {
+    switch (side) {
+      case RIGHT:
+        return getRightReefTargetPose();
+      case LEFT:
+      default:
+        return getLeftReefTargetPose();
+    }
+  }
+
   @Override
   public void periodic() {
+    currentXPub.set(LimelightUtil.getRobotPoseX());
     /* This method will be called once per scheduler run */
 
     // Updating odometry
@@ -441,20 +500,16 @@ public class Drivebase extends SubsystemBase {
 
     // Update the double array storing the field pose by getting the values from the
     // Subscriber.
-    this.botFieldPoseArray = this.botFieldPose.get();
+    this.R_limelightRobotPoseArray = this.R_limelightRobotPose.get();
 
     LimelightHelpers.SetRobotOrientation("limelight-right", this.getFieldAngle(), 0, 0, 0, 0, 0);
 
     // Everything below is unnecessary for running the robot
 
     this.field.setRobotPose(this.getRobotPose()); // Shows robot pose according to odometry
-
-    SmartDashboard.putNumber("R Target", LimelightUtil.getID("limelight-right"));
-
-    SmartDashboard.putNumber("Field Pose X", this.botFieldPoseArray[0]); // X Pose
-    SmartDashboard.putNumber("Field Pose Y", this.botFieldPoseArray[1]); // Y Pose
-    SmartDashboard.putNumber("LL Latency", this.botFieldPoseArray[5]); // Latency
-
     SmartDashboard.putNumber("Yaw", this.getFieldAngle());
+
+    SmartDashboard.putNumber("Robot Pose X", LimelightUtil.getRobotPoseX()); // X Pose
+    SmartDashboard.putNumber("Robot Pose Y", LimelightUtil.getRobotFieldPose2D(this.gyro).getY()); // Y Pose
   }
 }

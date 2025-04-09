@@ -29,9 +29,7 @@ import frc.robot.Constants.Elevator.PIDValuesE;
 
 @Logged
 public class Elevator extends SubsystemBase {
-  @NotLogged
   private final SparkMax leftMotor = new SparkMax(Constants.Elevator.leftMotorId, MotorType.kBrushless);
-  @NotLogged
   private final SparkMax rightMotor = new SparkMax(Constants.Elevator.rightMotorId, MotorType.kBrushless);
 
   private boolean positionKnown = false;
@@ -47,7 +45,6 @@ public class Elevator extends SubsystemBase {
       Constants.Elevator.FeedForwardValues.kG,
       Constants.Elevator.FeedForwardValues.kV);
 
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesE.p,
       PIDValuesE.i,
@@ -55,10 +52,14 @@ public class Elevator extends SubsystemBase {
       // The motion profile constraints
       Constants.Elevator.constraints);
 
+  @NotLogged
   final SparkMaxConfig leftMotorConfigBrake;
+  @NotLogged
   final SparkMaxConfig rightMotorConfigBrake;
 
+  @NotLogged
   final SparkMaxConfig leftMotorConfigCoast;
+  @NotLogged
   final SparkMaxConfig rightMotorConfigCoast;
 
   /** Creates a new Elevator. */
@@ -87,9 +88,13 @@ public class Elevator extends SubsystemBase {
 
     this.limitSwitch = this.rightMotor.getReverseLimitSwitch();
 
-    if (this.limitSwitchPressed()) {
+    if (this.limitSwitch.isPressed()) {
       this.resetPosition();
     }
+  }
+
+  public Command holdCommand() {
+    return this.runOnce(() -> this.pidController.setGoal(this.encoderPosition()));
   }
 
   public Command coastModeCommand() {
@@ -100,16 +105,23 @@ public class Elevator extends SubsystemBase {
           PersistMode.kNoPersistParameters);
     }, () -> {
       this.leftMotor.configure(leftMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
       this.rightMotor.configure(rightMotorConfigBrake, ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+          PersistMode.kPersistParameters);
     }).ignoringDisable(true);
   }
 
   private void updatePID() {
     var setpoint = this.getSetpoint();
+    @SuppressWarnings("removal")
     var ff = this.feedforward.calculate(setpoint.position, setpoint.velocity);
-    this.rightMotor.setVoltage(ff + this.pidController.calculate(this.encoderPosition()));
+    var output = ff + this.pidController.calculate(this.encoderPosition());
+    SmartDashboard.putNumber("Elevator Output", output);
+    this.rightMotor.setVoltage(output);
+  }
+
+  private void stopMotor() {
+    this.rightMotor.stopMotor();
   }
 
   @NotLogged
@@ -122,8 +134,10 @@ public class Elevator extends SubsystemBase {
   }
 
   public void resetPosition() {
-    this.positionKnown = true;
-    this.encoder.setPosition(0);
+    if (!this.positionKnown || this.encoderPosition() < 4) {
+      this.positionKnown = true;
+      this.encoder.setPosition(0);
+    }
   }
 
   public void enable() {
@@ -179,6 +193,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     if (!this.extended && this.limitSwitchPressed()) {
+      this.stopMotor();
       this.disable();
       this.resetPosition();
     }
@@ -186,10 +201,8 @@ public class Elevator extends SubsystemBase {
       this.updatePID();
     }
 
-    SmartDashboard.putNumber("Elevator Encoder", this.encoderPosition());
-
-    // SmartDashboard.putNumber("Setpoint",
-    // this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Setpoint", this.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Elevator Applied Output", this.rightMotor.getAppliedOutput());
 
     // SmartDashboard.putBoolean("Elevator Limit Switch",
     // this.limitSwitchPressed());

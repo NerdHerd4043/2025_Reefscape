@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center to Back Center Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4 Score"
+            "pathName": "Reverse Left Test Path"
           }
         }
       ]

@@ -15,12 +15,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralWrist.PIDValuesC;
@@ -28,14 +26,11 @@ import frc.robot.Constants.CoralWrist.WristPositionsC;
 
 @Logged
 public class CoralWrist extends SubsystemBase {
-  @NotLogged
   private final SparkMax wristMotor = new SparkMax(Constants.CoralWrist.motorId, MotorType.kBrushless);
 
-  @Logged
   private CANcoder encoder = new CANcoder(Constants.CoralWrist.encoderID); // FIXME: Set ID
 
   // FIXME: Tune
-  @Logged
   private ProfiledPIDController pidController = new ProfiledPIDController(
       PIDValuesC.p,
       PIDValuesC.i,
@@ -110,7 +105,7 @@ public class CoralWrist extends SubsystemBase {
   }
 
   public Command resetPIDCommand() {
-    return Commands.runOnce(this::resetPID);
+    return this.runOnce(this::resetPID);
   }
 
   @Override
@@ -119,9 +114,8 @@ public class CoralWrist extends SubsystemBase {
 
     this.updatePID();
 
-    // SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
-    // SmartDashboard.putNumber("Wrist Goal",
-    // this.pidController.getGoal().position);
+    SmartDashboard.putNumber("Wrist Setpoint", this.getSetpoint().position);
+    SmartDashboard.putNumber("Wrist Goal", this.pidController.getGoal().position);
     // SmartDashboard.putNumber("Coral Wrist Encoder", this.getEncoderRadians());
 
     // SmartDashboard.putNumber("EYE", this.pidController.getAccumulatedError());
