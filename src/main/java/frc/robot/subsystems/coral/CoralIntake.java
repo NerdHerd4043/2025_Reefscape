@@ -25,6 +25,8 @@ public class CoralIntake extends SubsystemBase {
 
   private final TimeOfFlight distanceSensor = new TimeOfFlight(33);
 
+  // Added this to change output speed mid-match, since it was having some issues
+  // with scoring.
   private SendableChooser<Double> outputSpeedChooser = new SendableChooser<>();
 
   /** Creates a new CoralIntake. */
@@ -35,16 +37,24 @@ public class CoralIntake extends SubsystemBase {
     motorConfig.idleMode(IdleMode.kBrake);
     motorConfig.inverted(true);
 
+    // Added this to change output speed mid-match, since it was having some issues
+    // with scoring.
     this.intakeMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    // Added this to change output speed mid-match, since it was having some issues
+    // with scoring.
     this.outputSpeedChooser = new SendableChooser<>();
 
+    // Added this to change output speed mid-match, since it was having some issues
+    // with scoring.
     this.outputSpeedChooser.setDefaultOption("0.5", 0.5);
     this.outputSpeedChooser.addOption("Original", 0.6);
     this.outputSpeedChooser.addOption("0.4", 0.4);
     this.outputSpeedChooser.addOption("0.4", 0.45);
     this.outputSpeedChooser.addOption("0.4", 0.35);
 
+    // Added this to change output speed mid-match, since it was having some issues
+    // with scoring.
     SmartDashboard.putData("Outtake Speed", this.outputSpeedChooser);
   }
 
@@ -66,10 +76,12 @@ public class CoralIntake extends SubsystemBase {
         .finallyDo(this::stop);
   }
 
+  // Returns the power being supplied to the intake motor.
   public double getIntakeAmps() {
     return this.intakeMotor.getOutputCurrent();
   }
 
+  // Returns the distance sensor measurement.
   public double getDistanceSensorRange() {
     return this.distanceSensor.getRange();
   }
@@ -82,6 +94,8 @@ public class CoralIntake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run.
 
+    // Puts the distance sensor measurement onto the dashboard if there is a
+    // measurement.
     if (this.distanceSensor.isRangeValid()) {
       SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
     }

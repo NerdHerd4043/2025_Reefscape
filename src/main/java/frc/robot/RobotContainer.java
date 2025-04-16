@@ -38,20 +38,28 @@ import cowlib.Util;
 
 @Logged
 public class RobotContainer {
+  // Creates our controller
+  // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#joystick-and-controller-coordinate-system
   @NotLogged
   private final CommandXboxController driveStick = new CommandXboxController(0);
 
+  // Creates our subsystems
   private final Drivebase drivebase = new Drivebase();
   private final Elevator elevator = new Elevator();
   private final CoralWrist coralWrist = new CoralWrist();
   private final CoralIntake coralIntake = new CoralIntake();
   private final Climber climber = new Climber();
 
+  // Creates our CANdle System, i.e. our LEDs
   @SuppressWarnings("unused")
   private final CANdleSystem CANdle = new CANdleSystem();
 
+  // This, plus some lines below, creates a drop down menu on the dashboard for
+  // selecting our auto.
   private SendableChooser<Command> autoChooser;
 
+  // Straightens the coral (game piece) automatically if the coral was recieved at
+  // an angle.
   private Command fixCoral = Commands.sequence(
       coralIntake.outtakeCommand().withTimeout(0.1),
       coralIntake.intakeCommand().withTimeout(0.15),
@@ -60,6 +68,7 @@ public class RobotContainer {
       coralIntake.outtakeCommand().withTimeout(0.05),
       coralIntake.intakeCommand().withTimeout(0.25));
 
+  // Algae commands are mostly untested
   Command lowAlgaeCommand = Commands.parallel(
       elevator.collapseCommand(),
       coralWrist.highBranchesCommand(),
@@ -78,8 +87,11 @@ public class RobotContainer {
       coralIntake.outtakeCommand().withTimeout(2),
       elevator.collapseCommand());
 
+  // Used to switch between climber/algae controls connected to the controller
+  // triggers. The logic is in `this.configureBindings`.
   public boolean climberMode;
 
+  // Tells the robot to drive by default.
   public RobotContainer() {
     drivebase.setDefaultCommand(
         new Drive(
@@ -95,9 +107,14 @@ public class RobotContainer {
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", validIDs);
     LimelightHelpers.SetFiducialIDFiltersOverride("limelight-left", validIDs);
 
+    // Makes sure the limelights are on the april tag detection pipeline (refer to
+    // limelight documentation for more information).
+    // https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary
     LimelightHelpers.setPipelineIndex("limelight-left", 0);
     LimelightHelpers.setPipelineIndex("limelight-right", 0);
 
+    // Creating named commands to be used by Pathplanner.
+    // https://pathplanner.dev/home.html
     NamedCommands.registerCommand("L2 Score",
         Commands.race(
             Commands.parallel(
@@ -152,11 +169,14 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Net Score", netScoreCommand);
 
+    // This, plus some other lines, creates a drop down menu on the dashboard for
+    // selecting our auto.
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
 
     CameraServer.startAutomaticCapture(0);
 
+    // Algae controls are the default, so climber mode is false.
     this.climberMode = false;
 
     this.configureBindings();
@@ -172,9 +192,16 @@ public class RobotContainer {
     }
   }
 
+  // Changes our input -> output from linear to exponential, allowing finer
+  // control close to the center without limiting our max output (since 1 is the
+  // highest input and 1^2 (the ouput) = 1, so no change to the edges of the
+  // input/output)
   private double[] getScaledXY() {
+    // Array for storing the x/y inputs from the controller
     double[] xy = new double[2];
 
+    // Assigning inputs to array locations. X and Y are switched because the
+    // controller is funky.
     xy[0] = deadband(-driveStick.getLeftY(), DriveConstants.deadband);
     xy[1] = deadband(-driveStick.getLeftX(), DriveConstants.deadband);
 
@@ -188,7 +215,7 @@ public class RobotContainer {
     return xy;
   }
 
-  // Used to scale the drive speed when the elevator is enabled.
+  // The function used to scale the drive speed when the elevator is enabled.
   private double getElevatorSpeedRatio() {
     if (elevator.encoderPosition() > 70) {
       return 0.5;
@@ -213,6 +240,7 @@ public class RobotContainer {
     return coralWrist.resetPIDCommand();
   }
 
+  // Some of the climber mode logic
   private void enterClimberMode() {
     climber.setDefaultCommand(climber.run(() -> climber.setSpeed(
         driveStick.getLeftTriggerAxis() - driveStick.getRightTriggerAxis())));
@@ -221,6 +249,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Climber Mode", this.climberMode);
   }
 
+  // Some of the climber mode logic
   private void exitClimberMode() {
     climber.removeDefaultCommand();
     climber.stopCommand().schedule();
@@ -228,6 +257,7 @@ public class RobotContainer {
     SmartDashboard.putBoolean("Climber Mode", this.climberMode);
   }
 
+  // Some of the climber mode logic
   public void toggleClimberMode() {
     if (this.climberMode) {
       exitClimberMode();
@@ -249,7 +279,6 @@ public class RobotContainer {
     // Output
     driveStick.rightBumper().whileTrue(coralIntake.outtakeCommand());
 
-    // FIXME
     driveStick.povDown().onTrue(this.lowAlgaeCommand);
     // driveStick.povDown().onTrue(this.fixCoral);
 
@@ -359,6 +388,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    // This, plus some lines above, creates a drop down menu on the dashboard for
+    // selecting our auto.
     return this.autoChooser.getSelected();
   }
 }
