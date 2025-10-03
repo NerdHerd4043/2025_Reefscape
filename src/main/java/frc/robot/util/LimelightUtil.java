@@ -77,10 +77,13 @@ public class LimelightUtil {
     L_LimelightRobotPoseArray = L_limelightRobotPose.get();
 
     if (R_LimelightRobotPoseArray.length > 0 && R_LimelightRobotPoseArray[0] != 0) {
+      SmartDashboard.putString("Limelight Used", "Right");
       return R_LimelightRobotPoseArray[0];
     } else if (L_LimelightRobotPoseArray.length > 0 && L_LimelightRobotPoseArray[0] != 0) {
+      SmartDashboard.putString("Limelight Used", "Left");
       return L_LimelightRobotPoseArray[0];
     } else {
+      SmartDashboard.putString("Limelight Used", "None");
       return 0;
     }
   }
