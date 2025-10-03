@@ -86,12 +86,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Low Algae"
                 }
               },

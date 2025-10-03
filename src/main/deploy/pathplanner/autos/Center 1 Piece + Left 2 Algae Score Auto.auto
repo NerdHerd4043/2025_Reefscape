@@ -42,12 +42,6 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "No Drive"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Low Algae"
                 }
               },
@@ -95,12 +89,6 @@
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "No Drive"
-                }
-              },
               {
                 "type": "named",
                 "data": {
