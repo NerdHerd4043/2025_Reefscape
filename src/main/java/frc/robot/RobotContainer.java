@@ -338,12 +338,7 @@ public class RobotContainer {
 
     driveStick.rightTrigger()
         .and(climberMode.negate())
-        .onTrue(Commands.sequence(
-            elevator.extendCommand(4),
-            coralWrist.L2BranchCommand(),
-            Commands.waitUntil(
-                () -> elevator.encoderPosition() > Constants.Elevator.maxElevatorHeight * .8),
-            coralIntake.outtakeCommand().withTimeout(2)));
+        .onTrue(fixCoral);
 
     /* Align Command Button Logic */
     Trigger semiAutoCancel = new Trigger(this::anyJoystickInput);
