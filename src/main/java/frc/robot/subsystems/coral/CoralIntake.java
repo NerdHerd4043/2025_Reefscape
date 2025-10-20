@@ -100,11 +100,6 @@ public class CoralIntake extends SubsystemBase {
       SmartDashboard.putNumber("Distance Sensor", this.getDistanceSensorRange());
     }
 
-    // This Smart Dashboard value is used by the CANdleSystem.java subsystems
-    if (!pieceAquired()) {
-      SmartDashboard.putBoolean("Aligned", false);
-    }
-
     SmartDashboard.putBoolean("Piece Acquired", this.pieceAquired());
 
     // SmartDashboard.putNumber("Intake Amps", this.getIntakeAmps());

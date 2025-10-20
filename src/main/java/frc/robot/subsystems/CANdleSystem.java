@@ -15,6 +15,7 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,6 +25,7 @@ import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 import cowlib.Util;
 
+@Logged
 public class CANdleSystem extends SubsystemBase {
   private final CANdle candle = new CANdle(Constants.CANdleConstants.CANdleID, "rio");
 
@@ -123,7 +125,7 @@ public class CANdleSystem extends SubsystemBase {
           this.toAnimate.setLedOffset(8);
           break;
         case Flash:
-          this.toAnimate = new StrobeAnimation(238, 130, 238);
+          this.toAnimate = new StrobeAnimation(238, 130, 238, 0, 0.5, -1);
           break;
         case Rainbow:
           this.toAnimate = new RainbowAnimation(80, 0.5, CANdleConstants.ledCount);
@@ -158,9 +160,7 @@ public class CANdleSystem extends SubsystemBase {
     // These Smart Dashboard values are set in multiple different places
     if (SmartDashboard.getBoolean("Climber Mode", false)) {
       this.setRed();
-    } else if (SmartDashboard.getBoolean("Running Autonomous", false)) {
-      this.setRainbow();
-    } else if (SmartDashboard.getBoolean("Aligned", false)) {
+    } else if (AlignmentSystem.aligned_sub.get()) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
       this.setFlashing();
@@ -183,5 +183,6 @@ public class CANdleSystem extends SubsystemBase {
     }
 
     this.candle.animate(this.toAnimate);
+
   }
 }

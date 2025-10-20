@@ -25,6 +25,7 @@ import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.coral.CoralIntake;
 import frc.robot.subsystems.coral.CoralWrist;
+import frc.robot.subsystems.AlignmentSystem;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.Climber;
 
@@ -49,6 +50,7 @@ public class RobotContainer {
   private final CoralWrist coralWrist = new CoralWrist();
   private final CoralIntake coralIntake = new CoralIntake();
   private final Climber climber = new Climber();
+  private final AlignmentSystem alignmentSystem = new AlignmentSystem();
 
   // Creates our CANdle System, i.e. our LEDs
   @SuppressWarnings("unused")
@@ -353,9 +355,9 @@ public class RobotContainer {
     var leftAlignCommand = Commands.parallel(
         leftRumbleCommand.withTimeout(0.5),
         new ReefAlignCommand(drivebase, ReefSide.LEFT))
-        .until(semiAutoCancel)
-        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+        .until(semiAutoCancel);
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    // .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.leftStick().toggleOnTrue(leftAlignCommand);
     driveStick.povLeft().toggleOnTrue(leftAlignCommand);
 
@@ -369,9 +371,9 @@ public class RobotContainer {
     var rightAlignCommand = Commands.parallel(
         rightRumbleCommand.withTimeout(0.5),
         new ReefAlignCommand(drivebase, ReefSide.RIGHT))
-        .until(semiAutoCancel)
-        // This Smart Dashboard value is used by the CANdleSystem.java subsystem
-        .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
+        .until(semiAutoCancel);
+    // This Smart Dashboard value is used by the CANdleSystem.java subsystem
+    // .andThen(() -> SmartDashboard.putBoolean("Aligned", false));
     driveStick.rightStick().toggleOnTrue(rightAlignCommand);
     driveStick.povRight().toggleOnTrue(rightAlignCommand);
   }

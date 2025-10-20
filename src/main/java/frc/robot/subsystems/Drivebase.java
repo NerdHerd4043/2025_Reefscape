@@ -55,10 +55,6 @@ import frc.robot.util.LimelightUtil;
 
 @Logged
 public class Drivebase extends SubsystemBase {
-  private static NetworkTable alignTable = NetworkTableInstance.getDefault()
-      .getTable("alignment");
-  private static DoublePublisher currentXPub = alignTable.getDoubleTopic("Robot Pose X").publish();
-
   private SwerveModule frontLeft = new SwerveModule(
       SwerveModules.frontLeft, DriveConstants.maxVelocity, DriveConstants.maxVoltage);
   private SwerveModule frontRight = new SwerveModule(
@@ -102,8 +98,6 @@ public class Drivebase extends SubsystemBase {
   // choosing the reef positions to move to.
   private SendableChooser<Double> driveSpeedChooser = new SendableChooser<>();
   private SendableChooser<Boolean> fieldOriented = new SendableChooser<>();
-  private SendableChooser<Double> leftReefTargetPose = new SendableChooser<>();
-  private SendableChooser<Double> rightReefTargetPose = new SendableChooser<>();
 
   // The Subscriber "subscribes" to a piece of information, allowing the
   // information to be recieved and updated. Source:
@@ -157,27 +151,9 @@ public class Drivebase extends SubsystemBase {
     // Adds Robot Oriented as an option.
     this.fieldOriented.addOption("Robot Oriented", false);
 
-    this.leftReefTargetPose.setDefaultOption("Original", 0.0);
-    this.leftReefTargetPose.addOption("0.01", 0.01);
-    this.leftReefTargetPose.addOption("0.02", 0.02);
-    this.leftReefTargetPose.addOption("0.03", 0.03);
-    this.leftReefTargetPose.addOption("-0.01", -0.01);
-    this.leftReefTargetPose.addOption("-0.02", -0.02);
-    this.leftReefTargetPose.addOption("-0.03", -0.03);
-
-    this.rightReefTargetPose.setDefaultOption("Original", 0.32);
-    this.rightReefTargetPose.addOption("0.01", 0.33);
-    this.rightReefTargetPose.addOption("0.02", 0.34);
-    this.rightReefTargetPose.addOption("0.03", 0.35);
-    this.rightReefTargetPose.addOption("-0.01", 0.31);
-    this.rightReefTargetPose.addOption("-0.02", 0.30);
-    this.rightReefTargetPose.addOption("-0.03", 0.29);
-
     // Putting Sendables on the dashboard so they can be used.
     SmartDashboard.putData("Drive Speed", this.driveSpeedChooser);
     SmartDashboard.putData("Drive Orientation", this.fieldOriented);
-    SmartDashboard.putData("Left Reef Target", this.leftReefTargetPose);
-    SmartDashboard.putData("Right Reef Target", this.rightReefTargetPose);
 
     // Putting the field on the dashboard
     SmartDashboard.putData("Field", this.field);
@@ -471,27 +447,8 @@ public class Drivebase extends SubsystemBase {
     return this.R_limelightRobotPoseArray[0];
   }
 
-  public double getLeftReefTargetPose() {
-    return this.leftReefTargetPose.getSelected();
-  }
-
-  public double getRightReefTargetPose() {
-    return this.rightReefTargetPose.getSelected();
-  }
-
-  public double getReefTargetPose(ReefSide side) {
-    switch (side) {
-      case RIGHT:
-        return getRightReefTargetPose();
-      case LEFT:
-      default:
-        return getLeftReefTargetPose();
-    }
-  }
-
   @Override
   public void periodic() {
-    currentXPub.set(LimelightUtil.getRobotPoseX());
     /* This method will be called once per scheduler run */
 
     // Updating odometry

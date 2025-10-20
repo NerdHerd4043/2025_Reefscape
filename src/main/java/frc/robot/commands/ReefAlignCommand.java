@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.AlignmentSystem;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.util.AutoDestinations.ReefSide;
 import frc.robot.util.LimelightUtil;
@@ -50,27 +51,28 @@ public class ReefAlignCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double distSensor = SmartDashboard.getNumber("Distance Sensor", Constants.CoralIntake.distSensorLow);
-    double distSensorOffset = Constants.CoralIntake.mapCoral(distSensor);
 
-    SmartDashboard.putNumber("Left Limelight Last Change", LimelightUtil.L_limelightRobotPose.getLastChange());
-    SmartDashboard.putNumber("Right Limelight Last Change", LimelightUtil.R_limelightRobotPose.getLastChange());
+    System.out.println("Align Exe");
     double robotPoseX = LimelightUtil.getRobotPoseX();
-    double targetPoseX = this.drivebase.getReefTargetPose(this.side);
-
-    double maxOffset = 1;
-    double deadband = 0.015;
-
-    double deltaX = MathUtil.clamp(robotPoseX - targetPoseX + distSensorOffset, -maxOffset, maxOffset);
-    double speedX = Math.copySign(Util.mapDouble(deltaX, 0, maxOffset, 0, this.drivebase.getTrueMaxVelocity() * 0.7),
+    double deltaX = AlignmentSystem.getDeltaX(side);
+    double maxOffset = AlignmentSystem.getMaxOffset();
+    double speedX = Math.copySign(
+        Util.mapDouble(
+            deltaX, 0,
+            maxOffset, 0,
+            this.drivebase.getTrueMaxVelocity() * 0.7),
         deltaX);
 
-    // System.out.println("Delta X" + deltaX);
-    // System.out.println("Speed X" + speedX);
+    System.out.println(AlignmentSystem.getSideAligned(side));
+    System.out.print(robotPoseX);
+    System.out.print(" ");
+    System.out.print(deltaX);
+    System.out.print(" ");
+    System.out.println(speedX);
 
     // In robotOrientedDrive: Positive x moves the robot forward, positive y moves
     // the robot left
-    if (robotPoseX != 0 && Math.abs(deltaX) > deadband) {
+    if (robotPoseX != 0 && !AlignmentSystem.getSideAligned(side)) {
       this.timeSet = false;
       this.drivebase.robotOrientedDrive(0, speedX, 0);
       // This Smart Dashboard value is used by the CANdleSystem.java subsystem
@@ -87,10 +89,9 @@ public class ReefAlignCommand extends Command {
 
       double deltaTime = Timer.getFPGATimestamp() - this.time;
 
-      if (deltaTime > 1 && deltaX < deadband) {
+      if (deltaTime > 1 && robotPoseX != 0) {
         this.finished = true;
       }
-
     }
   }
 
@@ -101,9 +102,6 @@ public class ReefAlignCommand extends Command {
 
     // These Smart Dashboard values are used by the CANdleSystem.java subsystem
     SmartDashboard.putBoolean("Aligning", false);
-    if (!interrupted) {
-      SmartDashboard.putBoolean("Aligned", true);
-    }
   }
 
   // Returns true when the command should end.

@@ -18,6 +18,7 @@ import frc.robot.util.LimelightHelpers.RawFiducial;
 
 /** Add your docs here. */
 public class LimelightUtil {
+
   public static NetworkTable left_ll_table = NetworkTableInstance.getDefault()
       .getTable("limelight-left");
 
