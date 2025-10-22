@@ -160,7 +160,7 @@ public class CANdleSystem extends SubsystemBase {
     // These Smart Dashboard values are set in multiple different places
     if (SmartDashboard.getBoolean("Climber Mode", false)) {
       this.setRed();
-    } else if (AlignmentSystem.aligned_sub.get()) {
+    } else if (AlignmentSystem.aligned_entry.get()) {
       this.setGreen();
     } else if (SmartDashboard.getBoolean("Aligning", false)) {
       this.setFlashing();

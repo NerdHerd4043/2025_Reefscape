@@ -4,21 +4,18 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanEntry;
 import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.networktables.PubSubOptions;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.AutoDestinations.ReefSide;
 import frc.robot.util.LimelightUtil;
-import cowlib.Util;
 
 public class AlignmentSystem extends SubsystemBase {
   private static NetworkTable smart_dashboard = NetworkTableInstance.getDefault()
@@ -26,59 +23,62 @@ public class AlignmentSystem extends SubsystemBase {
   private static NetworkTable alignment_table = NetworkTableInstance.getDefault()
       .getTable("alignment");
 
-  private static BooleanPublisher aligned_pub = alignment_table
-      .getBooleanTopic("Aligned").publish();
-  public static BooleanSubscriber aligned_sub = alignment_table
-      .getBooleanTopic("Aligned").subscribe(false);
-  private static BooleanPublisher right_aligned_pub = alignment_table
-      .getSubTable("right").getBooleanTopic("Aligned").publish();
-  public static BooleanSubscriber right_aligned_sub = alignment_table
-      .getSubTable("right").getBooleanTopic("Aligned").subscribe(false);
-  private static BooleanPublisher left_aligned_pub = alignment_table
-      .getSubTable("left").getBooleanTopic("Aligned").publish();
-  public static BooleanSubscriber left_aligned_sub = alignment_table
-      .getSubTable("left").getBooleanTopic("Aligned").subscribe(false);
+  public static BooleanEntry aligned_entry = alignment_table
+      .getBooleanTopic("Aligned").getEntry(false);
+
+  private static BooleanEntry right_aligned_entry = alignment_table
+      .getSubTable("right").getBooleanTopic("Aligned").getEntry(false);
+  public static BooleanEntry left_aligned_entry = alignment_table
+      .getSubTable("left").getBooleanTopic("Aligned").getEntry(false);
   private static BooleanSubscriber piece_sub = smart_dashboard
       .getBooleanTopic("Piece Acquired").subscribe(false);
   private static DoubleSubscriber distance_sensor_sub = smart_dashboard
       .getDoubleTopic("Distance Sensor").subscribe(Constants.CoralIntake.distSensorLow);
 
-  private static DoubleSubscriber left_pose_sub = alignment_table
-      .getDoubleTopic("Left Reef Target").subscribe(0);
-  private static DoubleSubscriber right_pose_sub = alignment_table
-      .getDoubleTopic("Right Reef Target").subscribe(0.32);
+  private static DoubleEntry left_pose_sub = alignment_table
+      .getSubTable("left").getDoubleTopic("Reef Target").getEntry(0);
+  private static DoubleEntry right_pose_sub = alignment_table
+      .getSubTable("right").getDoubleTopic("Reef Target").getEntry(0.32);
 
-  private static DoubleSubscriber max_offset_sub = alignment_table
-      .getDoubleTopic("Max Offset").subscribe(1);
-  private static DoubleSubscriber deadband_sub = alignment_table
-      .getDoubleTopic("Deadband").subscribe(0.02, PubSubOption.sendAll(true));
+  private static DoubleEntry max_offset_entry = alignment_table
+      .getDoubleTopic("Max Offset").getEntry(1);
+  private static DoubleEntry deadband_entry = alignment_table
+      .getDoubleTopic("Deadband").getEntry(0.02);
 
-  private static DoublePublisher left_delta_x_pub = alignment_table
-      .getSubTable("deltas").getDoubleTopic("Left Delta X").publish();
-  private static DoublePublisher right_delta_x_pub = alignment_table
-      .getSubTable("deltas").getDoubleTopic("Right Delta X").publish();
-
-  private static DoubleSubscriber left_delta_x_sub = alignment_table
-      .getSubTable("deltas").getDoubleTopic("Left Delta X").subscribe(0);
-  private static DoubleSubscriber right_delta_x_sub = alignment_table
-      .getSubTable("deltas").getDoubleTopic("Right Delta X").subscribe(0);
+  private static DoubleEntry left_delta_x_entry = alignment_table
+      .getSubTable("left").getDoubleTopic("Delta X").getEntry(0);
+  private static DoubleEntry right_delta_x_entry = alignment_table
+      .getSubTable("right").getDoubleTopic("Delta X").getEntry(0);
 
   /** Creates a new CANdleSystem. */
   public AlignmentSystem() {
+    max_offset_entry.setDefault(1);
+    deadband_entry.setDefault(0.02);
 
+    left_pose_sub.setDefault(0);
+    right_pose_sub.setDefault(0.32);
+
+    alignment_table
+        .getSubTable("left")
+        .getDoubleTopic("Reef Target")
+        .setPersistent(true);
+    alignment_table
+        .getSubTable("right")
+        .getDoubleTopic("Reef Target")
+        .setPersistent(true);
   }
 
   public static double getMaxOffset() {
-    return max_offset_sub.get();
+    return max_offset_entry.get();
   }
 
   public static double getDeltaX(ReefSide side) {
     switch (side) {
       case RIGHT:
-        return right_delta_x_sub.get();
+        return right_delta_x_entry.get();
       case LEFT:
       default:
-        return left_delta_x_sub.get();
+        return left_delta_x_entry.get();
     }
   }
 
@@ -103,10 +103,10 @@ public class AlignmentSystem extends SubsystemBase {
   private static void setSideDelta(ReefSide side, double value) {
     switch (side) {
       case RIGHT:
-        right_delta_x_pub.set(value);
+        right_delta_x_entry.set(value);
         break;
       case LEFT:
-        left_delta_x_pub.set(value);
+        left_delta_x_entry.set(value);
         break;
     }
   }
@@ -114,10 +114,10 @@ public class AlignmentSystem extends SubsystemBase {
   private static void setSideAligned(ReefSide side, boolean aligned) {
     switch (side) {
       case RIGHT:
-        right_aligned_pub.set(aligned);
+        right_aligned_entry.set(aligned);
         break;
       case LEFT:
-        left_aligned_pub.set(aligned);
+        left_aligned_entry.set(aligned);
         break;
     }
   }
@@ -125,10 +125,10 @@ public class AlignmentSystem extends SubsystemBase {
   public static boolean getSideAligned(ReefSide side) {
     switch (side) {
       case RIGHT:
-        return right_aligned_sub.get();
+        return right_aligned_entry.get();
       case LEFT:
       default:
-        return left_aligned_sub.get();
+        return left_aligned_entry.get();
     }
   }
 
@@ -139,7 +139,7 @@ public class AlignmentSystem extends SubsystemBase {
 
       double robotPoseX = LimelightUtil.getRobotPoseX();
 
-      double maxOffset = max_offset_sub.get();
+      double maxOffset = max_offset_entry.get();
 
       boolean aligned = false;
       for (ReefSide side : ReefSide.values()) {
@@ -150,16 +150,16 @@ public class AlignmentSystem extends SubsystemBase {
             -maxOffset,
             maxOffset);
 
-        boolean sideAligned = Math.abs(deltaX) < deadband_sub.get();
+        boolean sideAligned = Math.abs(deltaX) < deadband_entry.get();
         aligned = sideAligned || aligned;
         setSideDelta(side, deltaX);
         setSideAligned(side, sideAligned);
       }
 
       if (piece_sub.get()) {
-        aligned_pub.set(aligned);
+        aligned_entry.set(aligned);
       } else {
-        aligned_pub.set(false);
+        aligned_entry.set(false);
       }
     }
   }
